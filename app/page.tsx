@@ -1,101 +1,211 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from "react";
+import {
+  TextField,
+  Checkbox,
+  Button,
+  FormControlLabel,
+  FormGroup,
+  Box,
+  FormLabel,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import { useFormik } from "formik";
 
-export default function Home() {
+const FormComponent = () => {
+  const [isDifferentShipping, setIsDifferentShipping] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      name: "",
+      address: "",
+      shippingName: "",
+      shippingAddress: "",
+    },
+    onSubmit: (values) => {
+      console.log("First Name:", values.firstName);
+      console.log("Last Name:", values.lastName);
+      console.log("Email:", values.email);
+      console.log("Different Shipping Address:", isDifferentShipping);
+      console.log("Name:", values.name);
+      console.log("Address:", values.address);
+      console.log("Shipping Name:", values.shippingName);
+      console.log("Shipping Address:", values.shippingAddress);
+    },
+  });
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsDifferentShipping(e.target.checked);
+    formik.values.shippingName = "";
+    formik.values.shippingAddress = "";
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      sx={{
+        maxWidth: 600,
+        margin: "auto",
+        marginTop: {
+          xs: 20, // 16px margin on extra small screens (mobile)
+          sm: 5, // 24px margin on small screens
+          md: 5,
+        },
+        padding: 2,
+        borderRadius: 2,
+        boxShadow: 3,
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <Grid container spacing={2}>
+        <Grid size={20}>
+          <TextField
+            label="First Name"
+            name="firstName"
+            value={formik.values.firstName}
+            onChange={formik.handleChange}
+            fullWidth
+            required
+          />
+        </Grid>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+        <Grid size={20}>
+          <TextField
+            label="Last Name"
+            name="lastName"
+            value={formik.values.lastName}
+            onChange={formik.handleChange}
+            fullWidth
+            required
+          />
+        </Grid>
+
+        <Grid size={20}>
+          <TextField
+            label="Email"
+            name="email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            fullWidth
+            required
+            type="email"
+          />
+        </Grid>
+
+        <Grid container spacing={2} columns={16}>
+          <Grid size={8}>
+            <FormLabel>Billing Address</FormLabel>
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isDifferentShipping}
+                    onChange={handleCheckboxChange}
+                    name="differentShipping"
+                  />
+                }
+                sx={{
+                  color: "#000000",
+                }}
+                label="Different Shipping Address"
+              />
+            </FormGroup>
+
+            <TextField
+              label="Name"
+              name="name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              fullWidth
+              required
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+            <TextField
+              label="Address"
+              name="address"
+              value={formik.values.address}
+              onChange={formik.handleChange}
+              fullWidth
+              required
+              sx={{
+                marginTop: 1,
+              }}
+            />
+          </Grid>
+          <Grid size={8}>
+            <FormLabel>Shiping Address</FormLabel>
+
+            {/* <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isDifferentShipping}
+                      onChange={handleCheckboxChange}
+                      name="differentShipping1"
+                    />
+                  }
+                  sx={{
+                    color: "#000000",
+                  }}
+                  label="Different Shipping Address"
+                />
+              </FormGroup> */}
+
+            {isDifferentShipping && (
+              <>
+                <TextField
+                  label="Name"
+                  name="shippingName"
+                  value={formik.values.shippingName}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  required
+                  sx={{
+                    marginTop: 5.2,
+                  }}
+                />
+
+                <TextField
+                  label="Address"
+                  name="shippingAddress"
+                  value={formik.values.shippingAddress}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  required
+                  sx={{
+                    marginTop: 1,
+                  }}
+                />
+              </>
+            )}
+          </Grid>
+          {/* <Grid size={10}>
+           
+          </Grid>
+          <Grid size={10}>
+            
+          </Grid> */}
+        </Grid>
+
+        <Grid size={20}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: 2 }}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            Submit
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
-}
+};
+
+export default FormComponent;
