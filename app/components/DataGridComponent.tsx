@@ -7,54 +7,37 @@ import {
   GridRowsProp,
   GridToolbar,
 } from "@mui/x-data-grid";
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Link from "next/link";
 
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
-
-  loading: boolean;
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
   rows,
   columns,
-
-  loading,
 }) => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f5f5f5",
-        p: 2,
-      }}
-    >
+    <>
       <Box
         sx={{
-          width: "100%",
-          maxWidth: "1300px",
-          borderRadius: 2,
-          boxShadow: 3,
-          backgroundColor: "#ffffff",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f5f5f5",
           p: 2,
         }}
       >
-        {loading ? (
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : (
+        <Box
+          sx={{
+            borderRadius: 2,
+            boxShadow: 3,
+            backgroundColor: "#ffffff",
+            p: 2,
+          }}
+        >
           <>
             <Box
               sx={{
@@ -70,6 +53,10 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
             <DataGrid
               sx={{
                 height: "110vh",
+                "& .super-app-theme--header": {
+                  backgroundColor: "rgb(25, 117, 209)",
+                  color: "white",
+                },
               }}
               rows={[...rows].sort((a, b) => b.id - a.id)}
               columns={columns}
@@ -88,9 +75,9 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
               }}
             />
           </>
-        )}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

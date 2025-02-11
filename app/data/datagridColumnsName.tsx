@@ -14,6 +14,8 @@ export const getColumns = (
       width: 70,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "firstname",
@@ -21,6 +23,8 @@ export const getColumns = (
       width: 100,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "lastname",
@@ -28,6 +32,8 @@ export const getColumns = (
       width: 100,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "email",
@@ -35,6 +41,8 @@ export const getColumns = (
       width: 160,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "isDifferentShipping",
@@ -43,6 +51,8 @@ export const getColumns = (
       width: 150,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "name",
@@ -50,6 +60,8 @@ export const getColumns = (
       width: 100,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "address",
@@ -57,6 +69,8 @@ export const getColumns = (
       width: 150,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "shippingName",
@@ -64,6 +78,8 @@ export const getColumns = (
       width: 120,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "shippingAddress",
@@ -71,6 +87,8 @@ export const getColumns = (
       width: 150,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
     },
     {
       field: "actions",
@@ -78,6 +96,8 @@ export const getColumns = (
       width: 165,
       sortable: false,
       disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
       renderCell: (params) => (
         <>
           <Button

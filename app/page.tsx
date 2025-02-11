@@ -8,6 +8,7 @@ import EditModalComponent from "./components/EditModalComponent";
 import DeleteModalComponent from "./components/DeleteModalComponent";
 import { getColumns } from "./data/datagridColumnsName";
 import SuccessSnackbar from "./components/SuccessSnackbar";
+import { Box, CircularProgress } from "@mui/material";
 
 const Page: React.FC = () => {
   const [rows, setRows] = useState<GridRowsProp>([]);
@@ -19,19 +20,21 @@ const Page: React.FC = () => {
   const [updatedRow, setUpdatedRow] = useState<any>({});
   const [deleteid, setDeleteid] = useState<number>(0);
 
-  const fetchData = async () => {
-    setLoading(true);
-
-    const { data, error } = await supabase.from("form").select("*");
-    if (error) {
-      console.error(error);
-    } else {
-      setRows(data);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      // console.log("Fetching data..."); // Debugging statement
+
+      const { data, error } = await supabase.from("form").select("*");
+      if (error) {
+        console.error("Supabase Error:", error);
+      } else {
+        // console.log("Fetched Data:", data); // Check if data is returned
+        setRows(data);
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 
@@ -92,7 +95,21 @@ const Page: React.FC = () => {
   const columns = getColumns(handleEditOpen, handleDelete);
   return (
     <>
-      <DataGridComponent rows={rows} columns={columns} loading={loading} />
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh", // Full viewport height
+            width: "100vw",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <DataGridComponent rows={rows} columns={columns} />
+      )}
 
       <EditModalComponent
         openEditModal={openEditModal}
