@@ -13,11 +13,13 @@ import Link from "next/link";
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
+  height?: string | number;
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
   rows,
   columns,
+  height = "110vh",
 }) => {
   return (
     <>
@@ -52,7 +54,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
           </Box>
           <DataGrid
             sx={{
-              height: "110vh",
+              height: height,
               "& .super-app-theme--header": {
                 backgroundColor: "rgb(25, 117, 209)",
                 color: "white",
