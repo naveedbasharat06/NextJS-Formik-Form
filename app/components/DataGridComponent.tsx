@@ -21,7 +21,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
 }) => {
   return (
     <>
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -29,54 +29,54 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
           backgroundColor: "#f5f5f5",
           p: 2,
         }}
+      > */}
+      <Box
+        sx={{
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: "#ffffff",
+          p: 2,
+        }}
       >
-        <Box
-          sx={{
-            borderRadius: 2,
-            boxShadow: 3,
-            backgroundColor: "#ffffff",
-            p: 2,
-          }}
-        >
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "end",
-                marginBottom: 1,
-              }}
-            >
-              <Button variant="contained">
-                <Link href="/addContactDetals">Add CONTACT</Link>
-              </Button>
-            </Box>
-            <DataGrid
-              sx={{
-                height: "110vh",
-                "& .super-app-theme--header": {
-                  backgroundColor: "rgb(25, 117, 209)",
-                  color: "white",
-                },
-              }}
-              rows={[...rows].sort((a, b) => b.id - a.id)}
-              columns={columns}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 10 } },
-              }}
-              pageSizeOptions={[5, 10, 25]}
-              disableColumnFilter
-              disableColumnSelector
-              disableDensitySelector
-              slots={{ toolbar: GridToolbar }}
-              slotProps={{
-                toolbar: {
-                  showQuickFilter: true,
-                },
-              }}
-            />
-          </>
-        </Box>
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: 1,
+            }}
+          >
+            <Button variant="contained">
+              <Link href="/addContactDetals">Add CONTACT</Link>
+            </Button>
+          </Box>
+          <DataGrid
+            sx={{
+              height: "110vh",
+              "& .super-app-theme--header": {
+                backgroundColor: "rgb(25, 117, 209)",
+                color: "white",
+              },
+            }}
+            rows={[...rows].sort((a, b) => b.id - a.id)}
+            columns={columns}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10 } },
+            }}
+            pageSizeOptions={[5, 10, 25]}
+            disableColumnFilter
+            disableColumnSelector
+            disableDensitySelector
+            slots={{ toolbar: GridToolbar }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+              },
+            }}
+          />
+        </>
       </Box>
+      {/* </Box> */}
     </>
   );
 };

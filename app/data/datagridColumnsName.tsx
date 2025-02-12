@@ -14,6 +14,7 @@ export const getColumns = (
       width: 70,
       sortable: false,
       disableColumnMenu: true,
+
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
@@ -75,7 +76,7 @@ export const getColumns = (
     {
       field: "shippingName",
       headerName: "Shipping Name",
-      width: 120,
+      width: 160,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -84,7 +85,7 @@ export const getColumns = (
     {
       field: "shippingAddress",
       headerName: "Shipping Address",
-      width: 150,
+      width: 160,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
