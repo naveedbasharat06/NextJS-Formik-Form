@@ -108,7 +108,7 @@ const Page: React.FC = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <DataGridComponent rows={rows} columns={columns} />
+        <DataGridComponent rows={rows} columns={columns} showButton={true}  />
       )}
 
       <EditModalComponent

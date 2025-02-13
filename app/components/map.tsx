@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Button, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import DataGridComponent from "./DataGridComponent";
+import supabase from "../../utils/supabaseClient";
 
 // Set your Mapbox access token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -114,23 +115,50 @@ const Map = () => {
     if (lat && lng) {
       const address = await getAddressFromCoordinates(lat, lng);
       const newLocation = {
-        id: savedLocations.length + 1, // Generate a unique ID
+        id: savedLocations.length + 1, // Generate a unique ID (optional)
         lat,
         lng,
         address,
       };
-      setSavedLocations([...savedLocations, newLocation]);
+  
+      // Save data in Supabase
+      const { data, error } = await supabase
+        .from("location") // Your Supabase table name
+        .insert([
+          {
+            latitude: lat,
+            longitude: lng,
+            address: address,
+          },
+        ]);
+  
+      if (error) {
+        console.error("Error saving location:", error.message);
+        alert("Failed to save location.");
+      } else {
+        setSavedLocations([...savedLocations, newLocation]);
+        alert("Location saved successfully!");
+      }
     }
   };
 
   return (
     <>
-      <div className="w-full h-full flex mt-4 m-4">
+      {/* Location Input */}
+  
+
+      <Box className="w-full h-full flex   ">
+
+        
         {/* Map Container */}
-        <div className="relative w-[50%] h-[578px] m-2">
-          <div
+        <Box className="relative w-[50%] h-[525px] m-4">
+
+          
+          <Box
             ref={mapContainerRef}
-            className="w-full h-full rounded-xl shadow-2xl border-2 border-gray-200 overflow-hidden transform hover:scale-105 transition-transform duration-300"
+            className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
+             transform hover:scale-105 transition-transform duration-300 
+             shadow-[0px_10px_30px_rgba(0,0,255,0.4)]"
           />
           <Button
             onClick={locateUser}
@@ -156,13 +184,21 @@ const Map = () => {
           >
             Save Location
           </Button>
-        </div>
+        </Box>
 
         {/* DataGrid Container */}
-        <div className="w-[50%] h-[500px] mt-2">
-          <DataGridComponent rows={savedLocations} columns={columns} height={"80vh"} />
-        </div>
-      </div>
+        <Box className="w-[50%]  my-4 mr-4">
+
+    
+          <DataGridComponent
+            rows={savedLocations}
+            columns={columns}
+            height={"429px"}
+            showButton={false}
+            locationText={locationText}
+          />
+        </Box>
+      </Box>
     </>
   );
 };

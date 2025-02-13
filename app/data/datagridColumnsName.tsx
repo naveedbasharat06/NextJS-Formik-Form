@@ -11,7 +11,7 @@ export const getColumns = (
     {
       field: "id",
       headerName: "ID",
-      width: 70,
+      width: 10,
       sortable: false,
       disableColumnMenu: true,
 
@@ -21,7 +21,7 @@ export const getColumns = (
     {
       field: "firstname",
       headerName: "Firstname",
-      width: 100,
+      width: 85,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -30,7 +30,7 @@ export const getColumns = (
     {
       field: "lastname",
       headerName: "Lastname",
-      width: 100,
+      width: 85,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -39,7 +39,7 @@ export const getColumns = (
     {
       field: "email",
       headerName: "Email",
-      width: 160,
+      width: 150,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
