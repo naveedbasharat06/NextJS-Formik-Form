@@ -6,6 +6,9 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { Box, Button, TextField } from "@mui/material";
 import DataGridComponent from "./DataGridComponent";
 import supabase from "../../utils/supabaseClient";
+import { GridRowsProp } from "@mui/x-data-grid";
+import { SnackbarCloseReason } from "@mui/material/Snackbar";
+import SuccessSnackbar from "./SuccessSnackbar";
 
 // Set your Mapbox access token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -14,22 +17,61 @@ const Map = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
-
+  const [rows, setRows] = useState<GridRowsProp>([]);
   const [lng, setLng] = useState(73.1);
   const [lat, setLat] = useState(33.7);
   const [zoom, setZoom] = useState(10);
   const [locationText, setLocationText] = useState("");
-  const [savedLocations, setSavedLocations] = useState<
-    { id: number; lat: number; lng: number; address: string }[]
-  >([]);
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackString, setSnackString] = useState("");
 
   // Columns for the DataGrid
   const columns = [
-    { field: "id", headerName: "ID", width: 90 },
-    { field: "lat", headerName: "Latitude", width: 150 },
-    { field: "lng", headerName: "Longitude", width: 150 },
-    { field: "address", headerName: "Address", width: 400 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 90,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "latitude",
+      headerName: "Latitude",
+      width: 150,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "longitude",
+      headerName: "Longitude",
+      width: 150,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "address",
+      headerName: "Address",
+      width: 400,
+      headerClassName: "super-app-theme--header",
+    },
   ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // setLoading(true);
+      // console.log("Fetching data..."); // Debugging statement
+
+      const { data, error } = await supabase.from("location").select("*");
+      if (error) {
+        console.error("Supabase Error:", error);
+      } else {
+        // console.log("Fetched Data:", data); // Check if data is returned
+        setRows(data);
+
+        console.log(data);
+        // setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -114,13 +156,6 @@ const Map = () => {
   const saveLocation = async () => {
     if (lat && lng) {
       const address = await getAddressFromCoordinates(lat, lng);
-      const newLocation = {
-        id: savedLocations.length + 1, // Generate a unique ID (optional)
-        lat,
-        lng,
-        address,
-      };
-  
       // Save data in Supabase
       const { data, error } = await supabase
         .from("location") // Your Supabase table name
@@ -131,29 +166,33 @@ const Map = () => {
             address: address,
           },
         ]);
-  
+
       if (error) {
-        console.error("Error saving location:", error.message);
-        alert("Failed to save location.");
+        // console.error("Error saving location:", error.message);
       } else {
-        setSavedLocations([...savedLocations, newLocation]);
-        alert("Location saved successfully!");
+        setSnackOpen(true);
+        setSnackString("location save successfully");
       }
     }
+  };
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackOpen(false);
   };
 
   return (
     <>
       {/* Location Input */}
-  
 
       <Box className="w-full h-full flex   ">
-
-        
         {/* Map Container */}
         <Box className="relative w-[50%] h-[525px] m-4">
-
-          
           <Box
             ref={mapContainerRef}
             className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
@@ -188,10 +227,8 @@ const Map = () => {
 
         {/* DataGrid Container */}
         <Box className="w-[50%]  my-4 mr-4">
-
-    
           <DataGridComponent
-            rows={savedLocations}
+            rows={rows}
             columns={columns}
             height={"429px"}
             showButton={false}
@@ -199,6 +236,11 @@ const Map = () => {
           />
         </Box>
       </Box>
+      <SuccessSnackbar
+        handleClose={handleClose}
+        openSnackbar={snackOpen}
+        alertMessage={snackString}
+      />
     </>
   );
 };

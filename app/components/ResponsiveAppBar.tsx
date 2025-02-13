@@ -33,7 +33,7 @@ export default function ResponsiveAppBar() {
           <Box sx={{ display: "flex", gap: 4 }}>
             {[
               { label: "Manage", path: "/" },
-              { label: "Add Contact", path: "/addContactDetails" },
+              // { label: "Add Contact", path: "/addContactDetails" },
               { label: "Locate Yourself", path: "/locateYourself" },
             ].map((item) => (
               <Typography
