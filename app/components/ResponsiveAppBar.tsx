@@ -15,7 +15,7 @@ export default function ResponsiveAppBar() {
       <AppBar
         position="static"
         sx={{
-          backgroundColor: "#1E1E1E", // Dark gray for smooth contrast with black background
+          backgroundColor: "#003049", // Dark gray for smooth contrast with black background
           boxShadow: "0px 4px 10px rgba(255, 255, 255, 0.1)", // Soft glow effect
         }}
       >
@@ -33,7 +33,7 @@ export default function ResponsiveAppBar() {
           <Box sx={{ display: "flex", gap: 4 }}>
             {[
               { label: "Manage", path: "/" },
-              // { label: "Add Contact", path: "/addContactDetails" },
+
               { label: "Locate Yourself", path: "/locateYourself" },
             ].map((item) => (
               <Typography
@@ -53,7 +53,10 @@ export default function ResponsiveAppBar() {
                   padding: "6px 0",
                 }}
               >
-                <Link href={item.path} style={{ textDecoration: "none", color: "inherit" }}>
+                <Link
+                  href={item.path}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
                   {item.label}
                 </Link>
               </Typography>

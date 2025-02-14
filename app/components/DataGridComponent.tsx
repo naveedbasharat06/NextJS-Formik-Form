@@ -44,7 +44,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
             marginBottom: 1,
           }}
         >
-          <Button variant="contained">
+          <Button variant="contained" sx={{ background: "#669bbc" }}>
             <Link href="/addContactDetails">Add CONTACT</Link>
           </Button>
         </Box>
@@ -67,7 +67,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         sx={{
           height: height,
           "& .super-app-theme--header": {
-            backgroundColor: "rgb(117, 117, 117)",
+            backgroundColor: "#003049",
             color: "white",
           },
         }}
