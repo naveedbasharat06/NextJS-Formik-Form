@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import EditIcon from "@mui/icons-material/Edit";
 
 // import supabase from "../utils/supabaseClient";
 
@@ -55,22 +56,24 @@ export const getColumns2 = (
       width: 50,
       headerClassName: "super-app-theme--header",
     },
+
+    {
+      field: "address",
+      headerName: "Address",
+
+      flex: 1,
+      headerClassName: "super-app-theme--header",
+    },
     {
       field: "latitude",
       headerName: "Latitude",
-      width: 150,
+      flex: 1,
       headerClassName: "super-app-theme--header",
     },
     {
       field: "longitude",
       headerName: "Longitude",
-      width: 150,
-      headerClassName: "super-app-theme--header",
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      width: 400,
+      flex: 1,
       headerClassName: "super-app-theme--header",
     },
   ];
@@ -84,17 +87,18 @@ export const getColumns = (
     {
       field: "id",
       headerName: "ID",
-      width: 10,
+      width: 50, // Fixed width for ID
       sortable: false,
       disableColumnMenu: true,
-
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
+      hideable: false,
     },
     {
       field: "firstname",
       headerName: "Firstname",
-      width: 80,
+      flex: 1, // Make it flexible
+      minWidth: 100, // Prevent shrinking too much
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -103,7 +107,8 @@ export const getColumns = (
     {
       field: "lastname",
       headerName: "Lastname",
-      width: 80,
+      flex: 1,
+      minWidth: 100,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -112,7 +117,8 @@ export const getColumns = (
     {
       field: "email",
       headerName: "Email",
-      width: 150,
+      flex: 2, // Give it more space
+      minWidth: 200,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -122,7 +128,8 @@ export const getColumns = (
       field: "isDifferentShipping",
       headerName: "Different Shipping",
       type: "boolean",
-      width: 150,
+      flex: 1,
+      minWidth: 150,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -131,7 +138,8 @@ export const getColumns = (
     {
       field: "name",
       headerName: "Name",
-      width: 100,
+      flex: 1,
+      minWidth: 120,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -140,7 +148,8 @@ export const getColumns = (
     {
       field: "address",
       headerName: "Address",
-      width: 150,
+      flex: 2,
+      minWidth: 200,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -149,7 +158,8 @@ export const getColumns = (
     {
       field: "shippingName",
       headerName: "Shipping Name",
-      width: 160,
+      flex: 1,
+      minWidth: 150,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -158,7 +168,8 @@ export const getColumns = (
     {
       field: "shippingAddress",
       headerName: "Shipping Address",
-      width: 160,
+      flex: 2,
+      minWidth: 200,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
@@ -167,39 +178,22 @@ export const getColumns = (
     {
       field: "actions",
       headerName: "Actions",
-      width: 175,
+      width: 175, // Fixed width for action buttons
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
         <>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => handleEditOpen(params.row)}
-            sx={{
-              backgroundColor: "#669bbc", // Dark Grey (Neutral Look)
-              color: "white",
-              "&:hover": { backgroundColor: "#003049" }, // Slightly darker on hover
-            }}
-          >
-            Edit
-          </Button>
-
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => handleDelete(params.row.id)}
-            sx={{
-              backgroundColor: "#c1121f", // Bright Red (Danger)
-              color: "white",
-              "&:hover": { backgroundColor: "#780000" }, // Darker red on hover
-              marginLeft: 1,
-            }}
-          >
-            Delete
-          </Button>
+          <IconButton>
+            <EditIcon onClick={() => handleEditOpen(params.row)} />
+          </IconButton>
+          <IconButton>
+            <DeleteIcon
+              onClick={() => handleDelete(params.row.id)}
+              sx={{ color: "#c1121f" }}
+            />
+          </IconButton>
         </>
       ),
     },

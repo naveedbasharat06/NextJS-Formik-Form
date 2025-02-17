@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Box, Button } from "@mui/material";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
 import DataGridComponent from "./DataGridComponent";
 import supabase from "../../utils/supabaseClient";
 import { GridRowsProp } from "@mui/x-data-grid";
@@ -25,6 +25,8 @@ const Map = () => {
   const [locationText, setLocationText] = useState("");
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackString, setSnackString] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const [markers, setMarkers] = useState<{
     [key: string]: mapboxgl.Marker | null;
   }>({});
@@ -84,6 +86,7 @@ const Map = () => {
         console.error("Supabase Error:", error);
       } else {
         setRows(data);
+        setLoading(false);
         console.log(data);
       }
     };
@@ -109,8 +112,16 @@ const Map = () => {
         }
       )
       .subscribe();
+    return () => {
+      const removeSubscription = async () => {
+        await supabase.removeChannel(subscription);
+      };
+      removeSubscription();
+    };
+  }, []);
 
-    if (!mapContainerRef.current) return;
+  useEffect(() => {
+    if (loading || !mapContainerRef.current) return; // Ensure map initializes only after loading is false
 
     // Initialize the map
     mapRef.current = new mapboxgl.Map({
@@ -149,26 +160,23 @@ const Map = () => {
         });
       }
 
-      // Update state
       setLng(longitude);
       setLat(latitude);
-      setIsGeolocateActive(true); // ✅ Activate geolocation state
+      setIsGeolocateActive(true);
     });
 
     geolocateControl.on("trackuserlocationend", () => {
-      setIsGeolocateActive(false); // ✅ Deactivate geolocation state when off
+      setIsGeolocateActive(false);
     });
-    // Cleanup on unmount
+
     return () => {
-      const removeSubscription = async () => {
-        await supabase.removeChannel(subscription);
-      };
-      removeSubscription();
       if (mapRef.current) {
+        console.log("Cleaning up map instance");
         mapRef.current.remove();
       }
     };
-  }, []);
+  }, [loading]); // Dependence on 'loading'
+  // Depend on `loading` to ensure the map initializes only when data is ready
 
   const getAddressFromCoordinates = async (lat: number, lng: number) => {
     try {
@@ -196,17 +204,15 @@ const Map = () => {
     setSnackOpen(false);
   };
 
-  const addMarker = (lng: number, lat: number) => {
+  const addMarker = (id: number, lng: number, lat: number) => {
     if (!mapRef.current) return; // Ensure map is initialized
 
-    const key = `${lng},${lat}`; // Unique key for each marker
-
-    // Check if marker already exists
-    if (markers[key]) {
-      markers[key]?.remove(); // Remove marker from map
+    // Check if marker already exists for this row
+    if (markers[id]) {
+      markers[id]?.remove(); // Remove marker from map
       setMarkers((prev) => {
         const newMarkers = { ...prev };
-        delete newMarkers[key];
+        delete newMarkers[id];
         return newMarkers;
       });
     } else {
@@ -215,12 +221,14 @@ const Map = () => {
         .setLngLat([lng, lat])
         .addTo(mapRef.current);
 
-      // Store marker reference
-      setMarkers((prev) => ({ ...prev, [key]: newMarker }));
+      // Store marker reference by row ID
+      setMarkers((prev) => ({ ...prev, [id]: newMarker }));
     }
   };
+
   const handleShowMarker = (id: number, lat: number, lng: number) => {
-    addMarker(lng, lat);
+    addMarker(id, lng, lat); // ✅ Now passing ID to track each row's marker separately
+
     setRows((prevRows) =>
       prevRows.map((row) =>
         row.id === id ? { ...row, showEyeIcon: !row.showEyeIcon } : row
@@ -251,59 +259,109 @@ const Map = () => {
     });
   };
 
+  // const searchLocation = async () => {
+  //   if (!searchQuery.trim()) return;
+
+  //   try {
+  //     const response = await fetch(
+  //       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+  //         searchQuery
+  //       )}&format=json`
+  //     );
+  //     const data = await response.json();
+
+  //     if (data.length > 0) {
+  //       const { lat, lon } = data[0]; // Get first result
+  //       setLat(parseFloat(lat));
+  //       setLng(parseFloat(lon));
+
+  //       // Move the map to the new location
+  //       mapRef.current?.flyTo({ center: [lon, lat], zoom: 14 });
+
+  //       // Add or update marker
+  //       if (!markerRef.current) {
+  //         markerRef.current = new mapboxgl.Marker()
+  //           .setLngLat([lon, lat])
+  //           .addTo(mapRef.current!);
+  //       } else {
+  //         markerRef.current.setLngLat([lon, lat]);
+  //       }
+  //     } else {
+  //       alert("Location not found!");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching location:", error);
+  //   }
+  // };
+
   const columns = getColumns2(handleShowMarker, deleteRow);
   return (
     <>
       {/* Location Input */}
-
-      <Box className="w-full h-full flex">
-        {/* Map Container */}
-        <Box className="relative w-[50%] h-[525px] m-4">
-          <Box
-            ref={mapContainerRef}
-            className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh", // Full viewport height
+            width: "100vw",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh", // Full viewport height
+            width: "98vw",
+          }}
+        >
+          {/* Map Container */}
+          <Box className="relative w-[50%] h-[540px] m-4">
+            {/* <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-white p-2 rounded-lg shadow-md flex gap-2">
+              <input
+                type="text"
+                className="border px-3 py-1 rounded-md outline-none"
+                placeholder="Search location..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                onClick={searchLocation}
+              >
+                Search
+              </button>
+            </div> */}
+            <Box
+              ref={mapContainerRef}
+              className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
              transform hover:scale-105 transition-transform duration-300 
              shadow-[0px_10px_30px_rgba(0,0,255,0.4)]"
-          />
-          <Button
-            onClick={toggleDraggableMarker}
-            variant="contained"
-            style={{
-              position: "absolute",
-              top: "100px",
-              right: "16px",
-              zIndex: 10,
-            }}
-          >
-            Draggable Marker
-          </Button>
-          {(showDragableMarker || isGeolocateActive) && (
-            <Button
-              onClick={saveLocation}
-              variant="contained"
-              style={{
-                position: "absolute",
-                top: "60px",
-                right: "16px",
-                zIndex: 10,
-              }}
-            >
-              Save Location
-            </Button>
-          )}
-        </Box>
+            />
+          </Box>
 
-        {/* DataGrid Container */}
-        <Box className="w-[50%] my-4 mr-4">
-          <DataGridComponent
-            rows={rows}
-            columns={columns}
-            height={"429px"}
-            showButton={false}
-            locationText={locationText}
-          />
+          {/* DataGrid Container */}
+          <Box className="w-[50%] my-4 mr-4">
+            <DataGridComponent
+              rows={rows}
+              columns={columns}
+              height={"429px"}
+              showButton={false}
+              locationText={locationText}
+              toggleDragableMarker={toggleDraggableMarker}
+              isGeolocateActive={isGeolocateActive}
+              showDragableMarker={showDragableMarker}
+              saveLocation={saveLocation}
+            />
+          </Box>
         </Box>
-      </Box>
+      )}
+
       <SuccessSnackbar
         handleClose={handleClose}
         openSnackbar={snackOpen}
