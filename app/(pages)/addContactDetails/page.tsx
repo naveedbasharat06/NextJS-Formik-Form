@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import supabase from "../../utils/supabaseClient";
+import supabase from "../../../utils/supabaseClient";
 import { Formik, Form } from "formik";
-import BillingAddressForm from "../components/billingAddressForm";
+import BillingAddressForm from "../../components/billingAddressForm";
 import { useRouter } from "next/navigation";
 
 const FormComponent = () => {

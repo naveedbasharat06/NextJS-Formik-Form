@@ -8,6 +8,7 @@ import {
 } from "@mui/x-data-grid";
 import { Box, Button, TextField } from "@mui/material";
 import Link from "next/link";
+import { useMediaQuery } from "@mui/material";
 
 interface DataGridComponentProps {
   rows: GridRowsProp;
@@ -31,6 +32,16 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   showDragableMarker,
   saveLocation,
 }) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const columnVisibilityModel = {
+    shippingAddress: false,
+    shippingName: false,
+    latitude: false,
+    longitude: false,
+    id: isMobile ? false : true, // Hide ID column in mobile view
+  };
+  console.log("Column Visibility Model:", columnVisibilityModel);
   return (
     <Box
       sx={{
@@ -62,43 +73,46 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
             {locationText}
           </Box>
           <Box className="w-[50%] flex justify-end m-1">
+            {/* Show "Save Location" button only if geolocation is active or draggable marker is visible */}
             {(showDragableMarker || isGeolocateActive) && (
               <Button
                 onClick={saveLocation}
                 sx={{
                   marginRight: 1,
-                  padding: "8px 16px", // Adjust padding for a better button size
-                  backgroundColor: "#003049", // Dark Grey (Neutral Look)
+                  padding: "8px 16px",
+                  backgroundColor: "#003049",
                   color: "white",
-                  fontWeight: "bold", // Makes the text stand out
-                  borderRadius: "8px", // Rounded corners for a smoother look
-                  textTransform: "none", // Avoid uppercase transformation
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                  textTransform: "none",
                   "&:hover": {
-                    backgroundColor: "#001f29", // Darker shade on hover
-                    transform: "scale(1.05)", // Slight zoom effect on hover
-                    transition: "transform 0.2s ease-in-out", // Smooth zoom transition
+                    backgroundColor: "#001f29",
+                    transform: "scale(1.05)",
+                    transition: "transform 0.2s ease-in-out",
                   },
-                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Add subtle shadow
+                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 Save Location
               </Button>
             )}
+
+            {/* Toggle between "Add Location" and "Close Location" */}
             <Button
               onClick={toggleDragableMarker}
               sx={{
-                padding: "8px 16px", // Adjust padding for consistency
-                backgroundColor: "#003049", // Dark Grey (Neutral Look)
+                padding: "8px 16px",
+                backgroundColor: "#003049",
                 color: "white",
-                fontWeight: "bold", // Makes the text stand out
-                borderRadius: "8px", // Rounded corners for smoother edges
-                textTransform: "none", // Avoid uppercase transformation
+                fontWeight: "bold",
+                borderRadius: "8px",
+                textTransform: "none",
                 "&:hover": {
-                  backgroundColor: "#001f29", // Darker shade on hover
-                  transform: "scale(1.05)", // Slight zoom effect on hover
-                  transition: "transform 0.2s ease-in-out", // Smooth zoom transition
+                  backgroundColor: "#001f29",
+                  transform: "scale(1.05)",
+                  transition: "transform 0.2s ease-in-out",
                 },
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Add subtle shadow
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
               }}
             >
               {showDragableMarker ? "Close Location" : "Add Location"}
@@ -115,22 +129,16 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
             color: "white",
           },
 
-          "& .MuiDataGrid-cell": {
-            textAlign: "center", // Centering content in all cells
-          },
+          // "& .MuiDataGrid-cell": {
+          //   textAlign: "center", // Centering content in all cells
+          // },
         }}
         rows={[...rows].sort((a, b) => b.id - a.id)}
         columns={columns}
         getRowClassName={() => "super-app-theme--row"} // Apply class to full row
         initialState={{
           columns: {
-            columnVisibilityModel: {
-              // email: false,
-              shippingAddress: false,
-              shippingName: false,
-              latitude: false,
-              longitude: false,
-            },
+            columnVisibilityModel,
           },
           pagination: { paginationModel: { pageSize: 10 } },
         }}

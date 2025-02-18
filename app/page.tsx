@@ -6,7 +6,7 @@ import supabase from "../utils/supabaseClient";
 import DataGridComponent from "./components/DataGridComponent";
 import EditModalComponent from "./components/EditModalComponent";
 import DeleteModalComponent from "./components/DeleteModalComponent";
-import { getColumns } from "./data/datagridColumnsName";
+import { getColumns } from "./constants/datagridColumnsName";
 import SuccessSnackbar from "./components/SuccessSnackbar";
 import { Box, CircularProgress } from "@mui/material";
 

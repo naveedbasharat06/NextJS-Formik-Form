@@ -9,6 +9,12 @@ import { usePathname } from "next/navigation";
 
 export default function ResponsiveAppBar() {
   const pathname = usePathname(); // Get the current route
+  // const hideNavbarOn = ["/auth/signup", "/auth/login"];
+
+  // // If the current pathname is in the hideNavbarOn array, don't render the navbar
+  // if (hideNavbarOn.includes(pathname)) {
+  //   return null;
+  // }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -26,15 +32,47 @@ export default function ResponsiveAppBar() {
             margin: "0 auto",
             width: "100%",
             display: "flex",
-            justifyContent: "center", // Center navigation links
+            justifyContent: "space-between", // Space between navigation links and auth links
           }}
         >
           {/* Navigation Links */}
           <Box sx={{ display: "flex", gap: 4 }}>
             {[
               { label: "Manage", path: "/" },
-
               { label: "Locate Yourself", path: "/locateYourself" },
+            ].map((item) => (
+              <Typography
+                key={item.path}
+                variant="h6"
+                component="div"
+                sx={{
+                  cursor: "pointer",
+                  color: "#E0E0E0", // Light gray text for readability
+                  opacity: pathname === item.path ? 1 : 0.9,
+                  transition: "opacity 0.3s, border-bottom 0.3s",
+                  "&:hover": { opacity: 1 },
+                  borderBottom:
+                    pathname === item.path
+                      ? "2px solid #ffffff80" // White with 50% opacity for subtle highlight
+                      : "2px solid transparent",
+                  padding: "6px 0",
+                }}
+              >
+                <Link
+                  href={item.path}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  {item.label}
+                </Link>
+              </Typography>
+            ))}
+          </Box>
+
+          {/* Auth Links (Sign Up and Login) */}
+          <Box sx={{ display: "flex", gap: 4 }}>
+            {[
+              { label: "Sign Up", path: "/signup" },
+              { label: "Login", path: "/login" },
             ].map((item) => (
               <Typography
                 key={item.path}

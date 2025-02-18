@@ -29,7 +29,7 @@ const DeleteModalComponent: React.FC<DeleteModalComponentProps> = ({
     >
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
-        Are you sure you want to delete this item? This action cannot be undone.
+        Are you sure you want to delete this data? This action cannot be undone.
       </DialogContent>
       <DialogActions>
         <Button

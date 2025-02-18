@@ -9,7 +9,8 @@ import supabase from "../../utils/supabaseClient";
 import { GridRowsProp } from "@mui/x-data-grid";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
 import SuccessSnackbar from "./SuccessSnackbar";
-import { getColumns2 } from "../data/datagridColumnsName";
+import { getColumns2 } from "../constants/datagridColumnsName";
+import DeleteModalComponent from "./DeleteModalComponent";
 
 // Set your Mapbox access token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -19,8 +20,8 @@ const Map = () => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
   const [rows, setRows] = useState<GridRowsProp>([]);
-  const [lng, setLng] = useState(73.1);
-  const [lat, setLat] = useState(33.7);
+  const [lng, setLng] = useState(0);
+  const [lat, setLat] = useState(0);
   const [zoom, setZoom] = useState(10);
   const [locationText, setLocationText] = useState("");
   const [snackOpen, setSnackOpen] = useState(false);
@@ -32,6 +33,8 @@ const Map = () => {
   }>({});
   const [showDragableMarker, setShowDragableMarker] = useState(false);
   const [isGeolocateActive, setIsGeolocateActive] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [deleteid, setDeleteid] = useState<number>(0);
 
   // Function to handle marker drag end
   const onMarkerDragEnd = async () => {
@@ -42,22 +45,31 @@ const Map = () => {
     }
   };
 
-  // Columns for the DataGrid
-  const deleteRow = async (id: number) => {
+  //Delete Row From Supabase
+  const deleteRow = (id: number) => {
     // Delete the row from Supabase
-    const { error } = await supabase.from("location").delete().eq("id", id);
+
+    setDeleteid(id);
+    setOpen(true);
+  };
+  const confirmDelete = async () => {
+    const { error } = await supabase
+      .from("location")
+      .delete()
+      .eq("id", deleteid);
     if (error) {
       console.error("Error inserting data:", error);
     } else {
-      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteid));
+      setOpen(false);
       setSnackString("data deleted successfully");
       setSnackOpen(true);
     }
   };
-
+  //Save data in Supabase
   const saveLocation = async () => {
     if (lat && lng) {
-      const address = await getAddressFromCoordinates(lat, lng); // ✅ Added await
+      const address = await getAddressFromCoordinates(lat, lng); // Get address from coordinates
       const { error } = await supabase
         .from("location")
         .insert([{ latitude: lat, longitude: lng, address: address }]);
@@ -67,26 +79,49 @@ const Map = () => {
       } else {
         setSnackOpen(true);
         setSnackString("Location saved successfully");
+
+        // Reset states after saving
+        setIsGeolocateActive(false); // Turn off geolocation
+        setShowDragableMarker(false);
+
+        if (markerRef.current) {
+          markerRef.current.remove(); // Remove the marker from the map
+          markerRef.current = null; // Clear the marker reference
+        } // Hide the draggable marker
       }
     }
   };
+  //get the address every time the lat and lng change
 
   useEffect(() => {
-    const getaddress = async () => {
-      const address = await getAddressFromCoordinates(lat, lng);
-      setLocationText(address);
+    const getUserLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLoading(false);
+            const { latitude, longitude } = position.coords;
+            setLat(latitude);
+            setLng(longitude);
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+            // Fallback to default location if geolocation fails
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
     };
-    getaddress();
-  }, [lat, lng]);
 
-  useEffect(() => {
+    getUserLocation();
+
     const fetchData = async () => {
       const { data, error } = await supabase.from("location").select("*");
       if (error) {
         console.error("Supabase Error:", error);
       } else {
         setRows(data);
-        setLoading(false);
+
         console.log(data);
       }
     };
@@ -119,7 +154,15 @@ const Map = () => {
       removeSubscription();
     };
   }, []);
+  useEffect(() => {
+    const getaddress = async () => {
+      const address = await getAddressFromCoordinates(lat, lng);
+      setLocationText(address);
+    };
+    getaddress();
+  }, [lat, lng]);
 
+  //Mapbox integration // Depend on `loading` to ensure the map initializes only when data is ready
   useEffect(() => {
     if (loading || !mapContainerRef.current) return; // Ensure map initializes only after loading is false
 
@@ -142,7 +185,7 @@ const Map = () => {
 
     mapRef.current.addControl(geolocateControl);
 
-    // Move marker when Geolocate Control is activated
+    // Move the map to the user's location once geolocation is available
     geolocateControl.on("geolocate", (event) => {
       const { longitude, latitude } = event.coords;
 
@@ -169,6 +212,29 @@ const Map = () => {
       setIsGeolocateActive(false);
     });
 
+    // Automatically ask for user location on page load
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // Center map to the current location
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: [longitude, latitude],
+            zoom: 14,
+            essential: true,
+          });
+        }
+        setLng(longitude);
+        setLat(latitude);
+      },
+      (error) => {
+        console.error("Error getting user location:", error);
+        // Default to a known location if geolocation fails
+        setLng(73.1);
+        setLat(33.7);
+      }
+    );
+
     return () => {
       if (mapRef.current) {
         console.log("Cleaning up map instance");
@@ -176,8 +242,9 @@ const Map = () => {
       }
     };
   }, [loading]); // Dependence on 'loading'
-  // Depend on `loading` to ensure the map initializes only when data is ready
+  // Dependence on 'loading'
 
+  //get the address using openstreetmap api form lat and lng
   const getAddressFromCoordinates = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
@@ -194,6 +261,7 @@ const Map = () => {
     }
   };
 
+  //snackbar close function
   const handleClose = (
     event?: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
@@ -223,6 +291,20 @@ const Map = () => {
 
       // Store marker reference by row ID
       setMarkers((prev) => ({ ...prev, [id]: newMarker }));
+
+      // Update map bounds to ensure all markers are visible
+      const bounds = new mapboxgl.LngLatBounds();
+      Object.values(markers).forEach((marker) => {
+        if (marker) {
+          bounds.extend(marker.getLngLat());
+        }
+      });
+      bounds.extend([lng, lat]); // Include the new marker
+      mapRef.current.fitBounds(bounds, {
+        padding: 50, // Optional padding
+        duration: 500,
+        maxZoom: 12, // Smooth animation for zoom and center
+      });
     }
   };
 
@@ -259,41 +341,6 @@ const Map = () => {
     });
   };
 
-  // const searchLocation = async () => {
-  //   if (!searchQuery.trim()) return;
-
-  //   try {
-  //     const response = await fetch(
-  //       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-  //         searchQuery
-  //       )}&format=json`
-  //     );
-  //     const data = await response.json();
-
-  //     if (data.length > 0) {
-  //       const { lat, lon } = data[0]; // Get first result
-  //       setLat(parseFloat(lat));
-  //       setLng(parseFloat(lon));
-
-  //       // Move the map to the new location
-  //       mapRef.current?.flyTo({ center: [lon, lat], zoom: 14 });
-
-  //       // Add or update marker
-  //       if (!markerRef.current) {
-  //         markerRef.current = new mapboxgl.Marker()
-  //           .setLngLat([lon, lat])
-  //           .addTo(mapRef.current!);
-  //       } else {
-  //         markerRef.current.setLngLat([lon, lat]);
-  //       }
-  //     } else {
-  //       alert("Location not found!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching location:", error);
-  //   }
-  // };
-
   const columns = getColumns2(handleShowMarker, deleteRow);
   return (
     <>
@@ -322,21 +369,6 @@ const Map = () => {
         >
           {/* Map Container */}
           <Box className="relative w-[50%] h-[540px] m-4">
-            {/* <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-white p-2 rounded-lg shadow-md flex gap-2">
-              <input
-                type="text"
-                className="border px-3 py-1 rounded-md outline-none"
-                placeholder="Search location..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button
-                className="bg-blue-500 text-white px-3 py-1 rounded-md"
-                onClick={searchLocation}
-              >
-                Search
-              </button>
-            </div> */}
             <Box
               ref={mapContainerRef}
               className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
@@ -361,7 +393,11 @@ const Map = () => {
           </Box>
         </Box>
       )}
-
+      <DeleteModalComponent
+        open={open}
+        setOpen={setOpen}
+        confirmDelete={confirmDelete}
+      />
       <SuccessSnackbar
         handleClose={handleClose}
         openSnackbar={snackOpen}
