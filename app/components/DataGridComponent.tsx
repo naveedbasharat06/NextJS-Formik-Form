@@ -6,7 +6,7 @@ import {
   GridRowsProp,
   GridToolbar,
 } from "@mui/x-data-grid";
-import { Box, Button, Fade } from "@mui/material";
+import { Box, Button, Fade, useTheme } from "@mui/material";
 import Link from "next/link";
 import { useMediaQuery } from "@mui/material";
 import gsap from "gsap";
@@ -34,6 +34,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   showDragableMarker,
   saveLocation,
 }) => {
+  const theme = useTheme(); // Access the theme
   const isMobile = useMediaQuery("(max-width: 768px)");
   const buttonRef = useRef(null);
   const [saving, setSaving] = useState(false);
@@ -53,13 +54,12 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
       button,
       {
         scale: 1,
-        backgroundColor: "#003049",
+        backgroundColor: theme.palette.secondary.main, // Use theme's primary color
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
       },
       {
         scale: 1.1,
-        // rotate: 20,
-        backgroundColor: "#005f73",
+        backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
         boxShadow: "0px 0px 20px rgba(0, 0, 255, 0.5)",
         duration: 0.3,
         yoyo: true,
@@ -83,21 +83,32 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
     <Box
       sx={{
         borderRadius: 2,
-        backgroundColor: "#ffffff",
+        backgroundColor: theme.palette.background.paper, // Use theme's background color
         p: 2,
         margin: showButton ? 4 : 0,
-        boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
+        boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Use theme's shadow
       }}
     >
       {showButton ? (
         <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
-          <Button variant="contained" sx={{ background: "#003049" }}>
-            <Link href="/addContactDetails">Add CONTACT</Link>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: theme.palette.secondary.main }} // Use theme's primary color
+          >
+            <Link
+              href="/addContactDetails"
+              style={{ color: "inherit", textDecoration: "none" }}
+            >
+              Add CONTACT
+            </Link>
           </Button>
         </Box>
       ) : (
         <Box className="w-full flex items-center justify-between mb-2">
-          <Box className="w-[calc(50%)] h-[70px] text-left overflow-hidden">
+          <Box
+            className="w-[calc(50%)] h-[70px] text-left overflow-hidden"
+            sx={{ color: theme.palette.text.primary }}
+          >
             {locationText}
           </Box>
           <Box className="w-[50%] flex justify-end m-1">
@@ -107,19 +118,21 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                 sx={{
                   marginRight: 1,
                   padding: "8px 16px",
-                  backgroundColor: saving ? "#38b000" : "#003049",
+                  backgroundColor: saving
+                    ? "#38b000"
+                    : theme.palette.secondary.main, // Use theme's primary color
                   color: "white",
                   fontWeight: "bold",
                   borderRadius: "8px",
                   textTransform: "none",
                   "&:hover": {
-                    backgroundColor: "#001f29",
+                    backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
                     transform: "scale(1.05)",
                     transition: "transform 0.2s ease-in-out",
                   },
                   boxShadow: saving
                     ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
-                    : "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    : theme.shadows[3], // Use theme's shadow
                   transition:
                     "background-color 0.3s ease, box-shadow 0.3s ease",
                 }}
@@ -133,17 +146,17 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
               onClick={handleButtonClick}
               sx={{
                 padding: "8px 16px",
-                backgroundColor: "#003049",
+                backgroundColor: theme.palette.secondary.main, // Use theme's primary color
                 color: "white",
                 fontWeight: "bold",
                 borderRadius: "8px",
                 textTransform: "none",
                 "&:hover": {
-                  backgroundColor: "#001f29",
+                  backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
                   transform: "scale(1.05)",
                   transition: "transform 0.2s ease-in-out",
                 },
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                boxShadow: theme.shadows[3], // Use theme's shadow
               }}
             >
               {showDragableMarker ? "Close Location" : "Add Location"}
@@ -156,8 +169,8 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         sx={{
           height: height,
           "& .super-app-theme--header": {
-            backgroundColor: "#003049",
-            color: "white",
+            backgroundColor: theme.palette.secondary.main, // Use theme's primary color
+            color: theme.palette.primary.contrastText, // Use theme's contrast text color
           },
         }}
         rows={[...rows].sort((a, b) => b.id - a.id)}

@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  useTheme,
 } from "@mui/material";
 import BillingAddressForm from "./billingAddressForm";
 import { Formik, Form } from "formik";
@@ -23,6 +24,7 @@ const EditModalComponent: React.FC<EditModalComponentProps> = ({
   updatedRow,
   handleSaveRow,
 }) => {
+  const theme = useTheme();
   return (
     <Dialog open={openEditModal} onClose={handleEditClose}>
       <DialogTitle sx={{ marginBottom: 1 }}>Edit Record</DialogTitle>
@@ -45,10 +47,16 @@ const EditModalComponent: React.FC<EditModalComponentProps> = ({
               />
 
               <DialogActions>
-                <Button onClick={handleEditClose} color="primary">
+                <Button
+                  onClick={handleEditClose}
+                  sx={{ color: theme.palette.text.primary }}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" color="primary">
+                <Button
+                  type="submit"
+                  sx={{ color: theme.palette.text.primary }}
+                >
                   Save
                 </Button>
               </DialogActions>

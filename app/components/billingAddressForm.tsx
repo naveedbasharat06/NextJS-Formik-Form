@@ -5,6 +5,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  useTheme,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
@@ -38,7 +39,7 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
       setFieldValue("shippingAddress", "");
     }
   }, [isDifferentShipping, setFieldValue]);
-
+  const theme = useTheme();
   return (
     <>
       <Grid container spacing={2}>
@@ -87,9 +88,6 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
               name="isDifferentShipping"
             />
           }
-          sx={{
-            color: "#000000",
-          }}
           label="Different Shipping Address"
         />
       </FormGroup>

@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  useTheme,
 } from "@mui/material";
 
 interface DeleteModalComponentProps {
@@ -20,6 +21,7 @@ const DeleteModalComponent: React.FC<DeleteModalComponentProps> = ({
   setOpen,
   confirmDelete,
 }) => {
+  const theme = useTheme();
   return (
     <Dialog
       open={open}
@@ -36,11 +38,14 @@ const DeleteModalComponent: React.FC<DeleteModalComponentProps> = ({
           onClick={() => {
             setOpen(false);
           }}
-          color="primary"
+          sx={{ color: theme.palette.text.primary }}
         >
           Cancel
         </Button>
-        <Button onClick={confirmDelete} color="secondary">
+        <Button
+          onClick={confirmDelete}
+          sx={{ color: theme.palette.text.primary }}
+        >
           Confirm
         </Button>
       </DialogActions>

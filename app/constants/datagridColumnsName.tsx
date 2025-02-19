@@ -85,6 +85,28 @@ export const getColumns = (
 ): GridColDef[] => {
   return [
     {
+      field: "actions",
+      headerName: "Actions",
+      width: 120, // Fixed width for action buttons
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <>
+          <IconButton>
+            <EditIcon onClick={() => handleEditOpen(params.row)} />
+          </IconButton>
+          <IconButton>
+            <DeleteIcon
+              onClick={() => handleDelete(params.row.id)}
+              sx={{ color: "#c1121f" }}
+            />
+          </IconButton>
+        </>
+      ),
+    },
+    {
       field: "id",
       headerName: "ID",
       width: 50, // Fixed width for ID
@@ -174,28 +196,6 @@ export const getColumns = (
       disableColumnMenu: true,
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 175, // Fixed width for action buttons
-      sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
-      headerClassName: "super-app-theme--header",
-      renderCell: (params) => (
-        <>
-          <IconButton>
-            <EditIcon onClick={() => handleEditOpen(params.row)} />
-          </IconButton>
-          <IconButton>
-            <DeleteIcon
-              onClick={() => handleDelete(params.row.id)}
-              sx={{ color: "#c1121f" }}
-            />
-          </IconButton>
-        </>
-      ),
     },
   ];
 };

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import supabase from "../../../utils/supabaseClient";
 import { Formik, Form } from "formik";
@@ -8,6 +8,7 @@ import BillingAddressForm from "../../components/billingAddressForm";
 import { useRouter } from "next/navigation";
 
 const FormComponent = () => {
+  const theme = useTheme();
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
@@ -63,7 +64,7 @@ const FormComponent = () => {
                 // marginTop: { xs: 20, sm: 5, md: 5 },
                 padding: 2,
                 borderRadius: 2,
-                backgroundColor: "#ffffff",
+                backgroundColor: theme.palette.background.paper,
                 boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Blue glow shadow
                 transition: "transform 0.3s ease-in-out",
                 "&:hover": {
@@ -87,7 +88,9 @@ const FormComponent = () => {
                   // color={success ? "success" : "primary"}
                   fullWidth
                   sx={{
-                    backgroundColor: success ? "#6a994e" : "#003049",
+                    backgroundColor: success
+                      ? "#6a994e"
+                      : theme.palette.secondary.main,
                     // Dark Grey (Neutral Look)
                     color: "white",
                     // "&:hover": { backgroundColor: "#669bbc" },

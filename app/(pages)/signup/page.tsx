@@ -10,6 +10,7 @@ import {
   Button,
   Typography,
   SnackbarCloseReason,
+  useTheme,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import Visibility from "@mui/icons-material/Visibility";
@@ -18,20 +19,13 @@ import supabase from "../../../utils/supabaseClient";
 import { useRouter } from "next/navigation";
 import SuccessSnackbar from "../../components/SuccessSnackbar";
 
-// const validationSchema = Yup.object({
-//   email: Yup.string().email("Invalid email address").required("Required"),
-//   password: Yup.string()
-//     .min(6, "Password must be at least 6 characters")
-//     .required("Required"),
-//   name: Yup.string().name("invalid Name").required("Requires"),
-// });
-
 const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackString, setSnackString] = useState<string>("");
   const router = useRouter();
+  const theme = useTheme();
 
   const handleClose = (
     event?: React.SyntheticEvent | Event,
@@ -97,7 +91,7 @@ const SignupPage: React.FC = () => {
                   width: 400,
                   padding: 2,
                   borderRadius: 2,
-                  backgroundColor: "#ffffff",
+                  backgroundColor: theme.palette.background.paper,
                   boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Blue glow shadow
                   transition: "transform 0.3s ease-in-out",
                   "&:hover": {
@@ -170,8 +164,8 @@ const SignupPage: React.FC = () => {
                       type="submit"
                       fullWidth
                       variant="contained"
-                      color="primary"
                       disabled={isSubmitting}
+                      sx={{ background: theme.palette.secondary.main }}
                     >
                       {isSubmitting ? "Signing up..." : "Sign Up"}
                     </Button>
