@@ -1,26 +1,28 @@
 "use client";
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
   DataGrid,
   GridColDef,
   GridRowsProp,
   GridToolbar,
 } from "@mui/x-data-grid";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, Fade } from "@mui/material";
 import Link from "next/link";
 import { useMediaQuery } from "@mui/material";
+import gsap from "gsap";
 
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
   height?: string | number;
   locationText?: string | number;
-  showButton?: boolean; // Optional prop to show/hide the button
+  showButton?: boolean;
   toggleDragableMarker?: () => void;
   showDragableMarker?: boolean;
   isGeolocateActive?: boolean;
   saveLocation?: () => void;
 }
+
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
   rows,
   columns,
@@ -33,6 +35,8 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   saveLocation,
 }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const buttonRef = useRef(null);
+  const [saving, setSaving] = useState(false);
 
   const columnVisibilityModel = {
     shippingAddress: false,
@@ -41,27 +45,52 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
     longitude: false,
     id: isMobile ? false : true, // Hide ID column in mobile view
   };
-  console.log("Column Visibility Model:", columnVisibilityModel);
+
+  const handleButtonClick = () => {
+    const button = buttonRef.current;
+
+    gsap.fromTo(
+      button,
+      {
+        scale: 1,
+        backgroundColor: "#003049",
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+      },
+      {
+        scale: 1.1,
+        // rotate: 20,
+        backgroundColor: "#005f73",
+        boxShadow: "0px 0px 20px rgba(0, 0, 255, 0.5)",
+        duration: 0.3,
+        yoyo: true,
+        repeat: 1,
+        easein: "elastic.out(1, 0.3)",
+      }
+    );
+
+    if (toggleDragableMarker) {
+      toggleDragableMarker();
+    }
+  };
+
+  const handleSaveLocation = () => {
+    setSaving(true);
+    saveLocation?.();
+    setTimeout(() => setSaving(false), 1500); // Auto-hide animation after 1.5s
+  };
+
   return (
     <Box
       sx={{
         borderRadius: 2,
-
         backgroundColor: "#ffffff",
         p: 2,
         margin: showButton ? 4 : 0,
         boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
       }}
     >
-      {/* Conditionally render the button */}
       {showButton ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "end",
-            marginBottom: 1,
-          }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
           <Button variant="contained" sx={{ background: "#003049" }}>
             <Link href="/addContactDetails">Add CONTACT</Link>
           </Button>
@@ -69,18 +98,16 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
       ) : (
         <Box className="w-full flex items-center justify-between mb-2">
           <Box className="w-[calc(50%)] h-[70px] text-left overflow-hidden">
-            {/* Ensure long text doesn't break the layout */}
             {locationText}
           </Box>
           <Box className="w-[50%] flex justify-end m-1">
-            {/* Show "Save Location" button only if geolocation is active or draggable marker is visible */}
-            {(showDragableMarker || isGeolocateActive) && (
+            <Fade in={showDragableMarker || isGeolocateActive}>
               <Button
-                onClick={saveLocation}
+                onClick={handleSaveLocation}
                 sx={{
                   marginRight: 1,
                   padding: "8px 16px",
-                  backgroundColor: "#003049",
+                  backgroundColor: saving ? "#38b000" : "#003049",
                   color: "white",
                   fontWeight: "bold",
                   borderRadius: "8px",
@@ -90,16 +117,20 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                     transform: "scale(1.05)",
                     transition: "transform 0.2s ease-in-out",
                   },
-                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  boxShadow: saving
+                    ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
+                    : "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  transition:
+                    "background-color 0.3s ease, box-shadow 0.3s ease",
                 }}
               >
-                Save Location
+                {saving ? "Location Saved!" : "Save Location"}
               </Button>
-            )}
+            </Fade>
 
-            {/* Toggle between "Add Location" and "Close Location" */}
             <Button
-              onClick={toggleDragableMarker}
+              ref={buttonRef}
+              onClick={handleButtonClick}
               sx={{
                 padding: "8px 16px",
                 backgroundColor: "#003049",
@@ -125,17 +156,13 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         sx={{
           height: height,
           "& .super-app-theme--header": {
-            backgroundColor: "#003049", // Dark header background
+            backgroundColor: "#003049",
             color: "white",
           },
-
-          // "& .MuiDataGrid-cell": {
-          //   textAlign: "center", // Centering content in all cells
-          // },
         }}
         rows={[...rows].sort((a, b) => b.id - a.id)}
         columns={columns}
-        getRowClassName={() => "super-app-theme--row"} // Apply class to full row
+        getRowClassName={() => "super-app-theme--row"}
         initialState={{
           columns: {
             columnVisibilityModel,
@@ -147,11 +174,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         disableDensitySelector
         disableRowSelectionOnClick
         slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
+        slotProps={{ toolbar: { showQuickFilter: true } }}
       />
     </Box>
   );
