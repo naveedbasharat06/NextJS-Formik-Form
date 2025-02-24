@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import supabase from "../../../utils/supabaseClient";
 import { Formik, Form } from "formik";
@@ -72,6 +72,9 @@ const FormComponent = () => {
                 },
               }}
             >
+              <Typography variant="h5" align="center" sx={{ mb: 2 }}>
+                Add Contact
+              </Typography>
               <BillingAddressForm
                 values={values}
                 handleChange={handleChange}

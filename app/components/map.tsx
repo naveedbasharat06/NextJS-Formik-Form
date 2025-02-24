@@ -11,6 +11,7 @@ import { SnackbarCloseReason } from "@mui/material/Snackbar";
 import SuccessSnackbar from "./SuccessSnackbar";
 import { getColumns2 } from "../constants/datagridColumnsName";
 import DeleteModalComponent from "./DeleteModalComponent";
+import { useThemeContext } from "./ThemeRegistry";
 
 // Set your Mapbox access token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -35,6 +36,12 @@ const Map = () => {
   const [isGeolocateActive, setIsGeolocateActive] = useState(false);
   const [open, setOpen] = useState(false);
   const [deleteid, setDeleteid] = useState<number>(0);
+  const { mode } = useThemeContext();
+
+  const mapStyles = {
+    light: "mapbox://styles/mapbox/streets-v11",
+    dark: "mapbox://styles/mapbox/dark-v11",
+  };
 
   // Function to handle marker drag end
   const onMarkerDragEnd = async () => {
@@ -169,7 +176,7 @@ const Map = () => {
     // Initialize the map
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: mapStyles[mode],
       center: [lng, lat],
       zoom: zoom,
     });
@@ -241,8 +248,13 @@ const Map = () => {
         mapRef.current.remove();
       }
     };
-  }, [loading]); // Dependence on 'loading'
-  // Dependence on 'loading'
+  }, [loading]);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.setStyle(mapStyles[mode]);
+    }
+  }, [mode]);
 
   //get the address using openstreetmap api form lat and lng
   const getAddressFromCoordinates = async (lat: number, lng: number) => {

@@ -93,7 +93,7 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
       </FormGroup>
 
       <Grid container spacing={1}>
-        <Grid size={isDifferentShipping ? 6 : 6.16}>
+        <Grid size={isDifferentShipping ? 6 : 6}>
           <FormLabel>Billing Address</FormLabel>
 
           <TextField

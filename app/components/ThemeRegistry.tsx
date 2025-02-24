@@ -44,6 +44,7 @@ const getTheme = (mode: "light" | "dark") =>
       secondary: {
         main: mode === "dark" ? "#3C3D37" : "#003049",
       },
+
       text: {
         primary: mode === "dark" ? "#ffffff" : "#000000", // Dynamic text color
       },
