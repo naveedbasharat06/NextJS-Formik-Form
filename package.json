@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.3",
     "@mui/x-data-grid": "^7.25.0",
     "@supabase/supabase-js": "^2.48.1",
+    "cookies-next": "^5.1.0",
     "formik": "^2.4.6",
     "gsap": "^3.12.7",
     "mapbox-gl": "^3.9.4",

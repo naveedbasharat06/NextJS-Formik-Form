@@ -40,6 +40,13 @@ const SignInPage: React.FC = () => {
         setIsAuthenticating(true); // Start authentication process
 
         try {
+          // Validate form inputs
+          if (!values.email || !values.password) {
+            setErrorMessage("Please fill in all fields.");
+            return;
+          }
+
+          // Sign in with email and password
           const { data, error } = await supabase.auth.signInWithPassword({
             email: values.email,
             password: values.password,
@@ -47,18 +54,31 @@ const SignInPage: React.FC = () => {
 
           if (error) throw error;
 
+          // Redirect on successful sign-in
           if (data.user) {
-            setTimeout(() => {
-              router.push("/");
-            }, 1000); // Simulate a short delay before redirect
+            // Persist session in local storage
+            localStorage.setItem("sb-access-token", data.session.access_token);
+            localStorage.setItem(
+              "sb-refresh-token",
+              data.session.refresh_token
+            );
+
+            router.push("/"); // Redirect to home page
           } else {
             throw new Error("Sign-in failed. Please try again.");
           }
         } catch (error: any) {
-          setErrorMessage(error.message);
+          // Handle specific errors
+          if (error.message === "Invalid login credentials") {
+            setErrorMessage("Incorrect email or password. Please try again.");
+          } else {
+            setErrorMessage(
+              "An unexpected error occurred. Please try again later."
+            );
+          }
           setIsAuthenticating(false); // Stop loading if an error occurs
         } finally {
-          setSubmitting(false);
+          setSubmitting(false); // Reset form submission state
         }
       }}
     >
