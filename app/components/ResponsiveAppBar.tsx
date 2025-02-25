@@ -24,58 +24,52 @@ export default function ResponsiveAppBar() {
     const fetchSession = async () => {
       setLoading(true);
       const {
-        data: { session },
+        data
       } = await supabase.auth.getSession();
       setSession(session);
       setLoading(false);
-      console.log(session);
+      // console.log(session);
+
+      if (!data.session) {
+        router.replace("/"); // Redirect if no session
+      }
     };
 
     fetchSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === "SIGNED_IN" && session) {
-          setSession(session);
-        } else if (event === "SIGNED_OUT") {
-          setSession(null);
-        }
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      if (!session) {
+        router.replace("/"); // Redirect on logout
       }
-    );
+    });
 
-    return () => {
-      authListener?.subscription?.unsubscribe();
-    };
-  }, []);
+    return () => listener.subscription.unsubscribe();
+  }, [router]);
 
   const handleLogout = async () => {
-    setLoggingOut(true);
     await supabase.auth.signOut();
-    setSession(null);
-    router.push("/login");
-    setTimeout(() => {
-      setLoggingOut(false);
-    }, 1000);
+    router.replace("/"); // Redirect to sign-in after logout
   };
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          flexDirection: "column",
-        }}
-      >
-        <CircularProgress size={60} />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          Checking authentication...
-        </Typography>
-      </Box>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         height: "100vh",
+  //         flexDirection: "column",
+  //       }}
+  //     >
+  //       <CircularProgress size={60} />
+  //       <Typography variant="h6" sx={{ mt: 2 }}>
+  //         Checking authentication...
+  //       </Typography>
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box sx={{ flexGrow: 1 }}>

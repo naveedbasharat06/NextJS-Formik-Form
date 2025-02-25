@@ -58,6 +58,8 @@ const SignupPage: React.FC = () => {
             }
 
             if (data.user) {
+
+       
               setTimeout(() => {
                 router.push("/login");
               }, 3000);

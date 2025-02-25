@@ -21,6 +21,7 @@ interface DataGridComponentProps {
   showDragableMarker?: boolean;
   isGeolocateActive?: boolean;
   saveLocation?: () => void;
+  showUserButton?: boolean;
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
@@ -33,6 +34,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   isGeolocateActive,
   showDragableMarker,
   saveLocation,
+  showUserButton = false, // Default to false
 }) => {
   const theme = useTheme(); // Access the theme
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -89,82 +91,88 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Use theme's shadow
       }}
     >
-      {showButton ? (
-        <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: theme.palette.secondary.main }} // Use theme's primary color
-          >
-            <Link
-              href="/addContactDetails"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
-              Add CONTACT
-            </Link>
-          </Button>
-        </Box>
-      ) : (
-        <Box className="w-full flex items-center justify-between mb-2">
-          <Box
-            className="w-[calc(50%)] h-[70px] text-left overflow-hidden"
-            sx={{ color: theme.palette.text.primary }}
-          >
-            {locationText}
-          </Box>
-          <Box className="w-[50%] flex justify-end m-1">
-            <Fade in={showDragableMarker || isGeolocateActive}>
+      {/* Conditionally render buttons based on showUserButton */}
+      {!showUserButton && (
+        <>
+          {showButton ? (
+            <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
               <Button
-                onClick={handleSaveLocation}
-                sx={{
-                  marginRight: 1,
-                  padding: "8px 16px",
-                  backgroundColor: saving
-                    ? "#38b000"
-                    : theme.palette.secondary.main, // Use theme's primary color
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  "&:hover": {
-                    backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
-                    transform: "scale(1.05)",
-                    transition: "transform 0.2s ease-in-out",
-                  },
-                  boxShadow: saving
-                    ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
-                    : theme.shadows[3], // Use theme's shadow
-                  transition:
-                    "background-color 0.3s ease, box-shadow 0.3s ease",
-                }}
+                variant="contained"
+                sx={{ backgroundColor: theme.palette.secondary.main }} // Use theme's primary color
               >
-                {saving ? "Location Saved!" : "Save Location"}
+                <Link
+                  href="/addContactDetails"
+                  style={{ color: "inherit", textDecoration: "none" }}
+                >
+                  Add CONTACT
+                </Link>
               </Button>
-            </Fade>
+            </Box>
+          ) : (
+            <Box className="w-full flex items-center justify-between mb-2">
+              <Box
+                className="w-[calc(50%)] h-[70px] text-left overflow-hidden"
+                sx={{ color: theme.palette.text.primary }}
+              >
+                {locationText}
+              </Box>
+              <Box className="w-[50%] flex justify-end m-1">
+                <Fade in={showDragableMarker || isGeolocateActive}>
+                  <Button
+                    onClick={handleSaveLocation}
+                    sx={{
+                      marginRight: 1,
+                      padding: "8px 16px",
+                      backgroundColor: saving
+                        ? "#38b000"
+                        : theme.palette.secondary.main, // Use theme's primary color
+                      color: "white",
+                      fontWeight: "bold",
+                      borderRadius: "8px",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                        transform: "scale(1.05)",
+                        transition: "transform 0.2s ease-in-out",
+                      },
+                      boxShadow: saving
+                        ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
+                        : theme.shadows[3], // Use theme's shadow
+                      transition:
+                        "background-color 0.3s ease, box-shadow 0.3s ease",
+                    }}
+                  >
+                    {saving ? "Location Saved!" : "Save Location"}
+                  </Button>
+                </Fade>
 
-            <Button
-              ref={buttonRef}
-              onClick={handleButtonClick}
-              sx={{
-                padding: "8px 16px",
-                backgroundColor: theme.palette.secondary.main, // Use theme's primary color
-                color: "white",
-                fontWeight: "bold",
-                borderRadius: "8px",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
-                  transform: "scale(1.05)",
-                  transition: "transform 0.2s ease-in-out",
-                },
-                boxShadow: theme.shadows[3], // Use theme's shadow
-              }}
-            >
-              {showDragableMarker ? "Close Location" : "Add Location"}
-            </Button>
-          </Box>
-        </Box>
+                <Button
+                  ref={buttonRef}
+                  onClick={handleButtonClick}
+                  sx={{
+                    padding: "8px 16px",
+                    backgroundColor: theme.palette.secondary.main, // Use theme's primary color
+                    color: "white",
+                    fontWeight: "bold",
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                      transform: "scale(1.05)",
+                      transition: "transform 0.2s ease-in-out",
+                    },
+                    boxShadow: theme.shadows[3], // Use theme's shadow
+                  }}
+                >
+                  {showDragableMarker ? "Close Location" : "Add Location"}
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </>
       )}
 
+      {/* Render the DataGrid */}
       <DataGrid
         sx={{
           height: height,

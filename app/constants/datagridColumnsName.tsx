@@ -9,6 +9,32 @@ import EditIcon from "@mui/icons-material/Edit";
 
 // import supabase from "../utils/supabaseClient";
 
+
+export const getColumns3 = (
+
+) => {
+  return [
+  
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50,
+      headerClassName: "super-app-theme--header",
+    },
+
+
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      headerClassName: "super-app-theme--header",
+    },
+
+  ];
+};
+
+
+
 export const getColumns2 = (
   handleShowMarker: (id: number, lng: number, lat: number) => void,
   deleteRow: (id: number) => void

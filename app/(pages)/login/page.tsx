@@ -56,13 +56,7 @@ const SignInPage: React.FC = () => {
 
           // Redirect on successful sign-in
           if (data.user) {
-            // Persist session in local storage
-            localStorage.setItem("sb-access-token", data.session.access_token);
-            localStorage.setItem(
-              "sb-refresh-token",
-              data.session.refresh_token
-            );
-
+       
             router.push("/"); // Redirect to home page
           } else {
             throw new Error("Sign-in failed. Please try again.");

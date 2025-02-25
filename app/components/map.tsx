@@ -129,7 +129,7 @@ const Map = () => {
       } else {
         setRows(data);
 
-        console.log(data);
+        // console.log(data);
       }
     };
     fetchData();
@@ -140,7 +140,7 @@ const Map = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "location" },
         (payload) => {
-          console.log("Change received:", payload);
+          // console.log("Change received:", payload);
 
           if (payload.eventType === "INSERT") {
             setRows((prev) => [...prev, payload.new]); // Add new row
