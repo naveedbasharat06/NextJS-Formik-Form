@@ -1,38 +1,66 @@
 // utils/columns.ts
+
 import { GridColDef } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { Button,MenuItem, Select,Box} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
+import { useState } from "react";
 
 // import supabase from "../utils/supabaseClient";
 
-
-export const getColumns3 = (
-
-) => {
+export const getColumns3 = (handleRoleChange) => {
   return [
-  
     {
       field: "id",
       headerName: "ID",
-      width: 50,
+      flex:1,
+      sortable: false,
       headerClassName: "super-app-theme--header",
     },
-
-
     {
       field: "email",
       headerName: "Email",
       flex: 1,
+      sortable: false,
       headerClassName: "super-app-theme--header",
     },
+    {
+      field: "role",
+      headerName: "User Role",
+      flex: 1,
+      sortable: false,
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => {
+        const [role, setRole] = useState(params.value || "visitor"); // Default role
 
+        const handleChange = (event) => {
+          const newRole = event.target.value;
+          setRole(newRole);
+          handleRoleChange(params.row.id, newRole);
+        };
+
+        return (
+          <Select
+            value={role}
+            onChange={handleChange}
+            fullWidth
+            size="small"
+            variant="outlined"
+            displayEmpty
+          >
+            <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="staff">Staff</MenuItem>
+            <MenuItem value="visitor">Visitor</MenuItem>
+          </Select>
+        );
+      },
+    },
+  
   ];
 };
-
 
 
 export const getColumns2 = (

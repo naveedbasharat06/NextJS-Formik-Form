@@ -94,6 +94,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
       {/* Conditionally render buttons based on showUserButton */}
       {!showUserButton && (
         <>
+         
           {showButton ? (
             <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
               <Button
@@ -169,6 +170,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
               </Box>
             </Box>
           )}
+      
         </>
       )}
 
@@ -197,7 +199,8 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         slots={{ toolbar: GridToolbar }}
         slotProps={{ toolbar: { showQuickFilter: true } }}
       />
-    </Box>
+        </Box>
+   
   );
 };
 
