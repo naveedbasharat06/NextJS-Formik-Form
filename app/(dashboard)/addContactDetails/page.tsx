@@ -6,6 +6,7 @@ import supabase from "../../../utils/supabaseClient";
 import { Formik, Form } from "formik";
 import BillingAddressForm from "../../components/billingAddressForm";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 const FormComponent = () => {
   const theme = useTheme();
@@ -57,6 +58,10 @@ const FormComponent = () => {
               width: "98vw",
             }}
           >
+            <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}>
             <Box
               sx={{
                 maxWidth: 600,
@@ -92,22 +97,23 @@ const FormComponent = () => {
                   fullWidth
                   sx={{
                     backgroundColor: success
-                      ? "#6a994e"
-                      : theme.palette.secondary.main,
+                    ? "#6a994e"
+                    : theme.palette.secondary.main,
                     // Dark Grey (Neutral Look)
                     color: "white",
                     // "&:hover": { backgroundColor: "#669bbc" },
                     marginTop: 1,
                     boxShadow: "0px 4px 10px rgba(0,0,255,0.4)", // Blue shadow for the button
                     // "&:hover": {
-                    //   boxShadow: "0px 6px 15px rgba(0,0,255,0.6)", // Stronger effect on hover
-                    // },
-                  }}
+                      //   boxShadow: "0px 6px 15px rgba(0,0,255,0.6)", // Stronger effect on hover
+                      // },
+                    }}
                 >
                   {success ? "Data Saved Successfully" : "Submit"}
                 </Button>
               </Grid>
             </Box>
+                    </motion.div>
           </Box>
         </Form>
       )}

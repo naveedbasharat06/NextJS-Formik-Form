@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {
   Box,
@@ -9,115 +9,106 @@ import {
   TextField,
   Button,
   Typography,
+  SnackbarCloseReason,
   useTheme,
-  CircularProgress,
 } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { motion } from "framer-motion";
+import Grid from "@mui/material/Grid2";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import supabase from "../../../utils/supabaseClient";
 import { useRouter } from "next/navigation";
+import SuccessSnackbar from "../../components/SuccessSnackbar";
 
-// Validation Schema
-const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Required"),
-  password: Yup.string().required("Password is required"),
-});
-
-const SignInPage: React.FC = () => {
+const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [snackOpen, setSnackOpen] = useState<boolean>(false);
+  const [snackString, setSnackString] = useState<string>("");
   const router = useRouter();
   const theme = useTheme();
 
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackOpen(false);
+  };
   return (
-    <Formik
-      initialValues={{ email: "", password: "" }}
-      validationSchema={validationSchema}
-      onSubmit={async (values, { setSubmitting }) => {
-        setErrorMessage(null);
-        setIsAuthenticating(true); // Start authentication process
+    <>
+      <Formik
+        initialValues={{ email: "", password: "", name: "" }}
+        //   validationSchema={validationSchema}
+        onSubmit={async (values, { setSubmitting }) => {
+          setErrorMessage(null); // Reset error message
+          try {
+            const { data, error } = await supabase.auth.signUp({
+              email: values.email,
+              password: values.password,
+              options: {
+                data: { display_name: values.name },
+                emailRedirectTo: "http://localhost:3000/", // Store 'name' in user metadata
+              },
+            });
 
-        try {
-          // Validate form inputs
-          if (!values.email || !values.password) {
-            setErrorMessage("Please fill in all fields.");
-            return;
-          }
+            if (error) {
+              throw error; // Throw error if sign-up fails
+            }
 
-          // Sign in with email and password
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: values.email,
-            password: values.password,
-          });
+            if (data.user) {
 
-          if (error) throw error;
-
-          // Redirect on successful sign-in
-          if (data.user) {
        
-            router.push("/"); // Redirect to home page
-          } else {
-            throw new Error("Sign-in failed. Please try again.");
+              setTimeout(() => {
+                router.push("/login");
+              }, 3000);
+              setSnackOpen(true);
+              setSnackString(
+                "Signup successful! Check your email for verification."
+              );
+              // alert("Signup successful! Check your email for verification.");
+            } else {
+              throw new Error("Signup failed. Please try again.");
+            }
+          } catch (error: any) {
+            setErrorMessage(error.message); // Set error message if an error occurs
+          } finally {
+            setSubmitting(false); // Ensure form is no longer in submitting state
           }
-        } catch (error: any) {
-          // Handle specific errors
-          if (error.message === "Invalid login credentials") {
-            setErrorMessage("Incorrect email or password. Please try again.");
-          } else {
-            setErrorMessage(
-              "An unexpected error occurred. Please try again later."
-            );
-          }
-          setIsAuthenticating(false); // Stop loading if an error occurs
-        } finally {
-          setSubmitting(false); // Reset form submission state
-        }
-      }}
-    >
-      {({ isSubmitting, handleChange, values, errors, touched }) =>
-        isAuthenticating ? (
-          // Loading Screen
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-              flexDirection: "column",
-            }}
-          >
-            <CircularProgress size={60} />
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Authenticating...
-            </Typography>
-          </Box>
-        ) : (
+        }}
+      >
+        {({ isSubmitting, handleChange, values }) => (
           <Form>
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: "100vh",
+                height: "100vh", // Full viewport height
               }}
             >
+                      <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}>
+
               <Box
                 sx={{
                   width: 400,
-                  padding: 3,
+                  padding: 2,
                   borderRadius: 2,
                   backgroundColor: theme.palette.background.paper,
-                  boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
+                  boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Blue glow shadow
                   transition: "transform 0.3s ease-in-out",
                   "&:hover": {
-                    transform: "scale(1.02)",
+                    transform: "scale(1.02)", // Slight hover effect
                   },
                 }}
               >
                 <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-                  Sign In
+                  Sign Up
                 </Typography>
 
                 {errorMessage && (
@@ -127,7 +118,18 @@ const SignInPage: React.FC = () => {
                 )}
 
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
+                  <Grid size={20}>
+                    <TextField
+                      label="Name"
+                      name="name"
+                      value={values.name}
+                      onChange={handleChange}
+                      fullWidth
+                      required
+                      sx={{ marginTop: 1.5 }}
+                      />
+                  </Grid>
+                  <Grid size={12}>
                     <TextField
                       label="Email"
                       name="email"
@@ -136,11 +138,9 @@ const SignInPage: React.FC = () => {
                       fullWidth
                       required
                       type="email"
-                      error={touched.email && Boolean(errors.email)}
-                      helperText={touched.email && errors.email}
-                    />
+                      />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <TextField
                       label="Password"
                       fullWidth
@@ -149,8 +149,6 @@ const SignInPage: React.FC = () => {
                       name="password"
                       value={values.password}
                       onChange={handleChange}
-                      error={touched.password && Boolean(errors.password)}
-                      helperText={touched.password && errors.password}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -169,7 +167,7 @@ const SignInPage: React.FC = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Button
                       type="submit"
                       fullWidth
@@ -177,17 +175,23 @@ const SignInPage: React.FC = () => {
                       disabled={isSubmitting}
                       sx={{ background: theme.palette.secondary.main }}
                     >
-                      {isSubmitting ? "Signing in..." : "Sign In"}
+                      {isSubmitting ? "Signing up..." : "Sign Up"}
                     </Button>
                   </Grid>
                 </Grid>
               </Box>
+        </motion.div>
             </Box>
           </Form>
-        )
-      }
-    </Formik>
+        )}
+      </Formik>
+      <SuccessSnackbar
+        handleClose={handleClose}
+        openSnackbar={snackOpen}
+        alertMessage={snackString}
+      />
+    </>
   );
 };
 
-export default SignInPage;
+export default SignupPage;

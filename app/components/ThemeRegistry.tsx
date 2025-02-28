@@ -34,7 +34,7 @@ export const useThemeContext = () => useContext(ThemeContext);
 const getTheme = (mode: "light" | "dark") =>
   createTheme({
     typography: {
-      fontFamily: '"Helvetica Neue"', // Global font
+      fontFamily: '" Inter"', // Global font
     },
     palette: {
       mode,

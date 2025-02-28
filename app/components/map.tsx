@@ -12,6 +12,7 @@ import SuccessSnackbar from "./SuccessSnackbar";
 import { getColumns2 } from "../constants/datagridColumnsName";
 import DeleteModalComponent from "./DeleteModalComponent";
 import { useThemeContext } from "./ThemeRegistry";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Set your Mapbox access token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -381,6 +382,7 @@ const Map = () => {
         >
           {/* Map Container */}
           <Box className="relative w-[50%] h-[540px] m-4">
+            
             <Box
               ref={mapContainerRef}
               className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
@@ -389,8 +391,15 @@ const Map = () => {
             />
           </Box>
 
-          {/* DataGrid Container */}
+     
+
           <Box className="w-[50%] my-4 mr-4">
+          <motion.div
+          
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
             <DataGridComponent
               rows={rows}
               columns={columns}
@@ -401,7 +410,8 @@ const Map = () => {
               isGeolocateActive={isGeolocateActive}
               showDragableMarker={showDragableMarker}
               saveLocation={saveLocation}
-            />
+              />
+              </motion.div>
           </Box>
         </Box>
       )}

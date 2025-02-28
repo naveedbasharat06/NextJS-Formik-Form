@@ -19,6 +19,7 @@ interface EditModalComponentProps {
   handleEditClose: () => void;
   updatedRow: any;
   handleSaveRow: (updatedRow: any) => void;
+
 }
 
 const UserEditModalComponent: React.FC<EditModalComponentProps> = ({
@@ -26,6 +27,8 @@ const UserEditModalComponent: React.FC<EditModalComponentProps> = ({
   handleEditClose,
   updatedRow,
   handleSaveRow,
+
+
 }) => {
   const theme = useTheme();
 //   const handleChange = (event) => {
@@ -54,6 +57,7 @@ const UserEditModalComponent: React.FC<EditModalComponentProps> = ({
               <Grid size={20}>
 
                   <TextField
+                    disabled
                     label="ID"
                     name="id"
                     value={values.id}
@@ -63,9 +67,36 @@ const UserEditModalComponent: React.FC<EditModalComponentProps> = ({
                     sx={{ marginTop: 1.5 }}
                   />
                 </Grid>
+
+                <Grid size={20}>
+
+{/* <TextField
+  label="Role"
+  name="role"
+  value={values.role}
+  onChange={handleChange}
+  fullWidth
+  required
+/> */}
+ <Select
+ disabled
+  name="role"
+value={values.role}
+onChange={handleChange}
+fullWidth
+size="small"
+variant="outlined"
+// displayEmpty
+>
+<MenuItem value="admin">Admin</MenuItem>
+<MenuItem value="staff">Staff</MenuItem>
+<MenuItem value="visitor">Visitor</MenuItem>
+</Select>
+</Grid>
                 <Grid size={20}>
 
                   <TextField
+                   
                     label="Email"
                     name="email"
                     value={values.email}
@@ -75,30 +106,7 @@ const UserEditModalComponent: React.FC<EditModalComponentProps> = ({
                     type="email"
                   />
                 </Grid>
-                <Grid size={20}>
-
-                  {/* <TextField
-                    label="Role"
-                    name="role"
-                    value={values.role}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  /> */}
-                   <Select
-                    name="role"
-            value={values.role}
-            onChange={handleChange}
-            fullWidth
-            size="small"
-            variant="outlined"
-            // displayEmpty
-          >
-            <MenuItem value="admin">Admin</MenuItem>
-            <MenuItem value="staff">Staff</MenuItem>
-            <MenuItem value="visitor">Visitor</MenuItem>
-          </Select>
-                </Grid>
+             
               </Grid>
               <DialogActions>
                 <Button

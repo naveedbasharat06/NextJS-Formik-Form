@@ -10,6 +10,8 @@ import supabase from "../../utils/supabaseClient";
 import { Button, IconButton, useTheme, CircularProgress } from "@mui/material";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useThemeContext } from "./ThemeRegistry";
+import { motion, AnimatePresence } from "framer-motion";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 export default function ResponsiveAppBar() {
   const theme = useTheme();
@@ -23,24 +25,38 @@ export default function ResponsiveAppBar() {
   useEffect(() => {
     const fetchSession = async () => {
       setLoading(true);
-      const {
-        data
-      } = await supabase.auth.getSession();
-      setSession(session);
-      setLoading(false);
-      // console.log(session);
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData?.session) {
+        const { data: profile, error } = await supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", sessionData.session.user.id)
+          .single();
 
-      if (!data.session) {
-        router.replace("/"); // Redirect if no session
+        if (error) {
+          console.error("Error fetching profile:", error);
+        } else {
+          // Add the display_name to the session object
+          setSession({
+            ...sessionData.session,
+            user: {
+              ...sessionData.session.user,
+              display_name: profile?.display_name || sessionData.session.user.email,
+            },
+          });
+        }
       }
+      setLoading(false);
     };
 
     fetchSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session);
-      if (!session) {
-        router.replace("/"); // Redirect on logout
+      if (session) {
+        // Refetch the profile when the session changes
+        fetchSession();
+      } else {
+        setSession(null);
       }
     });
 
@@ -48,28 +64,11 @@ export default function ResponsiveAppBar() {
   }, [router]);
 
   const handleLogout = async () => {
+    setLoggingOut(true);
     await supabase.auth.signOut();
+    setLoggingOut(false);
     router.replace("/"); // Redirect to sign-in after logout
   };
-
-  // if (loading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //         height: "100vh",
-  //         flexDirection: "column",
-  //       }}
-  //     >
-  //       <CircularProgress size={60} />
-  //       <Typography variant="h6" sx={{ mt: 2 }}>
-  //         Checking authentication...
-  //       </Typography>
-  //     </Box>
-  //   );
-  // }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -132,84 +131,125 @@ export default function ResponsiveAppBar() {
             </Typography>
 
             {/* New "Users" Nav Item (Visible Only for Logged-In Users) */}
-            {/* Protected Routes (Only for Logged-In Users) */}
-            {session && (
-              <Typography
-                variant="h6"
-                sx={{
-                  cursor: "pointer",
-                  color: "inherit",
-                  opacity: pathname === "/users" ? 1 : 0.9,
-                  transition: "opacity 0.3s, border-bottom 0.3s",
-                  "&:hover": { opacity: 1 },
-                  borderBottom:
-                    pathname === "/users"
-                      ? "2px solid #ffffff80"
-                      : "2px solid transparent",
-                  padding: "6px 0",
-                }}
-              >
-                <Link
-                  href="/users"
-                  style={{ textDecoration: "none", color: "inherit" }}
+            <AnimatePresence>
+              {session && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  Users
-                </Link>
-              </Typography>
-            )}
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      cursor: "pointer",
+                      color: "inherit",
+                      opacity: pathname === "/users" ? 1 : 0.9,
+                      transition: "opacity 0.3s, border-bottom 0.3s",
+                      "&:hover": { opacity: 1 },
+                      borderBottom:
+                        pathname === "/users"
+                          ? "2px solid #ffffff80"
+                          : "2px solid transparent",
+                      padding: "6px 0",
+                    }}
+                  >
+                    <Link
+                      href="/users"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      Users
+                    </Link>
+                  </Typography>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Box>
 
           {/* Auth Links or User Info */}
-          <Box sx={{ display: "flex", gap: 1.5 }}>
-            {session ? (
-              <>
-                <Typography
-                  variant="h6"
-                  sx={{ color: "inherit", opacity: 1, padding: "6px 0" }}
-                >
-                  Welcome,{" "}
-                  {session.user.user_metadata?.display_name ||
-                    session.user.email}
-                </Typography>
-                <Button
-                  variant="outlined"
-                  sx={{ color: "inherit", borderColor: "inherit" }}
-                  onClick={handleLogout}
-                  disabled={loggingOut}
-                >
-                  {loggingOut ? "Logging out..." : "Logout"}
-                </Button>
-              </>
-            ) : (
-              [
-                { label: "Sign Up", path: "/signup" },
-                { label: "Login", path: "/login" },
-              ].map((item) => (
-                <Typography
-                  key={item.path}
-                  variant="h6"
-                  sx={{
-                    cursor: "pointer",
-                    color: "inherit",
-                    opacity: pathname === item.path ? 1 : 0.9,
-                    transition: "opacity 0.3s, border-bottom 0.3s",
-                    "&:hover": { opacity: 1 },
-                    borderBottom:
-                      pathname === item.path
-                        ? "2px solid #ffffff80"
-                        : "2px solid transparent",
-                    padding: "6px 0",
-                  }}
-                >
-                  <Link
-                    href={item.path}
-                    style={{ textDecoration: "none", color: "inherit" }}
+          <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+            <AnimatePresence>
+              {session ? (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    {item.label}
+                    <Typography
+                      variant="h6"
+                      sx={{ color: "inherit", opacity: 1, padding: "6px 0" }}
+                    >
+                      Welcome, {session.user.display_name || session.user.email}
+                    </Typography>
+                  </motion.div>
+                  <Link href="/userProfile">
+                    <AccountCircleIcon sx={{ cursor: "pointer" }} />
                   </Link>
-                </Typography>
-              ))
-            )}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        color: "inherit",
+                        borderColor: "inherit",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        },
+                      }}
+                      onClick={handleLogout}
+                      disabled={loggingOut}
+                    >
+                      {loggingOut ? (
+                        <CircularProgress size={20} sx={{ color: "inherit" }} />
+                      ) : (
+                        "Logout"
+                      )}
+                    </Button>
+                  </motion.div>
+                </>
+              ) : (
+                [
+                  { label: "Sign Up", path: "/signup" },
+                  { label: "Login", path: "/login" },
+                ].map((item) => (
+                  <motion.div
+                    key={item.path}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        cursor: "pointer",
+                        color: "inherit",
+                        opacity: pathname === item.path ? 1 : 0.9,
+                        transition: "opacity 0.3s, border-bottom 0.3s",
+                        "&:hover": { opacity: 1 },
+                        borderBottom:
+                          pathname === item.path
+                            ? "2px solid #ffffff80"
+                            : "2px solid transparent",
+                        padding: "6px 0",
+                      }}
+                    >
+                      <Link
+                        href={item.path}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        {item.label}
+                      </Link>
+                    </Typography>
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
 
             {/* Theme Toggle Button */}
             <IconButton sx={{ color: "inherit" }} onClick={toggleTheme}>
