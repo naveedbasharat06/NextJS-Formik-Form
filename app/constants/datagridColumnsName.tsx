@@ -11,8 +11,38 @@ import { useState } from "react";
 
 // import supabase from "../utils/supabaseClient";
 
-export const getColumns3 = (handleRoleChange) => {
+export const getColumns3 = (
+  handleEditOpen: (row: any) => void,
+  // handleDelete: (id: number) => void
+  // handleRoleChange:
+  user:any
+): GridColDef[] => {
   return [
+
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 70, // Fixed width for action buttons
+      // sortable: false,
+      // disableColumnMenu: true,
+      // headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <>
+          <IconButton>
+            <EditIcon 
+            onClick={() => handleEditOpen(params.row)} 
+            />
+          </IconButton>
+          {/* <IconButton>
+            <DeleteIcon
+              // onClick={() => handleDelete(params.row.id)}
+              sx={{ color: "#c1121f" }}
+            />
+          </IconButton> */}
+        </>
+      ),
+    },
     {
       field: "id",
       headerName: "ID",
@@ -33,29 +63,40 @@ export const getColumns3 = (handleRoleChange) => {
       flex: 1,
       sortable: false,
       headerClassName: "super-app-theme--header",
+      // renderCell: (params) => {
+      //   const [role, setRole] = useState(params.value || "visitor"); // Default role
+
+      //   const handleChange = (event) => {
+      //     const newRole = event.target.value;
+      //     setRole(newRole);
+      //     handleRoleChange(params.row.id, newRole);
+      //   };
+
+      //   return (
+      //     <Select
+      //       value={role}
+      //       onChange={handleChange}
+      //       fullWidth
+      //       size="small"
+      //       variant="outlined"
+      //       displayEmpty
+      //     >
+      //       <MenuItem value="admin">Admin</MenuItem>
+      //       <MenuItem value="staff">Staff</MenuItem>
+      //       <MenuItem value="visitor">Visitor</MenuItem>
+      //     </Select>
+      //   );
+      // },
+    },
+
+    {
+      field: "isCurrentUser",
+      headerName: "Logged In",
+      flex:1,
+      headerClassName: "super-app-theme--header",
+      width: 120,
       renderCell: (params) => {
-        const [role, setRole] = useState(params.value || "visitor"); // Default role
-
-        const handleChange = (event) => {
-          const newRole = event.target.value;
-          setRole(newRole);
-          handleRoleChange(params.row.id, newRole);
-        };
-
-        return (
-          <Select
-            value={role}
-            onChange={handleChange}
-            fullWidth
-            size="small"
-            variant="outlined"
-            displayEmpty
-          >
-            <MenuItem value="admin">Admin</MenuItem>
-            <MenuItem value="staff">Staff</MenuItem>
-            <MenuItem value="visitor">Visitor</MenuItem>
-          </Select>
-        );
+        return params.row.id === user?.id ? "LOGGED IN" : "";
       },
     },
   

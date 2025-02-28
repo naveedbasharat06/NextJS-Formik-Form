@@ -6,12 +6,18 @@ import DataGridComponent from "../../components/DataGridComponent";
 import { GridRowsProp } from "@mui/x-data-grid";
 import { getColumns3 } from "../../constants/datagridColumnsName";
 import { Box, CircularProgress } from "@mui/material";
-import supabaseAdmin from "../../../utils/supabaseClient2";
+import UserEditModalComponent from "../../components/UserEditModalComponent";
+import SuccessSnackbar from "../../components/SuccessSnackbar";
+import { SnackbarCloseReason } from "@mui/material/Snackbar";
 
 const Page = () => {
   const [rows, setRows] = useState<GridRowsProp>([]); // State to store rows for DataGrid
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const [user, setUser] = useState<any>(null); // State to store current user
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [updatedRow, setUpdatedRow] = useState<any>({});
+    const [snackOpen, setSnackOpen] = useState(false);
+     const [snackString, setSnackString] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -23,64 +29,28 @@ const Page = () => {
 
     const fetchProfiles = async () => {
       try {
-        // Fetch all profiles from the public.profiles table
         const { data: profiles, error } = await supabase
           .from("profiles")
           .select("id, email, role");
-    
+
         if (error) {
           throw error;
         }
-    
-        // Fetch active sessions for each user
-        const profilesWithStatus = await Promise.all(
-          profiles.map(async (profile) => {
-            // Check if the user has an active session
-            const { data: session, error: sessionError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
-    
-            if (sessionError) {
-              console.error("Error fetching session for user:", profile.id, sessionError);
-              return {
-                ...profile,
-                isConnected: false,
-              };
-            }
-    
-            const lastSignIn = session.user?.last_sign_in_at;
-            const isConnected = lastSignIn && new Date(lastSignIn) > new Date(Date.now() - 5 * 60 * 1000); // Last 5 minutes check
-    
-            return {
-              ...profile,
-              isConnected,
-            };
-          })
+
+        setRows(
+          profiles.map((profile) => ({
+            id: profile.id,
+            email: profile.email,
+            role: profile.role || "visitor", // Default to 'visitor' if role is null
+          }))
         );
-    
-        // Filter out only currently logged-in users
-        const loggedInUsers = profilesWithStatus.filter((profile) => profile.isConnected);
-    
-        console.log("Currently Logged-in Users:", loggedInUsers); // ✅ Print logged-in users to console
-    
-        setRows(profilesWithStatus);
       } catch (error) {
         console.error("Error fetching profiles:", error);
       } finally {
         setLoading(false);
       }
     };
-    
 
-    const fetchActiveUsers = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        console.log("Currently logged in user:", user);
-      } else {
-        console.log("No user is logged in");
-      }
-    };
-
-    fetchActiveUsers();
     fetchUser();
     fetchProfiles();
   }, []);
@@ -111,8 +81,44 @@ const Page = () => {
       console.error("Unexpected error:", error);
     }
   };
+  const handleEditOpen = (row: any) => {
+    setUpdatedRow(row);
+    setOpenEditModal(true);
+    console.log(row);
+  };
 
-  const columns = getColumns3(handleRoleChange);
+  const handleEditClose = () => {
+    setOpenEditModal(false);
+  };
+  const handleSaveRow = async (updatedRow: any) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update(updatedRow)
+      .eq("id", updatedRow.id);
+
+    if (error) {
+      console.error(error);
+    } else {
+      setSnackString(true);
+      setSnackOpen(true);
+      setRows((prevRows) =>
+        prevRows.map((row) => (row.id === updatedRow.id ? updatedRow : row))
+      );
+      setOpenEditModal(false);
+
+    }
+  };
+    const handleClose = (
+      event?: React.SyntheticEvent | Event,
+      reason?: SnackbarCloseReason
+    ) => {
+      if (reason === "clickaway") {
+        return;
+      }
+      setSnackOpen(false);
+    };
+  // Pass the user object to getColumns3
+  const columns = getColumns3(handleEditOpen, user);
 
   return (
     <ProtectedRoute>
@@ -129,10 +135,42 @@ const Page = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box sx={{ margin: 4 }}>
-          <DataGridComponent rows={rows} columns={columns} showUserButton={true} />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            height: "100vh", // Full viewport height
+            width: "98vw",
+          }}
+        >
+          <Box
+            sx={{
+              margin: 4,
+              width: "98%",
+            }}
+          >
+            <DataGridComponent
+              rows={rows}
+              columns={columns}
+              showUserButton={true}
+            />
+          </Box>
         </Box>
       )}
+      <UserEditModalComponent
+        openEditModal={openEditModal}
+        handleEditClose={handleEditClose}
+        updatedRow={updatedRow}
+        handleSaveRow={handleSaveRow}
+      />
+       <SuccessSnackbar
+        handleClose={handleClose}
+        openSnackbar={snackOpen}
+        alertMessage={
+          snackString
+            ? "Record has been successfully updated!"
+            : "Record deleted successfully."
+        } />
     </ProtectedRoute>
   );
 };
