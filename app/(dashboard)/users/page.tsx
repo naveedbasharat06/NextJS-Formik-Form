@@ -36,33 +36,33 @@ const Page = () => {
         if (!session?.session) {
           throw new Error("User not logged in");
         }
-
+    
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("id, email, role")
+          .select("id, email, role, display_name") // Add display_name here
           .eq("id", session.session.user.id)
           .single();
-
+    
         if (profileError) {
           throw profileError;
         }
-        // setRole(profile.role);
-
+    
         // If the user is an admin, fetch all profiles
         if (profile.role === "admin") {
           const { data: allProfiles, error: allProfilesError } = await supabase
             .from("profiles")
-            .select("id, email, role");
-
+            .select("id, email, role, display_name"); // Add display_name here
+    
           if (allProfilesError) {
             throw allProfilesError;
           }
-
+    
           setRows(
             allProfiles.map((p) => ({
               id: p.id,
               email: p.email,
               role: p.role || "visitor", // Default to 'visitor' if role is null
+              display_name: p.display_name || "", // Add display_name here
             }))
           );
         } else {
@@ -72,6 +72,7 @@ const Page = () => {
               id: profile.id,
               email: profile.email,
               role: profile.role || "visitor",
+              display_name: profile.display_name || "", // Add display_name here
             },
           ]);
         }
@@ -107,34 +108,38 @@ const Page = () => {
       console.error("User not logged in");
       return;
     }
-
+  
     // Fetch the current user's profile to check their role
     const { data: currentUserProfile, error: profileError } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", session.session.user.id)
       .single();
-
+  
     if (profileError) {
       console.error("Error fetching current user's profile:", profileError);
       return;
     }
-
+  
     // If the user is not an admin, ensure they can only update their own profile
     if (currentUserProfile.role !== "admin" && updatedRow.id !== session.session.user.id) {
       console.error("Unauthorized: You can only update your own profile");
       return;
     }
-
+  
     const { error } = await supabase
       .from("profiles")
-      .update(updatedRow)
+      .update({
+        email: updatedRow.email,
+        role: updatedRow.role,
+         // Add display_name here
+      })
       .eq("id", updatedRow.id);
-
+  
     if (error) {
       console.error(error);
     } else {
-      setSnackString("data is successfully updated");
+      setSnackString("Data is successfully updated");
       setSnackOpen(true);
       setRows((prevRows) =>
         prevRows.map((row) => (row.id === updatedRow.id ? updatedRow : row))

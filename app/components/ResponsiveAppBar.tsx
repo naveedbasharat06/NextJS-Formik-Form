@@ -29,39 +29,39 @@ export default function ResponsiveAppBar() {
       if (sessionData?.session) {
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("display_name")
+          .select("display_name, role") // Fetch role along with display_name
           .eq("id", sessionData.session.user.id)
           .single();
-
+  
         if (error) {
           console.error("Error fetching profile:", error);
         } else {
-          // Add the display_name to the session object
           setSession({
             ...sessionData.session,
             user: {
               ...sessionData.session.user,
               display_name: profile?.display_name || sessionData.session.user.email,
+              role: profile?.role, // Add role to session object
             },
           });
         }
       }
       setLoading(false);
     };
-
+  
     fetchSession();
-
+  
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        // Refetch the profile when the session changes
         fetchSession();
       } else {
         setSession(null);
       }
     });
-
+  
     return () => listener.subscription.unsubscribe();
   }, [router]);
+  
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -130,6 +130,29 @@ export default function ResponsiveAppBar() {
               </Link>
             </Typography>
 
+            <Typography
+              variant="h6"
+              sx={{
+                cursor: "pointer",
+                color: "inherit",
+                opacity: pathname === "/products" ? 1 : 0.9,
+                transition: "opacity 0.3s, border-bottom 0.3s",
+                "&:hover": { opacity: 1 },
+                borderBottom:
+                  pathname === "/products"
+                    ? "2px solid #ffffff80"
+                    : "2px solid transparent",
+                padding: "6px 0",
+              }}
+            >
+              <Link
+                href="/products"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Products
+              </Link>
+            </Typography>
+
             {/* New "Users" Nav Item (Visible Only for Logged-In Users) */}
             <AnimatePresence>
               {session && (
@@ -164,6 +187,36 @@ export default function ResponsiveAppBar() {
                 </motion.div>
               )}
             </AnimatePresence>
+            <AnimatePresence>
+  {session && session.user.role === "admin" && (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          cursor: "pointer",
+          color: "inherit",
+          opacity: pathname === "/userRoles" ? 1 : 0.9,
+          transition: "opacity 0.3s, border-bottom 0.3s",
+          "&:hover": { opacity: 1 },
+          borderBottom:
+            pathname === "/userRoles"
+              ? "2px solid #ffffff80"
+              : "2px solid transparent",
+          padding: "6px 0",
+        }}
+      >
+        <Link href="/userRoles" style={{ textDecoration: "none", color: "inherit" }}>
+          User Roles
+        </Link>
+      </Typography>
+    </motion.div>
+  )}
+</AnimatePresence>
           </Box>
 
           {/* Auth Links or User Info */}

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useMediaQuery } from "@mui/material";
 import gsap from "gsap";
 
+
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
@@ -22,6 +23,8 @@ interface DataGridComponentProps {
   isGeolocateActive?: boolean;
   saveLocation?: () => void;
   showUserButton?: boolean;
+  AddProductsButton?: boolean; // New prop for additional button
+ // Handler for additional button click
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
@@ -35,6 +38,8 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   showDragableMarker,
   saveLocation,
   showUserButton = false, // Default to false
+  AddProductsButton = false, // Default to false
+ // Handler for additional button click
 }) => {
   const theme = useTheme(); // Access the theme
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -46,6 +51,10 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
     shippingName: false,
     latitude: false,
     longitude: false,
+    product_code:false,
+    manufacturer:false,
+    warranty_period:false,
+    shipping_weight:false,
     id: isMobile ? false : true, // Hide ID column in mobile view
   };
 
@@ -94,7 +103,6 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
       {/* Conditionally render buttons based on showUserButton */}
       {!showUserButton && (
         <>
-         
           {showButton ? (
             <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
               <Button
@@ -118,15 +126,71 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                 {locationText}
               </Box>
               <Box className="w-[50%] flex justify-end m-1">
-                <Fade in={showDragableMarker || isGeolocateActive}>
+                {/* Only show these buttons if showAdditionalButton is false */}
+                {!AddProductsButton && (
+                  <>
+                    <Fade in={showDragableMarker || isGeolocateActive}>
+                      <Button
+                      
+                        sx={{
+                          marginRight: 1,
+                          padding: "8px 16px",
+                          backgroundColor: saving
+                            ? "#38b000"
+                            : theme.palette.secondary.main, // Use theme's primary color
+                          color: "white",
+                          fontWeight: "bold",
+                          borderRadius: "8px",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                            transform: "scale(1.05)",
+                            transition: "transform 0.2s ease-in-out",
+                          },
+                          boxShadow: saving
+                            ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
+                            : theme.shadows[3], // Use theme's shadow
+                          transition:
+                            "background-color 0.3s ease, box-shadow 0.3s ease",
+                        }}
+                      >
+                        {saving ? "Location Saved!" : "Save Location"}
+                      </Button>
+                    </Fade>
+
+                    <Button
+                      ref={buttonRef}
+                      onClick={handleButtonClick}
+                      sx={{
+                        padding: "8px 16px",
+                        backgroundColor: theme.palette.secondary.main, // Use theme's primary color
+                        color: "white",
+                        fontWeight: "bold",
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                          transform: "scale(1.05)",
+                          transition: "transform 0.2s ease-in-out",
+                        },
+                        boxShadow: theme.shadows[3], // Use theme's shadow
+                      }}
+                    >
+                      {showDragableMarker ? "Close Location" : "Add Location"}
+                    </Button>
+                  </>
+                )}
+
+                {/* Conditionally render the additional button */}
+                {AddProductsButton && (
+                  <Link href={"./addProducts"}>
+          
                   <Button
-                    onClick={handleSaveLocation}
+                  
                     sx={{
-                      marginRight: 1,
+                      marginLeft: 1,
                       padding: "8px 16px",
-                      backgroundColor: saving
-                        ? "#38b000"
-                        : theme.palette.secondary.main, // Use theme's primary color
+                      backgroundColor: theme.palette.secondary.main, // Use theme's primary color
                       color: "white",
                       fontWeight: "bold",
                       borderRadius: "8px",
@@ -136,41 +200,16 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                         transform: "scale(1.05)",
                         transition: "transform 0.2s ease-in-out",
                       },
-                      boxShadow: saving
-                        ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
-                        : theme.shadows[3], // Use theme's shadow
-                      transition:
-                        "background-color 0.3s ease, box-shadow 0.3s ease",
+                      boxShadow: theme.shadows[3], // Use theme's shadow
                     }}
                   >
-                    {saving ? "Location Saved!" : "Save Location"}
+                    NEW PRODUCT
                   </Button>
-                </Fade>
-
-                <Button
-                  ref={buttonRef}
-                  onClick={handleButtonClick}
-                  sx={{
-                    padding: "8px 16px",
-                    backgroundColor: theme.palette.secondary.main, // Use theme's primary color
-                    color: "white",
-                    fontWeight: "bold",
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
-                      transform: "scale(1.05)",
-                      transition: "transform 0.2s ease-in-out",
-                    },
-                    boxShadow: theme.shadows[3], // Use theme's shadow
-                  }}
-                >
-                  {showDragableMarker ? "Close Location" : "Add Location"}
-                </Button>
+                  </Link>
+                )}
               </Box>
             </Box>
           )}
-      
         </>
       )}
 
@@ -199,8 +238,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         slots={{ toolbar: GridToolbar }}
         slotProps={{ toolbar: { showQuickFilter: true } }}
       />
-        </Box>
-   
+    </Box>
   );
 };
 

@@ -1,7 +1,5 @@
-// utils/columns.ts
-
 import { GridColDef } from "@mui/x-data-grid";
-import { Button,MenuItem, Select,Box} from "@mui/material";
+import { Button, MenuItem, Select, Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -9,9 +7,13 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 
+
+// Define columns for the products table
+
+
 // import supabase from "../utils/supabaseClient";
 
-export const getColumns3 = (
+export const getColumns4 = (
   handleEditOpen: (row: any) => void,
   // handleDelete: (id: number) => void
   // handleRoleChange:
@@ -100,6 +102,66 @@ export const getColumns3 = (
       },
     },
   
+  ];
+};
+
+
+export const getColumns3 = (
+  handleEditOpen: (row: any) => void,
+  user: any
+): GridColDef[] => {
+  return [
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 70,
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <>
+          <IconButton>
+            <EditIcon onClick={() => handleEditOpen(params.row)} />
+          </IconButton>
+        </>
+      ),
+    },
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      sortable: false,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      sortable: false,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "display_name", // Add display_name column
+      headerName: "Display Name",
+      flex: 1,
+      sortable: false,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "role",
+      headerName: "User Role",
+      flex: 1,
+      sortable: false,
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "isCurrentUser",
+      headerName: "Logged In",
+      flex: 1,
+      headerClassName: "super-app-theme--header",
+      width: 120,
+      renderCell: (params) => {
+        return params.row.id === user?.id ? "LOGGED IN" : "";
+      },
+    },
   ];
 };
 
@@ -287,6 +349,170 @@ export const getColumns = (
       headerName: "Shipping Address",
       flex: 2,
       minWidth: 200,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+    },
+  ];
+};
+
+
+export const getProductColumns = (
+  handleEditOpen: (row: any) => void,
+  handleDelete: (id: number) => void
+): GridColDef[] => {
+  return [
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 120, // Fixed width for action buttons
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <>
+          <IconButton>
+            <EditIcon onClick={() => handleEditOpen(params.row)} />
+          </IconButton>
+          <IconButton>
+            <DeleteIcon
+              onClick={() => handleDelete(params.row.id)}
+              sx={{ color: "#c1121f" }}
+            />
+          </IconButton>
+        </>
+      ),
+    },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50, // Fixed width for ID
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      hideable: false,
+    },
+    {
+      field: "name",
+      headerName: "Product Name",
+      flex: 1, // Make it flexible
+      minWidth: 150, // Prevent shrinking too much
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      flex: 2, // Give it more space
+      minWidth: 200,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "price",
+      headerName: "Price",
+      flex: 1,
+      minWidth: 100,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      type: "number",
+      // valueFormatter: (params) => `$${params.value.toFixed(2)}`, // Format as currency
+    },
+    {
+      field: "stock",
+      headerName: "Stock",
+      flex: 1,
+      minWidth: 100,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      type: "number",
+    },
+    {
+      field: "image_url",
+      headerName: "Image URL",
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <img
+          src={params.value}
+          alt="Product"
+          style={{ width: 50, height: 50, objectFit: "cover" }}
+        />
+      ),
+    },
+    {
+      field: "product_code",
+      headerName: "Product Code",
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "manufacturer",
+      headerName: "Manufacturer",
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "warranty_period",
+      headerName: "Warranty (Months)",
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      type: "number",
+    },
+    {
+      field: "shipping_weight",
+      headerName: "Shipping Weight (kg)",
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+      type: "number",
+    },
+    {
+      field: "product_condition",
+      headerName: "Condition",
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: "center",
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "availability_status",
+      headerName: "Availability",
+      flex: 1,
+      minWidth: 150,
       sortable: false,
       disableColumnMenu: true,
       headerAlign: "center",
