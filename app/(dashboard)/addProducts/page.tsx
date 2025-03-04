@@ -128,6 +128,8 @@ const page: React.FC = () => {
   };
 
   return (
+    <>
+    
     <Box
       sx={{
         marginTop: "250px",
@@ -176,28 +178,31 @@ const page: React.FC = () => {
                 {loading ? "Saving..." : "Save Product"}
               </Button>
             </form>
-            <Snackbar
-              open={success}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-            >
-              <Alert onClose={handleCloseSnackbar} severity="success">
-                Product saved successfully!
-              </Alert>
-            </Snackbar>
-            <Snackbar
-              open={!!error}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-            >
-              <Alert onClose={handleCloseSnackbar} severity="error">
-                {error}
-              </Alert>
-            </Snackbar>
+         
           </Container>
         </Box>
       </motion.div>
     </Box>
+
+<Snackbar
+open={success}
+autoHideDuration={6000}
+onClose={handleCloseSnackbar}
+>
+<Alert onClose={handleCloseSnackbar} severity="success">
+  Product saved successfully!
+</Alert>
+</Snackbar>
+<Snackbar
+open={!!error}
+autoHideDuration={6000}
+onClose={handleCloseSnackbar}
+>
+<Alert onClose={handleCloseSnackbar} severity="error">
+  {error}
+</Alert>
+</Snackbar>
+</>
   );
 };
 

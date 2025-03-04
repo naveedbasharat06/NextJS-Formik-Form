@@ -10,6 +10,8 @@ import {
   TextField,
   Select,
   MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { Formik, Form } from "formik";
@@ -178,26 +180,34 @@ const ProductEditModalComponent: React.FC<ProductEditModalComponentProps> = ({
                   />
                 </Grid>
                 <Grid size={20}>
-                  <TextField
-                    label="Product_condition"
-                    name="product_condition"
-                    value={values.product_condition}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    type="text"
-                  />
+                <FormControl fullWidth required>
+          <InputLabel>Product Condition</InputLabel>
+          <Select
+            label="Product Condition"
+            name="product_condition"
+            value={values.product_condition}
+            onChange={handleChange}
+          >
+            <MenuItem value="New">New</MenuItem>
+            <MenuItem value="Refurbished">Refurbished</MenuItem>
+            <MenuItem value="Used">Used</MenuItem>
+          </Select>
+        </FormControl>
                 </Grid>
                 <Grid size={20}>
-                  <TextField
-                    label="Availability_status"
-                    name="availability_status"
-                    value={values.availability_status}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    type="text"
-                  />
+                <FormControl fullWidth required>
+          <InputLabel>Availability Status</InputLabel>
+          <Select
+            label="Availability Status"
+            name="availability_status"
+            value={values.availability_status}
+            onChange={handleChange}
+          >
+            <MenuItem value="In Stock">In Stock</MenuItem>
+            <MenuItem value="Out of Stock">Out of Stock</MenuItem>
+            <MenuItem value="Pre-Order">Pre-Order</MenuItem>
+          </Select>
+        </FormControl>
                 </Grid>
               </Grid>
 

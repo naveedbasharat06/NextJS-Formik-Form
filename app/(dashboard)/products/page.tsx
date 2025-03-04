@@ -7,6 +7,9 @@ import ProtectRoutes from "../../components/ProtectRoutes";
 import supabase from "../../../utils/supabaseClient";
 import { GridRowsProp } from "@mui/x-data-grid";
 import ProductEditModalComponent from "../../components/ProductsEditModal";
+import SuccessSnackbar from "../../components/SuccessSnackbar";
+import DeleteModalComponent from "../../components/DeleteModalComponent";
+import { SnackbarCloseReason } from "@mui/material";
 
 function Page() {
   const [rows, setRows] = useState<GridRowsProp>([]);
@@ -14,6 +17,10 @@ function Page() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [updatedRow, setUpdatedRow] = useState<any>(null);
+  const [open, setOpen] = useState(false);
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [snackString, setSnackString] = useState<string>("");
+      const [deleteid, setDeleteid] = useState<number>(0);
 
   // Fetch the current user's ID and role
   useEffect(() => {
@@ -68,12 +75,20 @@ function Page() {
     setOpenEditModal(true);
   };
 
-  const handleDelete = async (id: number) => {
-    const { error } = await supabase.from("products").delete().eq("id", id);
+  const handleDelete = (id: number) => {
+    setDeleteid(id);
+    setOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    const { error } = await supabase.from("products").delete().eq("id", deleteid);
     if (error) {
-      console.error("Error deleting product:", error);
+      console.error(error);
     } else {
-      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      setRows((prevRows) => prevRows.filter((row) => row.id !== deleteid));
+      setOpen(false);
+      setSnackOpen(true);
+      setSnackString("Data Deleted Successfully");
     }
   };
 
@@ -84,14 +99,25 @@ function Page() {
       .eq("id", updatedRow.id);
 
     if (error) {
-      console.error("Error updating product:", error);
+      console.error(error);
     } else {
+      setSnackString("data Updated Successfully");
+      setSnackOpen(true);
       setRows((prevRows) =>
         prevRows.map((row) => (row.id === updatedRow.id ? updatedRow : row))
       );
       setOpenEditModal(false);
     }
   };
+    const handleClose = (
+      event?: React.SyntheticEvent | Event,
+      reason?: SnackbarCloseReason
+    ) => {
+      if (reason === "clickaway") {
+        return;
+      }
+      setSnackOpen(false);
+    };
 
   // Get columns for the products table
   const columns = getProductColumns(handleEditOpen, handleDelete);
@@ -112,6 +138,20 @@ function Page() {
       handleSaveRow={handleSaveRow}
     />
   )};
+
+
+<DeleteModalComponent
+        open={open}
+        setOpen={setOpen}
+        confirmDelete={confirmDelete}
+      />
+      <SuccessSnackbar
+        handleClose={handleClose}
+        openSnackbar={snackOpen}
+        alertMessage={
+       snackString
+        }
+      />
       </ProtectRoutes>
     </>
   );
