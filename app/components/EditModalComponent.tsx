@@ -8,7 +8,7 @@ import {
   Button,
   useTheme,
 } from "@mui/material";
-import BillingAddressForm from "./billingAddressForm";
+import BillingAddressForm from "./BillingAddressForm";
 import { Formik, Form } from "formik";
 
 interface EditModalComponentProps {

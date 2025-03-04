@@ -12,14 +12,16 @@ import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useThemeContext } from "./ThemeRegistry";
 import { motion, AnimatePresence } from "framer-motion";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartWithBadge from "./ShoppingCartWithBadge";
 
 export default function ResponsiveAppBar() {
   const theme = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [loggingOut, setLoggingOut] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loggingOut, setLoggingOut] = useState<boolean>(false);
   const { mode, toggleTheme } = useThemeContext();
 
   useEffect(() => {
@@ -135,6 +137,36 @@ export default function ResponsiveAppBar() {
               sx={{
                 cursor: "pointer",
                 color: "inherit",
+                opacity: pathname === "/shop" ? 1 : 0.9,
+                transition: "opacity 0.3s, border-bottom 0.3s",
+                "&:hover": { opacity: 1 },
+                borderBottom:
+                  pathname === "/shop"
+                    ? "2px solid #ffffff80"
+                    : "2px solid transparent",
+                padding: "6px 0",
+              }}
+            >
+              <Link
+                href="/shop"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Shop
+              </Link>
+            </Typography>
+            <AnimatePresence>
+            {session && (
+               <motion.div
+               initial={{ opacity: 0, x: -20 }}
+               animate={{ opacity: 1, x: 0 }}
+               exit={{ opacity: 0, x: -20 }}
+               transition={{ duration: 0.3 }}
+             >
+            <Typography
+              variant="h6"
+              sx={{
+                cursor: "pointer",
+                color: "inherit",
                 opacity: pathname === "/products" ? 1 : 0.9,
                 transition: "opacity 0.3s, border-bottom 0.3s",
                 "&:hover": { opacity: 1 },
@@ -152,7 +184,9 @@ export default function ResponsiveAppBar() {
                 Products
               </Link>
             </Typography>
-
+            </motion.div>
+              )}
+            </AnimatePresence>
             {/* New "Users" Nav Item (Visible Only for Logged-In Users) */}
             <AnimatePresence>
               {session && (
@@ -237,9 +271,11 @@ export default function ResponsiveAppBar() {
                       Welcome, {session.user.display_name || session.user.email}
                     </Typography>
                   </motion.div>
-                  <Link href="/userProfile">
-                    <AccountCircleIcon sx={{ cursor: "pointer" }} />
-                  </Link>
+
+                 
+
+                  
+            
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -296,6 +332,7 @@ export default function ResponsiveAppBar() {
                         href={item.path}
                         style={{ textDecoration: "none", color: "inherit" }}
                       >
+                        
                         {item.label}
                       </Link>
                     </Typography>
@@ -303,6 +340,7 @@ export default function ResponsiveAppBar() {
                 ))
               )}
             </AnimatePresence>
+            <ShoppingCartWithBadge itemCount={2}/>
 
             {/* Theme Toggle Button */}
             <IconButton sx={{ color: "inherit" }} onClick={toggleTheme}>

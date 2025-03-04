@@ -4,7 +4,7 @@ import { Box, Button, Typography, useTheme } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import supabase from "../../../utils/supabaseClient";
 import { Formik, Form } from "formik";
-import BillingAddressForm from "../../components/billingAddressForm";
+import BillingAddressForm from "../../components/BillingAddressForm";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 

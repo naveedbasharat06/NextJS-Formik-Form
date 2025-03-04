@@ -23,7 +23,7 @@ interface ProductFormFieldsProps {
 const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
   return (
     <Grid container spacing={2}>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Product Name"
           name="name"
@@ -33,7 +33,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           required
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Description"
           name="description"
@@ -44,7 +44,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           rows={3}
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Price"
           name="price"
@@ -56,7 +56,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           inputProps={{ step: "0.01" }}
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Stock"
           name="stock"
@@ -67,7 +67,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           required
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Product Code"
           name="product_code"
@@ -76,7 +76,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           fullWidth
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Manufacturer"
           name="manufacturer"
@@ -85,7 +85,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           fullWidth
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Warranty Period (Months)"
           name="warranty_period"
@@ -94,7 +94,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           fullWidth
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <TextField
           label="Shipping Weight (kg)"
           name="shipping_weight"
@@ -103,7 +103,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           fullWidth
         />
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <FormControl fullWidth>
           <InputLabel>Product Condition</InputLabel>
           <Select
@@ -118,7 +118,7 @@ const ProductFormFields: React.FC<ProductFormFieldsProps> = ({ formik }) => {
           </Select>
         </FormControl>
       </Grid>
-      <Grid size={20}>
+      <Grid size={6}>
         <FormControl fullWidth>
           <InputLabel>Availability Status</InputLabel>
           <Select

@@ -9,7 +9,7 @@ import { GridRowsProp } from "@mui/x-data-grid";
 import ProductEditModalComponent from "../../components/ProductsEditModal";
 import SuccessSnackbar from "../../components/SuccessSnackbar";
 import DeleteModalComponent from "../../components/DeleteModalComponent";
-import { SnackbarCloseReason } from "@mui/material";
+import { Box, SnackbarCloseReason } from "@mui/material";
 
 function Page() {
   const [rows, setRows] = useState<GridRowsProp>([]);
@@ -125,11 +125,14 @@ function Page() {
   return (
     <>
       <ProtectRoutes>
+        <Box sx={{margin:4}}>
+
         <DataGridComponent
           rows={rows}
           columns={columns}
           AddProductsButton={true} // Only the additional button will show
-        />
+          />
+          </Box>
    { updatedRow && (
     <ProductEditModalComponent
       openEditModal={openEditModal}

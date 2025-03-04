@@ -132,6 +132,7 @@ const Page = () => {
       .update({
         email: updatedRow.email,
         role: updatedRow.role,
+        display_name:updatedRow.display_name
          // Add display_name here
       })
       .eq("id", updatedRow.id);

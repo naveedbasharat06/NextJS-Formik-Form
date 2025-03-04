@@ -132,7 +132,7 @@ const page: React.FC = () => {
     
     <Box
       sx={{
-        marginTop: "250px",
+       
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -147,6 +147,7 @@ const page: React.FC = () => {
       >
         <Box
           sx={{
+            marginTop: "150px",
             maxWidth: 600,
             padding: 2,
             borderRadius: 2,
