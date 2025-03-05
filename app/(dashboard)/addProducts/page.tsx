@@ -1,8 +1,16 @@
-"use client"
+"use client";
 import React, { useEffect } from "react";
 import supabase from "../../../utils/supabaseClient";
 import { useFormik } from "formik";
-import { Button, Typography, Container, Snackbar, Alert, Box, useTheme } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Container,
+  Snackbar,
+  Alert,
+  Box,
+  useTheme,
+} from "@mui/material";
 import { motion } from "framer-motion";
 import ProductFormFields from "../../components/ProductFormFields";
 import ImagePicker from "../../components/ImagePicker"; // Import the new ImagePicker component
@@ -31,7 +39,9 @@ const page: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
       }
@@ -129,81 +139,78 @@ const page: React.FC = () => {
 
   return (
     <>
-    
-    <Box
-      sx={{
-       
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        width: "98vw",
-      }}
-    >
-      <motion.div
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "98vw",
+        }}
       >
-        <Box
-          sx={{
-            marginTop: "150px",
-            maxWidth: 600,
-            padding: 2,
-            borderRadius: 2,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
-            transition: "transform 0.3s ease-in-out",
-            "&:hover": {
-              transform: "scale(1.02)",
-            },
-          }}
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <Container maxWidth="sm">
-            <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-              Add a New Product
-            </Typography>
-            <form onSubmit={formik.handleSubmit}>
-              <ProductFormFields formik={formik} />
-              <Box sx={{ mt: 2, mb: 2 }}>
-                <ImagePicker onImageChange={setImageFile} />
-              </Box>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={loading || !userId}
-                fullWidth
-                sx={{ mt: 2, backgroundColor: theme.palette.secondary.main }}
-              >
-                {loading ? "Saving..." : "Save Product"}
-              </Button>
-            </form>
-         
-          </Container>
-        </Box>
-      </motion.div>
-    </Box>
+          <Box
+            sx={{
+              marginTop: 8,
+              maxWidth: 600,
+              padding: 2,
+              borderRadius: 2,
+              backgroundColor: theme.palette.background.paper,
+              boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
+              transition: "transform 0.3s ease-in-out",
+              "&:hover": {
+                transform: "scale(1.02)",
+              },
+            }}
+          >
+            <Container maxWidth="sm">
+              <Typography variant="h5" align="center" sx={{ mb: 2 }}>
+                Add a New Product
+              </Typography>
+              <form onSubmit={formik.handleSubmit}>
+                <ProductFormFields formik={formik} />
+                <Box sx={{ mt: 2, mb: 2 }}>
+                  <ImagePicker onImageChange={setImageFile} />
+                </Box>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={loading || !userId}
+                  fullWidth
+                  sx={{ mt: 2, backgroundColor: theme.palette.secondary.main }}
+                >
+                  {loading ? "Saving..." : "Save Product"}
+                </Button>
+              </form>
+            </Container>
+          </Box>
+        </motion.div>
+      </Box>
 
-<Snackbar
-open={success}
-autoHideDuration={6000}
-onClose={handleCloseSnackbar}
->
-<Alert onClose={handleCloseSnackbar} severity="success">
-  Product saved successfully!
-</Alert>
-</Snackbar>
-<Snackbar
-open={!!error}
-autoHideDuration={6000}
-onClose={handleCloseSnackbar}
->
-<Alert onClose={handleCloseSnackbar} severity="error">
-  {error}
-</Alert>
-</Snackbar>
-</>
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          Product saved successfully!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

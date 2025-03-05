@@ -10,10 +10,13 @@ import {
   Container,
   Button,
   SnackbarCloseReason,
+  CircularProgress,
+  Box,
+  useTheme,
 } from "@mui/material";
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../store/cart/cartSlice'; // Adjust the import path
-import { AppDispatch, RootState } from '../../store';
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/cart/cartSlice"; // Adjust the import path
+import { AppDispatch, RootState } from "../../store/store";
 import SuccessSnackbar from "../../components/SuccessSnackbar";
 
 interface Product {
@@ -27,9 +30,10 @@ interface Product {
 const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch<AppDispatch>(); 
-  const [snackString,setSnackString]=useState("")
+  const dispatch = useDispatch<AppDispatch>();
+  const [snackString, setSnackString] = useState("");
   const [snackOpen, setSnackOpen] = useState(false);
+  const theme = useTheme();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -65,114 +69,132 @@ const Shop: React.FC = () => {
   const handleBuyNow = (product: Product) => {
     dispatch(addToCart(product)); // Dispatch the addToCart action
     setSnackString(`${product.name} added to cart!`);
-    setSnackOpen(true)
+    setSnackOpen(true);
   };
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
+  // if (loading) {
+  //   return <Typography>Loading...</Typography>;
+  // }
 
   return (
-      <>
-    <Container sx={{ py: 4 }}>
-      <Typography
-        variant="h4"
-        component="h1"
-        gutterBottom
-        sx={{ textAlign: "center", mb: 4 }}
-      >
-        Our Products
-      </Typography>
-      <Grid container spacing={4}>
-        {products.map((product) => (
-          <Grid size={3} key={product.id}>
-            <Card
-              sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                borderRadius: 2,
-                boxShadow: 3,
-                transition: "transform 0.3s, box-shadow 0.3s",
-                "&:hover": {
-                  transform: "scale(1.05)",
-                  boxShadow: 6,
-                },
-              }}
-            >
-              {product.image_url && (
-                <CardMedia
-                  component="img"
-                  height="150"
-                
-                  image={product.image_url}
-                  alt={product.name}
-                  sx={{ objectFit: "cover" }}
-                />
-              )}
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography
-                  variant="h6"
-                  component="h2"
-                  gutterBottom
-                  sx={{ fontWeight: "bold" }}
-                >
-                  {product.name}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  gutterBottom
-                  sx={{ mb: 2 }}
-                >
-                  {product.description}
-                </Typography>
-              </CardContent>
-              {/* Price at the bottom of the card */}
-              <CardContent
-                sx={{
-                  borderTop: "1px solid #e0e0e0",
-                  paddingTop: 2,
-                  paddingBottom: 2,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  component="h2"
-                  gutterBottom
-                  sx={{ fontWeight: "bold", textAlign: "right" }}
-                >
-                  ${product.price.toFixed(2)}
-                </Typography>
-                <Button
-                  variant="contained"
-                  fullWidth
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh", // Full viewport height
+            width: "100vw",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Container sx={{ py: 4 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            sx={{ textAlign: "center", mb: 4 }}
+          >
+            Our Products
+          </Typography>
+          <Grid container spacing={4}>
+            {products.map((product) => (
+              <Grid size={3} key={product.id}>
+                <Card
                   sx={{
-                    
-                    backgroundColor: "primary.main",
-                    color: "white",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    boxShadow: 3,
+                    transition: "transform 0.3s, box-shadow 0.3s",
                     "&:hover": {
-                      backgroundColor: "primary.dark",
+                      transform: "scale(1.05)",
+                      boxShadow: 6,
                     },
                   }}
-                  onClick={() => handleBuyNow(product)}
                 >
-                  BUY NOW
-                </Button>
-              </CardContent>
-            </Card>
+                  {product.image_url && (
+                    <CardMedia
+                      component="img"
+                      height="150"
+                      image={product.image_url}
+                      alt={product.name}
+                      sx={{ objectFit: "cover" }}
+                    />
+                  )}
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant="h6"
+                      component="h2"
+                      gutterBottom
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                      sx={{
+                        mb: 2,
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 2, // Limit to 2 lines
+                        overflow: "hidden", // Hide overflow text
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {product.description}
+                    </Typography>
+                  </CardContent>
+                  {/* Price at the bottom of the card */}
+                  <CardContent
+                    sx={{
+                      borderTop: "1px solid #e0e0e0",
+                      paddingTop: 2,
+                      paddingBottom: 2,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      component="h2"
+                      gutterBottom
+                      sx={{ fontWeight: "bold", textAlign: "right" }}
+                    >
+                      ${product.price.toFixed(2)}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        backgroundColor: theme.palette.secondary.main,
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "primary.dark",
+                        },
+                      }}
+                      onClick={() => handleBuyNow(product)}
+                    >
+                      ADD TO Cart
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-    </Container>
-    <SuccessSnackbar
+        </Container>
+      )}
+
+      <SuccessSnackbar
         handleClose={handleClose}
         openSnackbar={snackOpen}
-        alertMessage={
-       snackString
-        }
+        alertMessage={snackString}
       />
-</>  
-);
+    </>
+  );
 };
 
 export default Shop;

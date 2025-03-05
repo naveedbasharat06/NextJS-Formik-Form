@@ -18,14 +18,16 @@ function Page() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [updatedRow, setUpdatedRow] = useState<any>(null);
   const [open, setOpen] = useState(false);
-    const [snackOpen, setSnackOpen] = useState(false);
-    const [snackString, setSnackString] = useState<string>("");
-      const [deleteid, setDeleteid] = useState<number>(0);
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackString, setSnackString] = useState<string>("");
+  const [deleteid, setDeleteid] = useState<number>(0);
 
   // Fetch the current user's ID and role
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id); // Set the user ID
 
@@ -81,7 +83,10 @@ function Page() {
   };
 
   const confirmDelete = async () => {
-    const { error } = await supabase.from("products").delete().eq("id", deleteid);
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", deleteid);
     if (error) {
       console.error(error);
     } else {
@@ -109,15 +114,15 @@ function Page() {
       setOpenEditModal(false);
     }
   };
-    const handleClose = (
-      event?: React.SyntheticEvent | Event,
-      reason?: SnackbarCloseReason
-    ) => {
-      if (reason === "clickaway") {
-        return;
-      }
-      setSnackOpen(false);
-    };
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackOpen(false);
+  };
 
   // Get columns for the products table
   const columns = getProductColumns(handleEditOpen, handleDelete);
@@ -125,36 +130,32 @@ function Page() {
   return (
     <>
       <ProtectRoutes>
-        <Box sx={{margin:4}}>
-
-        <DataGridComponent
-          rows={rows}
-          columns={columns}
-          AddProductsButton={true} // Only the additional button will show
+        <Box sx={{ margin: 4 }}>
+          <DataGridComponent
+            rows={rows}
+            columns={columns}
+            AddProductsButton={true} // Only the additional button will show
           />
-          </Box>
-   { updatedRow && (
-    <ProductEditModalComponent
-      openEditModal={openEditModal}
-      handleEditClose={() => setOpenEditModal(false)}
-      updatedRow={updatedRow}
-      handleSaveRow={handleSaveRow}
-    />
-  )};
-
-
-<DeleteModalComponent
-        open={open}
-        setOpen={setOpen}
-        confirmDelete={confirmDelete}
-      />
-      <SuccessSnackbar
-        handleClose={handleClose}
-        openSnackbar={snackOpen}
-        alertMessage={
-       snackString
-        }
-      />
+        </Box>
+        {updatedRow && (
+          <ProductEditModalComponent
+            openEditModal={openEditModal}
+            handleEditClose={() => setOpenEditModal(false)}
+            updatedRow={updatedRow}
+            handleSaveRow={handleSaveRow}
+          />
+        )}
+        ;
+        <DeleteModalComponent
+          open={open}
+          setOpen={setOpen}
+          confirmDelete={confirmDelete}
+        />
+        <SuccessSnackbar
+          handleClose={handleClose}
+          openSnackbar={snackOpen}
+          alertMessage={snackString}
+        />
       </ProtectRoutes>
     </>
   );

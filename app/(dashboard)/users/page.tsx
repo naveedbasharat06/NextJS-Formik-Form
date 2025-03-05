@@ -21,7 +21,6 @@ const Page = () => {
   const [snackString, setSnackString] = useState("");
   // const [role,setRole]=useState("")
 
-
   useEffect(() => {
     const fetchUser = async () => {
       const { data: session } = await supabase.auth.getSession();
@@ -36,27 +35,27 @@ const Page = () => {
         if (!session?.session) {
           throw new Error("User not logged in");
         }
-    
+
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("id, email, role, display_name") // Add display_name here
           .eq("id", session.session.user.id)
           .single();
-    
+
         if (profileError) {
           throw profileError;
         }
-    
+
         // If the user is an admin, fetch all profiles
         if (profile.role === "admin") {
           const { data: allProfiles, error: allProfilesError } = await supabase
             .from("profiles")
             .select("id, email, role, display_name"); // Add display_name here
-    
+
           if (allProfilesError) {
             throw allProfilesError;
           }
-    
+
           setRows(
             allProfiles.map((p) => ({
               id: p.id,
@@ -88,14 +87,8 @@ const Page = () => {
   }, []);
 
   const handleEditOpen = (row: any) => {
-    
-      setUpdatedRow(row);
-      setOpenEditModal(true);
-    
-    
-  
-
-    
+    setUpdatedRow(row);
+    setOpenEditModal(true);
   };
 
   const handleEditClose = () => {
@@ -108,35 +101,38 @@ const Page = () => {
       console.error("User not logged in");
       return;
     }
-  
+
     // Fetch the current user's profile to check their role
     const { data: currentUserProfile, error: profileError } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", session.session.user.id)
       .single();
-  
+
     if (profileError) {
       console.error("Error fetching current user's profile:", profileError);
       return;
     }
-  
+
     // If the user is not an admin, ensure they can only update their own profile
-    if (currentUserProfile.role !== "admin" && updatedRow.id !== session.session.user.id) {
+    if (
+      currentUserProfile.role !== "admin" &&
+      updatedRow.id !== session.session.user.id
+    ) {
       console.error("Unauthorized: You can only update your own profile");
       return;
     }
-  
+
     const { error } = await supabase
       .from("profiles")
       .update({
         email: updatedRow.email,
         role: updatedRow.role,
-        display_name:updatedRow.display_name
-         // Add display_name here
+        display_name: updatedRow.display_name,
+        // Add display_name here
       })
       .eq("id", updatedRow.id);
-  
+
     if (error) {
       console.error(error);
     } else {
@@ -210,14 +206,11 @@ const Page = () => {
         handleEditClose={handleEditClose}
         updatedRow={updatedRow}
         handleSaveRow={handleSaveRow}
-
       />
       <SuccessSnackbar
         handleClose={handleClose}
         openSnackbar={snackOpen}
-        alertMessage={
-        snackString
-        }
+        alertMessage={snackString}
       />
     </ProtectedRoute>
   );

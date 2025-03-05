@@ -1,7 +1,7 @@
 // components/ShoppingCartWithBadge.tsx
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { RootState } from '../store/store';
 import { Badge, IconButton } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ShoppingCartModal from './ShoppingCartModal';

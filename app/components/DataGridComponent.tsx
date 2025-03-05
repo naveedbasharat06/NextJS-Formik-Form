@@ -11,7 +11,6 @@ import Link from "next/link";
 import { useMediaQuery } from "@mui/material";
 import gsap from "gsap";
 
-
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
@@ -24,7 +23,7 @@ interface DataGridComponentProps {
   saveLocation?: () => void;
   showUserButton?: boolean;
   AddProductsButton?: boolean; // New prop for additional button
- // Handler for additional button click
+  // Handler for additional button click
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
@@ -39,7 +38,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   saveLocation,
   showUserButton = false, // Default to false
   AddProductsButton = false, // Default to false
- // Handler for additional button click
+  // Handler for additional button click
 }) => {
   const theme = useTheme(); // Access the theme
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -51,10 +50,10 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
     shippingName: false,
     latitude: false,
     longitude: false,
-    product_code:false,
-    manufacturer:false,
-    warranty_period:false,
-    shipping_weight:false,
+    product_code: false,
+    manufacturer: false,
+    warranty_period: false,
+    shipping_weight: false,
     id: isMobile ? false : true, // Hide ID column in mobile view
   };
 
@@ -104,7 +103,9 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
       {!showUserButton && (
         <>
           {showButton ? (
-            <Box sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}
+            >
               <Button
                 variant="contained"
                 sx={{ backgroundColor: theme.palette.secondary.main }} // Use theme's primary color
@@ -131,8 +132,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                   <>
                     <Fade in={showDragableMarker || isGeolocateActive}>
                       <Button
-                      onClick={handleSaveLocation}
-                      
+                        onClick={handleSaveLocation}
                         sx={{
                           marginRight: 1,
                           padding: "8px 16px",
@@ -185,27 +185,25 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                 {/* Conditionally render the additional button */}
                 {AddProductsButton && (
                   <Link href={"./addProducts"}>
-          
-                  <Button
-                  
-                    sx={{
-                      marginLeft: 1,
-                      padding: "8px 16px",
-                      backgroundColor: theme.palette.secondary.main, // Use theme's primary color
-                      color: "white",
-                      fontWeight: "bold",
-                      borderRadius: "8px",
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
-                        transform: "scale(1.05)",
-                        transition: "transform 0.2s ease-in-out",
-                      },
-                      boxShadow: theme.shadows[3], // Use theme's shadow
-                    }}
-                  >
-                    NEW PRODUCT
-                  </Button>
+                    <Button
+                      sx={{
+                        marginLeft: 1,
+                        padding: "8px 16px",
+                        backgroundColor: theme.palette.secondary.main, // Use theme's primary color
+                        color: "white",
+                        fontWeight: "bold",
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                          transform: "scale(1.05)",
+                          transition: "transform 0.2s ease-in-out",
+                        },
+                        boxShadow: theme.shadows[3], // Use theme's shadow
+                      }}
+                    >
+                      NEW PRODUCT
+                    </Button>
                   </Link>
                 )}
               </Box>

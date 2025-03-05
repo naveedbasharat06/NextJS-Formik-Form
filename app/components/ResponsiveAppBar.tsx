@@ -12,7 +12,7 @@ import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useThemeContext } from "./ThemeRegistry";
 import { motion, AnimatePresence } from "framer-motion";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingCartWithBadge from "./ShoppingCartWithBadge";
 
 export default function ResponsiveAppBar() {
@@ -31,10 +31,10 @@ export default function ResponsiveAppBar() {
       if (sessionData?.session) {
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("display_name, role") // Fetch role along with display_name
+          .select("display_name, role,photo_url") // Fetch role along with display_name
           .eq("id", sessionData.session.user.id)
           .single();
-  
+
         if (error) {
           console.error("Error fetching profile:", error);
         } else {
@@ -42,28 +42,31 @@ export default function ResponsiveAppBar() {
             ...sessionData.session,
             user: {
               ...sessionData.session.user,
-              display_name: profile?.display_name || sessionData.session.user.email,
+              display_name:
+                profile?.display_name || sessionData.session.user.email,
               role: profile?.role, // Add role to session object
+              photo_url: profile?.photo_url,
             },
           });
         }
       }
       setLoading(false);
     };
-  
+
     fetchSession();
-  
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        fetchSession();
-      } else {
-        setSession(null);
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          fetchSession();
+        } else {
+          setSession(null);
+        }
       }
-    });
-  
+    );
+
     return () => listener.subscription.unsubscribe();
   }, [router]);
-  
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -155,36 +158,36 @@ export default function ResponsiveAppBar() {
               </Link>
             </Typography>
             <AnimatePresence>
-            {session && (
-               <motion.div
-               initial={{ opacity: 0, x: -20 }}
-               animate={{ opacity: 1, x: 0 }}
-               exit={{ opacity: 0, x: -20 }}
-               transition={{ duration: 0.3 }}
-             >
-            <Typography
-              variant="h6"
-              sx={{
-                cursor: "pointer",
-                color: "inherit",
-                opacity: pathname === "/products" ? 1 : 0.9,
-                transition: "opacity 0.3s, border-bottom 0.3s",
-                "&:hover": { opacity: 1 },
-                borderBottom:
-                  pathname === "/products"
-                    ? "2px solid #ffffff80"
-                    : "2px solid transparent",
-                padding: "6px 0",
-              }}
-            >
-              <Link
-                href="/products"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                Products
-              </Link>
-            </Typography>
-            </motion.div>
+              {session && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      cursor: "pointer",
+                      color: "inherit",
+                      opacity: pathname === "/products" ? 1 : 0.9,
+                      transition: "opacity 0.3s, border-bottom 0.3s",
+                      "&:hover": { opacity: 1 },
+                      borderBottom:
+                        pathname === "/products"
+                          ? "2px solid #ffffff80"
+                          : "2px solid transparent",
+                      padding: "6px 0",
+                    }}
+                  >
+                    <Link
+                      href="/products"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      Products
+                    </Link>
+                  </Typography>
+                </motion.div>
               )}
             </AnimatePresence>
             {/* New "Users" Nav Item (Visible Only for Logged-In Users) */}
@@ -222,35 +225,38 @@ export default function ResponsiveAppBar() {
               )}
             </AnimatePresence>
             <AnimatePresence>
-  {session && session.user.role === "admin" && (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
-    >
-      <Typography
-        variant="h6"
-        sx={{
-          cursor: "pointer",
-          color: "inherit",
-          opacity: pathname === "/userRoles" ? 1 : 0.9,
-          transition: "opacity 0.3s, border-bottom 0.3s",
-          "&:hover": { opacity: 1 },
-          borderBottom:
-            pathname === "/userRoles"
-              ? "2px solid #ffffff80"
-              : "2px solid transparent",
-          padding: "6px 0",
-        }}
-      >
-        <Link href="/userRoles" style={{ textDecoration: "none", color: "inherit" }}>
-          User Roles
-        </Link>
-      </Typography>
-    </motion.div>
-  )}
-</AnimatePresence>
+              {session && session.user.role === "admin" && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      cursor: "pointer",
+                      color: "inherit",
+                      opacity: pathname === "/userRoles" ? 1 : 0.9,
+                      transition: "opacity 0.3s, border-bottom 0.3s",
+                      "&:hover": { opacity: 1 },
+                      borderBottom:
+                        pathname === "/userRoles"
+                          ? "2px solid #ffffff80"
+                          : "2px solid transparent",
+                      padding: "6px 0",
+                    }}
+                  >
+                    <Link
+                      href="/userRoles"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      User Roles
+                    </Link>
+                  </Typography>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Box>
 
           {/* Auth Links or User Info */}
@@ -272,10 +278,31 @@ export default function ResponsiveAppBar() {
                     </Typography>
                   </motion.div>
 
-                 
+                  {/* Profile Image or Icon */}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {session.user.photo_url ? (
+                      <img
+                        src={session.user.photo_url}
+                        alt="Profile"
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <AccountCircleIcon
+                        sx={{ fontSize: 40, color: "inherit" }}
+                      />
+                    )}
+                  </motion.div>
 
-                  
-            
+                  {/* Logout Button */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -332,7 +359,6 @@ export default function ResponsiveAppBar() {
                         href={item.path}
                         style={{ textDecoration: "none", color: "inherit" }}
                       >
-                        
                         {item.label}
                       </Link>
                     </Typography>
@@ -340,16 +366,13 @@ export default function ResponsiveAppBar() {
                 ))
               )}
             </AnimatePresence>
-            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-  {/* Other components */}
-  <ShoppingCartWithBadge />
-  <IconButton sx={{ color: 'inherit' }} onClick={toggleTheme}>
-    {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-  </IconButton>
-</Box>
-
-            {/* Theme Toggle Button */}
-            
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+              {/* Other components */}
+              <ShoppingCartWithBadge />
+              <IconButton sx={{ color: "inherit" }} onClick={toggleTheme}>
+                {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
