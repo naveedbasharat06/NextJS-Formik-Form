@@ -340,12 +340,16 @@ export default function ResponsiveAppBar() {
                 ))
               )}
             </AnimatePresence>
-            <ShoppingCartWithBadge itemCount={2}/>
+            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+  {/* Other components */}
+  <ShoppingCartWithBadge />
+  <IconButton sx={{ color: 'inherit' }} onClick={toggleTheme}>
+    {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+  </IconButton>
+</Box>
 
             {/* Theme Toggle Button */}
-            <IconButton sx={{ color: "inherit" }} onClick={toggleTheme}>
-              {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
-            </IconButton>
+            
           </Box>
         </Toolbar>
       </AppBar>

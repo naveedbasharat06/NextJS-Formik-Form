@@ -1,30 +1,35 @@
-import React from "react";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Badge, Box, IconButton, styled } from "@mui/material";
-import { color } from "framer-motion";
-import { Margin } from "@mui/icons-material";
+// components/ShoppingCartWithBadge.tsx
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { Badge, IconButton } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartModal from './ShoppingCartModal';
 
-// Styled component for the badge (optional customization)
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    right: -3,
-    top: 13,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: "0 4px",
+const ShoppingCartWithBadge: React.FC = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
+  // Calculate total item count (including quantities)
+  const totalItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  },
-}));
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
 
-const ShoppingCartWithBadge: React.FC<{ itemCount: number }> = ({ itemCount }) => {
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
   return (
-<Box sx={{margin:1}}>
-
-      <StyledBadge badgeContent={itemCount} color="secondary">
-        <ShoppingCartIcon  />
-      </StyledBadge>
-</Box>
-
+    <>
+      <IconButton color="inherit" onClick={handleOpenModal}>
+        <Badge badgeContent={totalItemCount} color="error">
+          <ShoppingCartIcon />
+        </Badge>
+      </IconButton>
+      <ShoppingCartModal open={modalOpen} onClose={handleCloseModal} />
+    </>
   );
 };
 

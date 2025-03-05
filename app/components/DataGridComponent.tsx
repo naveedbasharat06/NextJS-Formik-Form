@@ -131,6 +131,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                   <>
                     <Fade in={showDragableMarker || isGeolocateActive}>
                       <Button
+                      onClick={handleSaveLocation}
                       
                         sx={{
                           marginRight: 1,

@@ -7,7 +7,6 @@ const Map = dynamic(() => import("../../components/map"), {
 export default function LocateYourself() {
   return (
     <div>
-      {/* <h1>Locate Yourself</h1> */}
       <Map />
     </div>
   );

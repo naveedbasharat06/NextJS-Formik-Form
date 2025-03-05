@@ -11,6 +11,7 @@ import SuccessSnackbar from "./components/SuccessSnackbar";
 import { Box, CircularProgress } from "@mui/material";
 import { motion } from "framer-motion";
 
+
 const Page: React.FC = () => {
   const [rows, setRows] = useState<GridRowsProp>([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +114,7 @@ const Page: React.FC = () => {
         >
           <DataGridComponent rows={rows} columns={columns} showButton={true} />
         </motion.div>)}
+        {/* <Cart /> */}
     
 
 

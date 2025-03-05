@@ -9,7 +9,12 @@ import {
   Typography,
   Container,
   Button,
+  SnackbarCloseReason,
 } from "@mui/material";
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../store/cart/cartSlice'; // Adjust the import path
+import { AppDispatch, RootState } from '../../store';
+import SuccessSnackbar from "../../components/SuccessSnackbar";
 
 interface Product {
   id: string;
@@ -19,10 +24,12 @@ interface Product {
   image_url: string;
 }
 
-const ProductsPage: React.FC = () => {
+const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const dispatch = useDispatch<AppDispatch>(); 
+  const [snackString,setSnackString]=useState("")
+  const [snackOpen, setSnackOpen] = useState(false);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -46,23 +53,38 @@ const ProductsPage: React.FC = () => {
     fetchProducts();
   }, []);
 
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackOpen(false);
+  };
+  const handleBuyNow = (product: Product) => {
+    dispatch(addToCart(product)); // Dispatch the addToCart action
+    setSnackString(`${product.name} added to cart!`);
+    setSnackOpen(true)
+  };
   if (loading) {
     return <Typography>Loading...</Typography>;
   }
 
   return (
+      <>
     <Container sx={{ py: 4 }}>
       <Typography
         variant="h4"
         component="h1"
         gutterBottom
-        sx={{  textAlign: "center", mb: 4 }}
+        sx={{ textAlign: "center", mb: 4 }}
       >
         Our Products
       </Typography>
       <Grid container spacing={4}>
         {products.map((product) => (
-          <Grid size={4} key={product.id}>
+          <Grid size={3} key={product.id}>
             <Card
               sx={{
                 height: "100%",
@@ -80,7 +102,8 @@ const ProductsPage: React.FC = () => {
               {product.image_url && (
                 <CardMedia
                   component="img"
-                  height="200"
+                  height="150"
+                
                   image={product.image_url}
                   alt={product.name}
                   sx={{ objectFit: "cover" }}
@@ -103,11 +126,20 @@ const ProductsPage: React.FC = () => {
                 >
                   {product.description}
                 </Typography>
+              </CardContent>
+              {/* Price at the bottom of the card */}
+              <CardContent
+                sx={{
+                  borderTop: "1px solid #e0e0e0",
+                  paddingTop: 2,
+                  paddingBottom: 2,
+                }}
+              >
                 <Typography
-                    variant="h6"
+                  variant="h6"
                   component="h2"
                   gutterBottom
-                  sx={{ fontWeight: "bold" }}
+                  sx={{ fontWeight: "bold", textAlign: "right" }}
                 >
                   ${product.price.toFixed(2)}
                 </Typography>
@@ -115,12 +147,14 @@ const ProductsPage: React.FC = () => {
                   variant="contained"
                   fullWidth
                   sx={{
+                    
                     backgroundColor: "primary.main",
                     color: "white",
                     "&:hover": {
                       backgroundColor: "primary.dark",
                     },
                   }}
+                  onClick={() => handleBuyNow(product)}
                 >
                   BUY NOW
                 </Button>
@@ -130,7 +164,15 @@ const ProductsPage: React.FC = () => {
         ))}
       </Grid>
     </Container>
-  );
+    <SuccessSnackbar
+        handleClose={handleClose}
+        openSnackbar={snackOpen}
+        alertMessage={
+       snackString
+        }
+      />
+</>  
+);
 };
 
-export default ProductsPage;
+export default Shop;

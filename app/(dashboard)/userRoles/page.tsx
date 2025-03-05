@@ -39,7 +39,7 @@ const Page = () => {
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("id, email, role")
+          .select("id, email, role,display_name")
           .eq("id", session.session.user.id)
           .single();
 
@@ -52,7 +52,7 @@ const Page = () => {
         if (profile.role === "admin") {
           const { data: allProfiles, error: allProfilesError } = await supabase
             .from("profiles")
-            .select("id, email, role");
+            .select("id, email, role,display_name");
 
           if (allProfilesError) {
             throw allProfilesError;
@@ -62,6 +62,7 @@ const Page = () => {
             allProfiles.map((p) => ({
               id: p.id,
               email: p.email,
+              display_name: p.display_name || "",
               role: p.role || "visitor", // Default to 'visitor' if role is null
             }))
           );
@@ -71,6 +72,7 @@ const Page = () => {
             {
               id: profile.id,
               email: profile.email,
+              display_name: profile.display_name || "",
               role: profile.role || "visitor",
             },
           ]);

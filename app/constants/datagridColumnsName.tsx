@@ -60,6 +60,13 @@ export const getColumns4 = (
       headerClassName: "super-app-theme--header",
     },
     {
+      field: "display_name", // Add display_name column
+      headerName: "Display Name",
+      flex: 1,
+      sortable: false,
+      headerClassName: "super-app-theme--header",
+    },
+    {
       field: "role",
       headerName: "User Role",
       flex: 1,
