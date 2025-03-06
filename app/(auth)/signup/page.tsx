@@ -50,7 +50,8 @@ const SignupPage: React.FC = () => {
               password: values.password,
               options: {
                 data: { display_name: values.name },
-                emailRedirectTo: "http://localhost:3000/", // Store 'name' in user metadata
+                emailRedirectTo:
+                  "https://next-js-formik-form-git-master-naveedbasharat06s-projects.vercel.app/VerificationSuccess", // Store 'name' in user metadata
               },
             });
 
@@ -59,8 +60,6 @@ const SignupPage: React.FC = () => {
             }
 
             if (data.user) {
-
-       
               setTimeout(() => {
                 router.push("/login");
               }, 3000);
@@ -89,98 +88,98 @@ const SignupPage: React.FC = () => {
                 height: "100vh", // Full viewport height
               }}
             >
-                      <motion.div
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}>
-
-              <Box
-                sx={{
-                  width: 400,
-                  padding: 2,
-                  borderRadius: 2,
-                  backgroundColor: theme.palette.background.paper,
-                  boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Blue glow shadow
-                  transition: "transform 0.3s ease-in-out",
-                  "&:hover": {
-                    transform: "scale(1.02)", // Slight hover effect
-                  },
-                }}
+              <motion.div
+                initial={{ y: -50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
               >
-                <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-                  Sign Up
-                </Typography>
-
-                {errorMessage && (
-                  <Typography color="error" align="center" sx={{ mb: 2 }}>
-                    {errorMessage}
+                <Box
+                  sx={{
+                    width: 400,
+                    padding: 2,
+                    borderRadius: 2,
+                    backgroundColor: theme.palette.background.paper,
+                    boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Blue glow shadow
+                    transition: "transform 0.3s ease-in-out",
+                    "&:hover": {
+                      transform: "scale(1.02)", // Slight hover effect
+                    },
+                  }}
+                >
+                  <Typography variant="h5" align="center" sx={{ mb: 2 }}>
+                    Sign Up
                   </Typography>
-                )}
 
-                <Grid container spacing={2}>
-                  <Grid size={20}>
-                    <TextField
-                      label="Name"
-                      name="name"
-                      value={values.name}
-                      onChange={handleChange}
-                      fullWidth
-                      required
-                      sx={{ marginTop: 1.5 }}
+                  {errorMessage && (
+                    <Typography color="error" align="center" sx={{ mb: 2 }}>
+                      {errorMessage}
+                    </Typography>
+                  )}
+
+                  <Grid container spacing={2}>
+                    <Grid size={20}>
+                      <TextField
+                        label="Name"
+                        name="name"
+                        value={values.name}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                        sx={{ marginTop: 1.5 }}
                       />
-                  </Grid>
-                  <Grid size={12}>
-                    <TextField
-                      label="Email"
-                      name="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      fullWidth
-                      required
-                      type="email"
+                    </Grid>
+                    <Grid size={12}>
+                      <TextField
+                        label="Email"
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                        type="email"
                       />
+                    </Grid>
+                    <Grid size={12}>
+                      <TextField
+                        label="Password"
+                        fullWidth
+                        required
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={values.password}
+                        onChange={handleChange}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={12}>
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        disabled={isSubmitting}
+                        sx={{ background: theme.palette.secondary.main }}
+                      >
+                        {isSubmitting ? "Signing up..." : "Sign Up"}
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid size={12}>
-                    <TextField
-                      label="Password"
-                      fullWidth
-                      required
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={values.password}
-                      onChange={handleChange}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={12}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      disabled={isSubmitting}
-                      sx={{ background: theme.palette.secondary.main }}
-                    >
-                      {isSubmitting ? "Signing up..." : "Sign Up"}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Box>
-        </motion.div>
+                </Box>
+              </motion.div>
             </Box>
           </Form>
         )}
