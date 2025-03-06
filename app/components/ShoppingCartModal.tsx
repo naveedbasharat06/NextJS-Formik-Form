@@ -53,7 +53,7 @@ const ShoppingCartModal: React.FC<ShoppingCartModalProps> = ({
     try {
       // Call the backend to create a Checkout Session
       const response = await fetch(
-        "http://localhost:3001/create-checkout-session",
+        "https://nodejs-backend-ob7w.onrender.com/create-checkout-session",
         {
           method: "POST",
           headers: {
