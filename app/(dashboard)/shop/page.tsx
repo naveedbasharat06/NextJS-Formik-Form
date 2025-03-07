@@ -162,7 +162,7 @@ const Shop: React.FC = () => {
                       variant="h6"
                       component="h2"
                       gutterBottom
-                      sx={{ fontWeight: "bold", textAlign: "right" }}
+                      sx={{  textAlign: "right" }}
                     >
                       ${product.price.toFixed(2)}
                     </Typography>
