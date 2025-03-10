@@ -1,0 +1,26 @@
+services:
+  backend:
+    container_name: node_backend
+    build:
+      context: ./NodeJS-Backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./NodeJS-Backend:/app
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+    command: node server.js
+
+  frontend:
+    container_name: nextjs_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
