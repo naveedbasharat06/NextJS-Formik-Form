@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, TextField, Typography, Box, Container } from "@mui/material";
 import supabase from "../../../utils/supabaseClient";
@@ -110,4 +110,10 @@ const VerifyPage: React.FC = () => {
   );
 };
 
-export default VerifyPage;
+export default function WrappedVerifyPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyPage />
+    </Suspense>
+  );
+}
