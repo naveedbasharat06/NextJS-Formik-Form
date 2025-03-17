@@ -11,11 +11,25 @@ import {
 import BillingAddressForm from "./BillingAddressForm";
 import { Formik, Form } from "formik";
 
+// Define a proper interface for the form data
+interface FormData {
+  id: number;
+  name: string;
+  address: string;
+  shippingName: string;
+  shippingAddress: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  isDifferentShipping: boolean;
+  [key: string]: any; // For any additional fields
+}
+
 interface EditModalComponentProps {
   openEditModal: boolean;
   handleEditClose: () => void;
-  updatedRow: any;
-  handleSaveRow: (updatedRow: any) => void;
+  updatedRow: FormData;
+  handleSaveRow: (updatedRow: FormData) => void;
 }
 
 const EditModalComponent: React.FC<EditModalComponentProps> = ({
@@ -26,9 +40,14 @@ const EditModalComponent: React.FC<EditModalComponentProps> = ({
 }) => {
   const theme = useTheme();
   return (
-    <Dialog open={openEditModal} onClose={handleEditClose}>
-      <DialogTitle sx={{ marginBottom: 1 }}>Edit Record</DialogTitle>
-      <DialogContent>
+    <Dialog 
+      open={openEditModal} 
+      onClose={handleEditClose}
+      aria-labelledby="edit-dialog-title"
+      aria-describedby="edit-dialog-description"
+    >
+      <DialogTitle id="edit-dialog-title" sx={{ marginBottom: 1 }}>Edit Record</DialogTitle>
+      <DialogContent id="edit-dialog-description">
         <Formik
           initialValues={updatedRow}
           enableReinitialize
@@ -50,12 +69,14 @@ const EditModalComponent: React.FC<EditModalComponentProps> = ({
                 <Button
                   onClick={handleEditClose}
                   sx={{ color: theme.palette.text.primary }}
+                  aria-label="Cancel edit"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   sx={{ color: theme.palette.text.primary }}
+                  aria-label="Save changes"
                 >
                   Save
                 </Button>

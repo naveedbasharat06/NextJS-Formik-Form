@@ -6,20 +6,24 @@ import {
   FormControlLabel,
   Checkbox,
   useTheme,
+  FormHelperText,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
+// Define a more specific interface for the form values
+interface FormValues {
+  name: string;
+  address: string;
+  shippingName: string;
+  shippingAddress: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  isDifferentShipping: boolean;
+}
+
 interface BillingAddressFormProps {
-  values: {
-    name: string;
-    address: string;
-    shippingName: string;
-    shippingAddress: string;
-    firstname: string;
-    lastname: string;
-    email: string;
-    isDifferentShipping: boolean;
-  };
+  values: FormValues;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlecheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   isDifferentShipping: boolean;
@@ -39,7 +43,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
       setFieldValue("shippingAddress", "");
     }
   }, [isDifferentShipping, setFieldValue]);
+  
   const theme = useTheme();
+  
   return (
     <>
       <Grid container spacing={2}>
@@ -52,6 +58,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
             fullWidth
             required
             sx={{ marginTop: 1.5 }}
+            aria-required="true"
+            aria-label="First Name"
+            inputProps={{ "aria-label": "First Name" }}
           />
         </Grid>
 
@@ -63,6 +72,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
             onChange={handleChange}
             fullWidth
             required
+            aria-required="true"
+            aria-label="Last Name"
+            inputProps={{ "aria-label": "Last Name" }}
           />
         </Grid>
 
@@ -75,6 +87,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
             fullWidth
             required
             type="email"
+            aria-required="true"
+            aria-label="Email"
+            inputProps={{ "aria-label": "Email" }}
           />
         </Grid>
       </Grid>
@@ -86,6 +101,7 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
               checked={isDifferentShipping}
               onChange={handlecheckboxChange}
               name="isDifferentShipping"
+              aria-label="Use different shipping address"
             />
           }
           label="Different Shipping Address"
@@ -94,7 +110,8 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
 
       <Grid container spacing={1}>
         <Grid size={isDifferentShipping ? 6 : 6}>
-          <FormLabel>Billing Address</FormLabel>
+          <FormLabel id="billing-address-label">Billing Address</FormLabel>
+          <FormHelperText>Enter your billing information</FormHelperText>
 
           <TextField
             label="Name"
@@ -104,6 +121,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
             fullWidth
             required
             sx={{ marginTop: 1 }}
+            aria-required="true"
+            aria-labelledby="billing-address-label"
+            inputProps={{ "aria-label": "Billing Name" }}
           />
           <TextField
             label="Address"
@@ -113,12 +133,16 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
             fullWidth
             required
             sx={{ marginTop: 1 }}
+            aria-required="true"
+            aria-labelledby="billing-address-label"
+            inputProps={{ "aria-label": "Billing Address" }}
           />
         </Grid>
 
         {isDifferentShipping && (
           <Grid size={6}>
-            <FormLabel>Shipping Address</FormLabel>
+            <FormLabel id="shipping-address-label">Shipping Address</FormLabel>
+            <FormHelperText>Enter your shipping information</FormHelperText>
             <TextField
               label="Name"
               name="shippingName"
@@ -127,6 +151,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
               fullWidth
               required
               sx={{ marginTop: 1 }}
+              aria-required="true"
+              aria-labelledby="shipping-address-label"
+              inputProps={{ "aria-label": "Shipping Name" }}
             />
             <TextField
               label="Address"
@@ -136,6 +163,9 @@ const BillingAddressForm: React.FC<BillingAddressFormProps> = ({
               fullWidth
               required
               sx={{ marginTop: 1 }}
+              aria-required="true"
+              aria-labelledby="shipping-address-label"
+              inputProps={{ "aria-label": "Shipping Address" }}
             />
           </Grid>
         )}

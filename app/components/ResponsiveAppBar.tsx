@@ -157,6 +157,29 @@ export default function ResponsiveAppBar() {
                 Shop
               </Link>
             </Typography>
+
+            <Typography
+              variant="h6"
+              sx={{
+                cursor: "pointer",
+                color: "inherit",
+                opacity: pathname === "/contactsData" ? 1 : 0.9,
+                transition: "opacity 0.3s, border-bottom 0.3s",
+                "&:hover": { opacity: 1 },
+                borderBottom:
+                  pathname === "/contactsData"
+                    ? "2px solid #ffffff80"
+                    : "2px solid transparent",
+                padding: "6px 0",
+              }}
+            >
+              <Link
+                href="/contactsData"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Contact Data
+              </Link>
+            </Typography>
             <AnimatePresence>
               {session && (
                 <motion.div

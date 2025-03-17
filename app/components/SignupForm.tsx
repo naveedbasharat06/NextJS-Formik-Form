@@ -46,23 +46,23 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
-      .email("Invalid email")
+      .email("Invalid email format")
       .test(
         "email-or-phone",
         "Please provide either an email or a phone number, but not both.",
         function (value) {
           const { phone } = this.parent; // Access sibling field (phone)
-        //   if (value && phone) {
-        //     return this.createError({
-        //       message:
-        //         "Please provide either an email or a phone number, but not both.",
-        //     });
-        //   }
-        //   if (!value && !phone) {
-        //     return this.createError({
-        //       message: "Please provide either an email or a phone number.",
-        //     });
-        //   }
+          if (value && phone) {
+            return this.createError({
+              message:
+                "Please provide either an email or a phone number, but not both.",
+            });
+          }
+          if (!value && !phone) {
+            return this.createError({
+              message: "Please provide either an email or a phone number.",
+            });
+          }
           return true;
         }
       ),
@@ -71,17 +71,17 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
       "Please provide either an email or a phone number, but not both.",
       function (value) {
         const { email } = this.parent; // Access sibling field (email)
-        // if (value && email) {
-        //   return this.createError({
-        //     message:
-        //       "Please provide either an email or a phone number, but not both.",
-        //   });
-        // }
-        // if (!value && !email) {
-        //   return this.createError({
-        //     message: "Please provide either an email or a phone number.",
-        //   });
-        // }
+        if (value && email) {
+          return this.createError({
+            message:
+              "Please provide either an email or a phone number, but not both.",
+          });
+        }
+        if (!value && !email) {
+          return this.createError({
+            message: "Please provide either an email or a phone number.",
+          });
+        }
         return true;
       }
     ),
@@ -160,16 +160,16 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
               }, 3000);
             }
           } catch (error: any) {
-            // setErrorMessage(error.message); // Set error message if an error occurs
-            // setSnackOpen(true);
-            // setSnackString(error.message); // Show error message in snackbar
-            // onError?.(error.message); // Trigger onError callback
+            setErrorMessage(error.message); // Set error message if an error occurs
+            setSnackOpen(true);
+            setSnackString(error.message); // Show error message in snackbar
+            onError?.(error.message); // Trigger onError callback
           } finally {
             setSubmitting(false); // Ensure form is no longer in submitting state
           }
         }}
       >
-        {({ isSubmitting, handleChange, values, errors }) => (
+        {({ isSubmitting, handleChange, values, errors, touched }) => (
           <Form>
             <Box
               sx={{
@@ -217,6 +217,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
                         fullWidth
                         required
                         sx={{ marginTop: 1.5 }}
+                        error={touched.name && !!errors.name}
+                        helperText={touched.name && errors.name}
                       />
                     </Grid>
                     <Grid size={12}>
@@ -226,8 +228,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
                         value={values.email || ""} // Ensure value is never undefined
                         onChange={handleChange}
                         fullWidth
-                        error={!!errors.email} // Show error state
-                        helperText={errors.email} // Display error message
+                        error={touched.email && !!errors.email} // Show error state
+                        helperText={touched.email && errors.email} // Display error message
                         type="email"
                       />
                     </Grid>
@@ -238,8 +240,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
                         value={values.phone || ""} // Ensure value is never undefined
                         onChange={handleChange}
                         fullWidth
-                        error={!!errors.phone} // Show error state
-                        helperText={errors.phone} // Display error message
+                        error={touched.phone && !!errors.phone} // Show error state
+                        helperText={touched.phone && errors.phone} // Display error message
                       />
                     </Grid>
                     <Grid size={12}>
@@ -251,12 +253,15 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
                         name="password"
                         value={values.password || ""} // Ensure value is never undefined
                         onChange={handleChange}
+                        error={touched.password && !!errors.password}
+                        helperText={touched.password && errors.password}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
                               <IconButton
                                 onClick={() => setShowPassword(!showPassword)}
                                 edge="end"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
                               >
                                 {showPassword ? (
                                   <VisibilityOff />
