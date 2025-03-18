@@ -10,6 +10,7 @@ import { getColumns } from "./constants/datagridColumnsName";
 import SuccessSnackbar from "./components/SuccessSnackbar";
 import { Box, CircularProgress, Typography, Alert } from "@mui/material";
 import { motion } from "framer-motion";
+import ResponsiveAppBar from "./components/ResponsiveAppBar";
 
 // Define a proper interface for the form data
 interface FormData {
@@ -134,6 +135,9 @@ const Page: React.FC = () => {
   
   return (
     <>
+  
+
+
       {loading ? (
         <Box
           sx={{
@@ -202,6 +206,7 @@ const Page: React.FC = () => {
         severity={snackSeverity}
         autoHideDuration={4000}
       />
+       
     </>
   );
 };

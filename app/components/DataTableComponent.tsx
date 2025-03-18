@@ -1,10 +1,16 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
-import { Box, useTheme, Typography, CircularProgress } from '@mui/material';
-import { fetchUsers, User } from '../services/Services';
+import  supabase  from '../../utils/supabaseClient';
+import FilterComponent from './FilterComponent';
+import { Box} from '@mui/material';
 
-// Define columns
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  age: number;
+}
 const columns: TableColumn<User>[] = [
   {
     name: 'ID',
@@ -27,28 +33,39 @@ const columns: TableColumn<User>[] = [
     sortable: true,
   },
 ];
-
-const DataTableComponent: React.FC = () => {
+const DataTableComponent = () => {
   const [data, setData] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [totalRows, setTotalRows] = useState<number>(0);
-  const [perPage, setPerPage] = useState<number>(20);
-  const [page, setPage] = useState<number>(1);
-  const [error, setError] = useState<string | null>(null);
-  const theme = useTheme();
+  const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [perPage, setPerPage] = useState(10);
+  const [page, setPage] = useState(1);
+  const [filterText, setFilterText] = useState<string>('');
 
 
-  const fetchData = async (page: number, perPage: number) => {
+    const filteredItems = data.filter(
+    (item) =>
+      (item.name && item.name.toLowerCase().includes(filterText.toLowerCase())) ||
+      (item.email && item.email.toLowerCase().includes(filterText.toLowerCase())) ||
+      (item.age && item.age.toString().toLowerCase().includes(filterText.toLowerCase()))
+  );
+  const fetchData = async (page, perPage) => {
     setLoading(true);
-    setError(null);
 
     try {
-      const { data: fetchedData, count } = await fetchUsers(page, perPage);
+      // Calculate the range for pagination
+      const from = (page - 1) * perPage;
+      const to = from + perPage - 1;
+
+      // Fetch data from Supabase
+      const { data: fetchedData, count } = await supabase
+        .from('users')
+        .select('*', { count: 'exact' })
+        .range(from, to);
+
       setData(fetchedData || []);
       setTotalRows(count || 0);
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError('Failed to fetch data. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -58,50 +75,53 @@ const DataTableComponent: React.FC = () => {
     fetchData(page, perPage);
   }, [page, perPage]);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page) => {
     setPage(page);
   };
 
-  const handlePerRowsChange = (newPerPage: number, page: number) => {
+  const handlePerRowsChange = (newPerPage, page) => {
     setPerPage(newPerPage);
     setPage(page);
   };
 
   return (
     <>
-    {loading?   <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100vh", // Full viewport height
-                width: "100vw",
-              }}
-            >
-              <CircularProgress size={60} thickness={4} />
-              </Box> :     <Box
-      sx={{
-        borderRadius: 2,
-        margin: 4,
-        boxShadow: theme.shadows[5], // Use theme's shadow
-        backgroundColor: theme.palette.background.paper, // Use theme's background color
-        padding: 3,
-      }}
-    >
-      <Typography variant="h4" sx={{ mb: 3, color: theme.palette.text.primary }}>
-        User Data
-      </Typography>
 
-      {/* {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
-          {error}
-        </Typography>
-      )} */}
+    {/* {loading ? (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // Full viewport height
+          width: '100vw',
+         
+        }}
+      >
+        <CircularProgress size={60} thickness={4} />
+      </Box>
+    ) : ( */}
+      <Box
+        sx={{
+          margin: 4,
+          boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Use theme's shadow
+          borderRadius: 2,
+          p: 2,
+         
+        }}
+      >
+   
+
+    
+           <FilterComponent
+        filterText={filterText}
+        onFilter={(e) => setFilterText(e.target.value)}
+      />
 
       <DataTable
         columns={columns}
-        data={data}
+        data={filteredItems}
         progressPending={loading}
         pagination
         paginationServer
@@ -110,13 +130,14 @@ const DataTableComponent: React.FC = () => {
         paginationRowsPerPageOptions={[10, 20, 30, 50]}
         onChangePage={handlePageChange}
         onChangeRowsPerPage={handlePerRowsChange}
+        // subHeader
+        // subHeaderComponent={subHeaderComponentMemo} // Add the search filter component
         highlightOnHover
         striped
         responsive
       />
-    </Box>
-              }
-
+   </Box>
+    {/* )} */}
     </>
   );
 };
