@@ -11,7 +11,6 @@ import Link from "next/link";
 
 import gsap from "gsap";
 
-
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
@@ -50,8 +49,8 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
 
   const columnVisibilityModel = {
     // address:false,
-    name:false,
-    isDifferentShipping:false,
+    name: false,
+    isDifferentShipping: false,
     shippingAddress: false,
     shippingName: false,
     latitude: false,
@@ -60,6 +59,8 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
     manufacturer: false,
     warranty_period: false,
     shipping_weight: false,
+    product_condition: false,
+    availability_status: false,
     // id: isMobile ? false : true, // Hide ID column in mobile view
   };
 
@@ -96,65 +97,83 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   };
 
   return (
-<>
-
-    <Box
-    sx={{width:width,}}
-    
-    >
-
-
-    <Box
-      sx={{
-       
-
-        borderRadius: 2,
-        backgroundColor: theme.palette.background.paper, // Use theme's background color
-        p: 2,
-        margin: showButton ? 4 : 0,
-        boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Use theme's shadow
-      }}
-    >
-      {/* Conditionally render buttons based on showUserButton */}
-      {!showUserButton && (
-        <>
-          {showButton ? (
-            <Box
-              sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}
-            >
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: theme.palette.secondary.main }} // Use theme's primary color
-              >
-                <Link
-                  href="/addContactDetails"
-                  style={{ color: "inherit", textDecoration: "none" }}
-                >
-                  Add CONTACT
-                </Link>
-              </Button>
-            </Box>
-          ) : (
-            <Box className="w-full flex items-center justify-between mb-2">
+    <>
+      <Box
+        sx={{
+          width: width,
+          borderRadius: 2,
+          backgroundColor: theme.palette.background.paper, // Use theme's background color
+          p: 2,
+          // margin: showButton ? 4 : 0,
+          boxShadow: "0px 10px 30px rgba(0,0,255,0.4)", // Use theme's shadow
+        }}
+      >
+        {/* Conditionally render buttons based on showUserButton */}
+        {!showUserButton && (
+          <>
+            {showButton ? (
               <Box
-                className="w-[calc(50%)] h-[70px] text-left overflow-hidden"
-                sx={{ color: theme.palette.text.primary }}
+                sx={{ display: "flex", justifyContent: "end", marginBottom: 1 }}
               >
-                {locationText}
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: theme.palette.secondary.main }} // Use theme's primary color
+                >
+                  <Link
+                    href="/addContactDetails"
+                    style={{ color: "inherit", textDecoration: "none" }}
+                  >
+                    Add CONTACT
+                  </Link>
+                </Button>
               </Box>
-              <Box className="w-[50%] flex justify-end m-1">
-                {/* Only show these buttons if showAdditionalButton is false */}
-                {!AddProductsButton && (
-                  <>
-                    <Fade in={showDragableMarker || isGeolocateActive}>
+            ) : (
+              <Box className="w-full flex items-center justify-between mb-2">
+                <Box
+                  className="w-[calc(50%)] h-[70px] text-left overflow-hidden"
+                  sx={{ color: theme.palette.text.primary }}
+                >
+                  {locationText}
+                </Box>
+                <Box className="w-[50%] flex justify-end m-1">
+                  {/* Only show these buttons if showAdditionalButton is false */}
+                  {!AddProductsButton && (
+                    <>
+                      <Fade in={showDragableMarker || isGeolocateActive}>
+                        <Button
+                          onClick={handleSaveLocation}
+                          sx={{
+                            marginRight: 1,
+                            padding: "8px 16px",
+                            backgroundColor: saving
+                              ? "#38b000"
+                              : theme.palette.secondary.main, // Use theme's primary color
+                            color: "white",
+                            fontWeight: "bold",
+                            borderRadius: "8px",
+                            textTransform: "none",
+                            "&:hover": {
+                              backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                              transform: "scale(1.05)",
+                              transition: "transform 0.2s ease-in-out",
+                            },
+                            boxShadow: saving
+                              ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
+                              : theme.shadows[3], // Use theme's shadow
+                            transition:
+                              "background-color 0.3s ease, box-shadow 0.3s ease",
+                          }}
+                        >
+                          {saving ? "Location Saved!" : "Save Location"}
+                        </Button>
+                      </Fade>
+
                       <Button
-                        onClick={handleSaveLocation}
+                        ref={buttonRef}
+                        onClick={handleButtonClick}
                         sx={{
-                          marginRight: 1,
                           padding: "8px 16px",
-                          backgroundColor: saving
-                            ? "#38b000"
-                            : theme.palette.secondary.main, // Use theme's primary color
+                          backgroundColor: theme.palette.secondary.main, // Use theme's primary color
                           color: "white",
                           fontWeight: "bold",
                           borderRadius: "8px",
@@ -164,101 +183,71 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
                             transform: "scale(1.05)",
                             transition: "transform 0.2s ease-in-out",
                           },
-                          boxShadow: saving
-                            ? "0px 0px 20px rgba(56, 176, 0, 0.8)"
-                            : theme.shadows[3], // Use theme's shadow
-                          transition:
-                            "background-color 0.3s ease, box-shadow 0.3s ease",
+                          boxShadow: theme.shadows[3], // Use theme's shadow
                         }}
                       >
-                        {saving ? "Location Saved!" : "Save Location"}
+                        {showDragableMarker ? "Close Location" : "Add Location"}
                       </Button>
-                    </Fade>
+                    </>
+                  )}
 
-                    <Button
-                      ref={buttonRef}
-                      onClick={handleButtonClick}
-                      sx={{
-                        padding: "8px 16px",
-                        backgroundColor: theme.palette.secondary.main, // Use theme's primary color
-                        color: "white",
-                        fontWeight: "bold",
-                        borderRadius: "8px",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
-                          transform: "scale(1.05)",
-                          transition: "transform 0.2s ease-in-out",
-                        },
-                        boxShadow: theme.shadows[3], // Use theme's shadow
-                      }}
-                    >
-                      {showDragableMarker ? "Close Location" : "Add Location"}
-                    </Button>
-                  </>
-                )}
-
-                {/* Conditionally render the additional button */}
-                {AddProductsButton && (
-                  <Link href={"./addProducts"}>
-                    <Button
-                      sx={{
-                        marginLeft: 1,
-                        padding: "8px 16px",
-                        backgroundColor: theme.palette.secondary.main, // Use theme's primary color
-                        color: "white",
-                        fontWeight: "bold",
-                        borderRadius: "8px",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
-                          transform: "scale(1.05)",
-                          transition: "transform 0.2s ease-in-out",
-                        },
-                        boxShadow: theme.shadows[3], // Use theme's shadow
-                      }}
-                    >
-                      NEW PRODUCT
-                    </Button>
-                  </Link>
-                )}
+                  {/* Conditionally render the additional button */}
+                  {AddProductsButton && (
+                    <Link href={"./addProducts"}>
+                      <Button
+                        sx={{
+                          marginLeft: 1,
+                          padding: "8px 16px",
+                          backgroundColor: theme.palette.secondary.main, // Use theme's primary color
+                          color: "white",
+                          fontWeight: "bold",
+                          borderRadius: "8px",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: theme.palette.primary.dark, // Use theme's darker primary color
+                            transform: "scale(1.05)",
+                            transition: "transform 0.2s ease-in-out",
+                          },
+                          boxShadow: theme.shadows[3], // Use theme's shadow
+                        }}
+                      >
+                        NEW PRODUCT
+                      </Button>
+                    </Link>
+                  )}
+                </Box>
               </Box>
-            </Box>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
 
-      {/* Render the DataGrid */}
-      <DataGrid
-        sx={{
-          height: height,
-          
-          "& .super-app-theme--header": {
-            backgroundColor: theme.palette.secondary.main, // Use theme's primary color
-            color: theme.palette.primary.contrastText, // Use theme's contrast text color
-          },
-        }}
-        rows={[...rows].sort((a, b) => b.id - a.id)}
-        columns={columns}
-        getRowClassName={() => "super-app-theme--row"}
-        initialState={{
-          columns: {
-            columnVisibilityModel,
-          },
-          pagination: { paginationModel: { pageSize: 10 } },
-        }}
-        pageSizeOptions={[5, 10, 25]}
-        disableColumnFilter
-        disableDensitySelector
-        disableRowSelectionOnClick
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{ toolbar: { showQuickFilter: true } }}
-  
+        {/* Render the DataGrid */}
+        <DataGrid
+          sx={{
+            height: height,
 
-        
-      />
-    </Box>
-    </Box>
+            "& .super-app-theme--header": {
+              backgroundColor: theme.palette.secondary.main, // Use theme's primary color
+              color: theme.palette.primary.contrastText, // Use theme's contrast text color
+            },
+          }}
+          rows={[...rows].sort((a, b) => b.id - a.id)}
+          columns={columns}
+          getRowClassName={() => "super-app-theme--row"}
+          initialState={{
+            columns: {
+              columnVisibilityModel,
+            },
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+          pageSizeOptions={[5, 10, 25]}
+          disableColumnFilter
+          disableDensitySelector
+          disableRowSelectionOnClick
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{ toolbar: { showQuickFilter: true } }}
+        />
+      </Box>
     </>
   );
 };

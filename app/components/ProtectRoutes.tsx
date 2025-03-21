@@ -1,10 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../utils/supabaseClient";
+import supabase from "../utils/supabaseClient";
 import { CircularProgress, Box, Typography } from "@mui/material";
 
-const ProtectRoutes = ({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) => {
+const ProtectRoutes = ({
+  children,
+  adminOnly = false,
+}: {
+  children: React.ReactNode;
+  adminOnly?: boolean;
+}) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -38,14 +44,16 @@ const ProtectRoutes = ({ children, adminOnly = false }: { children: React.ReactN
 
     checkAuth();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-        router.replace("/login");
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+          router.replace("/login");
+        }
       }
-    });
+    );
 
     return () => {
       listener.subscription.unsubscribe();
@@ -54,9 +62,18 @@ const ProtectRoutes = ({ children, adminOnly = false }: { children: React.ReactN
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress size={60} />
-        <Typography variant="h6" sx={{ mt: 2 }}>Checking authentication...</Typography>
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Checking authentication...
+        </Typography>
       </Box>
     );
   }
@@ -67,4 +84,3 @@ const ProtectRoutes = ({ children, adminOnly = false }: { children: React.ReactN
 };
 
 export default ProtectRoutes;
-

@@ -15,7 +15,7 @@ import {
 import Grid from "@mui/material/Grid2";
 import { Formik, Form } from "formik";
 import ImagePicker from "./ImagePicker";
-import  supabase  from "../../utils/supabaseClient"; // Adjust the import path
+import supabase from "../utils/supabaseClient"; // Adjust the import path
 
 interface EditModalComponentProps {
   openEditModal: boolean;
@@ -36,48 +36,48 @@ const UserEditModalComponent: React.FC<EditModalComponentProps> = ({
   const [imageFile, setImageFile] = React.useState<File | null>(null);
 
   const handleSubmit = async (values: any) => {
-  let photoUrl = updatedRow.photo_url; // Keep the existing photo URL if no new image is uploaded
+    let photoUrl = updatedRow.photo_url; // Keep the existing photo URL if no new image is uploaded
 
-  if (imageFile) {
-    const userId = values.id; // Ensure this is the correct user ID
-    const filePath = `profile_images/${userId}/${imageFile.name}`;
+    if (imageFile) {
+      const userId = values.id; // Ensure this is the correct user ID
+      const filePath = `profile_images/${userId}/${imageFile.name}`;
 
-    // Upload the image to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("profile_images") // Your Supabase Storage bucket name
-      .upload(filePath, imageFile);
+      // Upload the image to Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("profile_images") // Your Supabase Storage bucket name
+        .upload(filePath, imageFile);
 
-    if (uploadError) {
-      console.error("Error uploading image:", uploadError);
-      return;
+      if (uploadError) {
+        console.error("Error uploading image:", uploadError);
+        return;
+      }
+
+      // Get the public URL of the uploaded image
+      const { data: publicUrlData } = supabase.storage
+        .from("profile_images")
+        .getPublicUrl(filePath);
+
+      photoUrl = publicUrlData.publicUrl;
     }
 
-    // Get the public URL of the uploaded image
-    const { data: publicUrlData } = supabase.storage
-      .from("profile_images")
-      .getPublicUrl(filePath);
+    // Update the profile in the database
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({
+        role: values.role,
+        email: values.email,
+        display_name: values.display_name,
+        photo_url: photoUrl,
+      })
+      .eq("id", values.id);
 
-    photoUrl = publicUrlData.publicUrl;
-  }
-
-  // Update the profile in the database
-  const { data, error } = await supabase
-    .from("profiles")
-    .update({
-      role: values.role,
-      email: values.email,
-      display_name: values.display_name,
-      photo_url: photoUrl,
-    })
-    .eq("id", values.id);
-
-  if (error) {
-    console.error("Error updating profile:", error);
-  } else {
-    handleSaveRow({ ...updatedRow, ...values, photo_url: photoUrl });
-    handleEditClose();
-  }
-};
+    if (error) {
+      console.error("Error updating profile:", error);
+    } else {
+      handleSaveRow({ ...updatedRow, ...values, photo_url: photoUrl });
+      handleEditClose();
+    }
+  };
 
   return (
     <Dialog open={openEditModal} onClose={handleEditClose}>

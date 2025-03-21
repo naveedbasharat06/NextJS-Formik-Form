@@ -2,7 +2,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, TextField, Typography, Box, Container } from "@mui/material";
-import supabase from "../../../utils/supabaseClient";
+import supabase from "../../utils/supabaseClient";
 
 const VerifyPage: React.FC = () => {
   const [otp, setOtp] = useState<string>("");

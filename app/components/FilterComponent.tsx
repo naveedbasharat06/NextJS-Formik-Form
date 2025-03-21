@@ -1,31 +1,31 @@
-import React from 'react';
-import { TextField, useTheme } from '@mui/material';
+import React from "react";
+import { Box, TextField, Button } from "@mui/material";
 
 interface FilterComponentProps {
   filterText: string;
   onFilter: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearch: () => void; // Add onSearch prop
 }
 
-const FilterComponent: React.FC<FilterComponentProps> = ({ filterText, onFilter }) => {
-  const theme = useTheme();
-
+const FilterComponent: React.FC<FilterComponentProps> = ({
+  filterText,
+  onFilter,
+  onSearch,
+}) => {
   return (
-    <TextField
-      id="search"
-      type="text"
-      placeholder="Filter By Name, Email, or Age"
-      aria-label="Search Input"
-      value={filterText}
-      onChange={onFilter}
-      variant="outlined"
-      sx={{
-    marginBottom: 2,
-        width: '20%',
-     
-        color: theme.palette.text.primary,
-        
-      }}
-    />
+    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      <TextField
+        id="search"
+        type="text"
+        placeholder="Search"
+        value={filterText}
+        onChange={onFilter}
+        sx={{ mr: 2 }}
+      />
+      <Button variant="contained" onClick={onSearch}>
+        Search
+      </Button>
+    </Box>
   );
 };
 

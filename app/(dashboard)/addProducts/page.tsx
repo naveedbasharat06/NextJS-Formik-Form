@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import supabase from "../../../utils/supabaseClient";
+import supabase from "../../utils/supabaseClient";
 import { useFormik } from "formik";
 import {
   Button,

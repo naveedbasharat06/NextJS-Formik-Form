@@ -16,7 +16,7 @@ import { motion } from "framer-motion";
 import Grid from "@mui/material/Grid2";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import supabase from "../../utils/supabaseClient";
+import supabase from "../utils/supabaseClient";
 import { useRouter } from "next/navigation";
 import SuccessSnackbar from "./SuccessSnackbar";
 
@@ -261,7 +261,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
                               <IconButton
                                 onClick={() => setShowPassword(!showPassword)}
                                 edge="end"
-                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                aria-label={
+                                  showPassword
+                                    ? "Hide password"
+                                    : "Show password"
+                                }
                               >
                                 {showPassword ? (
                                   <VisibilityOff />

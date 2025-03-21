@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import supabase from "../../utils/supabaseClient";
+import supabase from "../utils/supabaseClient";
 import FilterComponent from "./FilterComponent";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, useTheme } from "@mui/material";
 
 export interface User {
   id: string;
@@ -36,6 +36,7 @@ const columns: TableColumn<User>[] = [
 ];
 
 const DataTableComponent = () => {
+  const theme = useTheme();
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState(true); // Initial loading state
   const [totalRows, setTotalRows] = useState(0);
@@ -43,14 +44,12 @@ const DataTableComponent = () => {
   const [page, setPage] = useState(1);
   const [filterText, setFilterText] = useState<string>("");
 
-  const filteredItems = data.filter(
-    (item) =>
-      (item.name && item.name.toLowerCase().includes(filterText.toLowerCase())) ||
-      (item.email && item.email.toLowerCase().includes(filterText.toLowerCase())) ||
-      (item.age && item.age.toString().toLowerCase().includes(filterText.toLowerCase()))
-  );
-
-  const fetchData = async (page, perPage) => {
+  // Fetch data function
+  const fetchData = async (
+    page: number,
+    perPage: number,
+    filterText: string
+  ) => {
     setLoading(true);
 
     try {
@@ -58,11 +57,33 @@ const DataTableComponent = () => {
       const from = (page - 1) * perPage;
       const to = from + perPage - 1;
 
-      // Fetch data from Supabase
-      const { data: fetchedData, count } = await supabase
+      // Validate age filter
+      let ageFilter = "";
+      if (!isNaN(parseInt(filterText, 10))) {
+        ageFilter = `age.eq.${parseInt(filterText, 10)}`;
+      }
+
+      // Build the query
+      let query = supabase
         .from("users")
         .select("*", { count: "exact" })
         .range(from, to);
+
+      // Add search filter if filterText is provided
+      if (filterText) {
+        query = query.or(
+          `name.ilike.%${filterText}%,email.ilike.%${filterText}%${
+            ageFilter ? `,${ageFilter}` : ""
+          }`
+        );
+      }
+
+      // Execute the query
+      const { data: fetchedData, count, error } = await query;
+
+      if (error) {
+        throw error;
+      }
 
       setData(fetchedData || []);
       setTotalRows(count || 0);
@@ -73,29 +94,48 @@ const DataTableComponent = () => {
     }
   };
 
+  // Fetch data when page or perPage changes
   useEffect(() => {
-    fetchData(page, perPage);
+    fetchData(page, perPage, filterText);
   }, [page, perPage]);
 
-  const handlePageChange = (page) => {
+  // Handle page change
+  const handlePageChange = (page: number) => {
     setPage(page);
   };
 
-  const handlePerRowsChange = (newPerPage, page) => {
+  // Handle rows per page change
+  const handlePerRowsChange = (newPerPage: number, page: number) => {
     setPerPage(newPerPage);
     setPage(page);
+  };
+
+  // Handle filter input change
+  const handleFilterChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFilterText(e.target.value);
+    },
+    []
+  );
+
+  // Handle search button click
+  const handleSearch = () => {
+    // Reset to the first page when searching
+    setPage(1);
+    fetchData(1, perPage, filterText);
   };
 
   return (
     <>
       <Box
         sx={{
-          height:"100vh",
+          height: "100vh",
           marginTop: 6,
           boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
           borderRadius: 2,
           p: 2,
           position: "relative", // Required for the absolute positioning of the spinner
+          backgroundColor: theme.palette.background.paper,
         }}
       >
         {/* Loading Spinner Overlay */}
@@ -112,6 +152,7 @@ const DataTableComponent = () => {
               alignItems: "center",
               zIndex: 9999, // Ensure it's on top of everything
               borderRadius: 2, // Match the border radius of the parent Box
+              // Semi-transparent background
             }}
           >
             <CircularProgress size={60} thickness={4} />
@@ -128,13 +169,13 @@ const DataTableComponent = () => {
         >
           <FilterComponent
             filterText={filterText}
-            onFilter={(e) => setFilterText(e.target.value)}
+            onFilter={handleFilterChange}
+            onSearch={handleSearch} // Pass handleSearch to FilterComponent
           />
 
           <DataTable
-       
             columns={columns}
-            data={filteredItems}
+            data={data}
             pagination
             paginationServer
             paginationTotalRows={totalRows}
@@ -145,6 +186,45 @@ const DataTableComponent = () => {
             highlightOnHover
             striped
             responsive
+            customStyles={{
+              headCells: {
+                style: {
+                  backgroundColor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
+                },
+              },
+              rows: {
+                style: {
+                  backgroundColor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                  "&.rdt_TableRow--selected": {
+                    backgroundColor: theme.palette.action.selected,
+                    color: theme.palette.primary.contrastText,
+                  },
+                },
+              },
+              pagination: {
+                style: {
+                  backgroundColor: theme.palette.background.paper,
+                  color: theme.palette.text.primary,
+                  borderTop: `1px solid ${theme.palette.divider}`,
+                },
+                pageButtonsStyle: {
+                  color: theme.palette.primary.main,
+                  fill: theme.palette.primary.main,
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                  "&:focus": {
+                    outline: "none",
+                    backgroundColor: theme.palette.action.selected,
+                  },
+                },
+              },
+            }}
           />
         </Box>
       </Box>

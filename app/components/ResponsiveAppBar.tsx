@@ -6,8 +6,17 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import supabase from "../../utils/supabaseClient";
-import { Button, IconButton, useTheme, CircularProgress, List, ListItem, ListItemText } from "@mui/material";
+import supabase from "../utils/supabaseClient";
+import {
+  Button,
+  IconButton,
+  useTheme,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+} from "@mui/material";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useThemeContext } from "./ThemeRegistry";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +24,15 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartWithBadge from "./ShoppingCartWithBadge";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+
+// Import icons for menu items
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import PeopleIcon from "@mui/icons-material/People";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 interface ResponsiveAppBarProps {
   children?: React.ReactNode;
@@ -48,7 +66,8 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
             ...sessionData.session,
             user: {
               ...sessionData.session.user,
-              display_name: profile?.display_name || sessionData.session.user.email,
+              display_name:
+                profile?.display_name || sessionData.session.user.email,
               role: profile?.role,
               photo_url: profile?.photo_url,
             },
@@ -60,13 +79,15 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
 
     fetchSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        fetchSession();
-      } else {
-        setSession(null);
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          fetchSession();
+        } else {
+          setSession(null);
+        }
       }
-    });
+    );
 
     return () => listener.subscription.unsubscribe();
   }, [router]);
@@ -82,53 +103,70 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
     setMenuOpen((prev) => !prev); // Toggle the menu state
   };
 
+  // Define menu items with icons
   const menuItems = [
-    { label: "Contact Details", path: "/" },
-    { label: "Locate Yourself", path: "/locateYourself" },
-    { label: "Shop", path: "/shop" },
-    { label: "Data Table", path: "/dataTable" },
-    ...(session ? [{ label: "Products", path: "/products" }] : []),
-    ...(session ? [{ label: "Users", path: "/users" }] : []),
-    ...(session && session.user.role === "admin" ? [{ label: "User Roles", path: "/userRoles" }] : []),
+    { label: "Contact Details", path: "/", icon: <ContactMailIcon /> },
+    {
+      label: "Locate Yourself",
+      path: "/locateYourself",
+      icon: <LocationOnIcon />,
+    },
+    { label: "Shop", path: "/shop", icon: <ShoppingCartIcon /> },
+    { label: "Data Table", path: "/dataTable", icon: <TableChartIcon /> },
+    ...(session
+      ? [{ label: "Products", path: "/products", icon: <InventoryIcon /> }]
+      : []),
+    ...(session
+      ? [{ label: "Users", path: "/users", icon: <PeopleIcon /> }]
+      : []),
+    ...(session && session.user.role === "admin"
+      ? [
+          {
+            label: "User Roles",
+            path: "/userRoles",
+            icon: <AdminPanelSettingsIcon />,
+          },
+        ]
+      : []),
   ];
 
   // Animation variants for the drawer
   const drawerVariants = {
-    open: { 
-      width: 240, 
-      opacity: 1, 
-      transition: { 
-        type: "spring", 
-        stiffness: 200, 
-        damping: 25, 
-        mass: 1, 
-        velocity: 2 
-      } 
+    open: {
+      width: 240,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 25,
+        mass: 1,
+        velocity: 2,
+      },
     },
-    closed: { 
-      width: 0, 
-      opacity: 0, 
-      transition: { 
-        type: "spring", 
-        stiffness: 200, 
-        damping: 25, 
-        mass: 1, 
-        velocity: 2 
-      } 
+    closed: {
+      width: 0,
+      opacity: 0,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 25,
+        mass: 1,
+        velocity: 2,
+      },
     },
   };
 
   // Animation variants for the menu items
   const menuItemVariants = {
-    open: { 
-      opacity: 1, 
+    open: {
+      opacity: 1,
       visibility: "visible" as const, // Use valid value for visibility
-      transition: { delay: 0.1 } 
+      transition: { delay: 0.1 },
     },
-    closed: { 
-      opacity: 0, 
+    closed: {
+      opacity: 0,
       visibility: "hidden" as const, // Use valid value for visibility
-      transition: { duration: 0.1 } 
+      transition: { duration: 0.1 },
     },
   };
 
@@ -180,7 +218,18 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
                 }}
               >
                 <Link href={item.path} passHref>
-                  <ListItemText sx={{ color: "white" }} primary={item.label} />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: "white",
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: "inherit" }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.label} />
+                  </Box>
                 </Link>
               </ListItem>
             ))}
@@ -199,7 +248,10 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
         }}
       >
         {/* AppBar */}
-        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <AppBar
+          position="fixed"
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
           <Toolbar
             variant="dense"
             sx={{
@@ -209,7 +261,12 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
             }}
           >
             {/* Menu Icon to toggle the left menu */}
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleMenu}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleMenu}
+            >
               <MenuIcon />
             </IconButton>
 
@@ -224,13 +281,21 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <Typography variant="h6" sx={{ color: "inherit", opacity: 1, padding: "6px 0" }}>
-                        Welcome, {session.user.display_name || session.user.email}
+                      <Typography
+                        variant="h6"
+                        sx={{ color: "inherit", opacity: 1, padding: "6px 0" }}
+                      >
+                        Welcome,{" "}
+                        {session.user.display_name || session.user.email}
                       </Typography>
                     </motion.div>
 
                     {/* Profile Image or Icon */}
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       {session.user.photo_url ? (
                         <img
                           src={session.user.photo_url}
@@ -243,12 +308,18 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
                           }}
                         />
                       ) : (
-                        <AccountCircleIcon sx={{ fontSize: 40, color: "inherit" }} />
+                        <AccountCircleIcon
+                          sx={{ fontSize: 40, color: "inherit" }}
+                        />
                       )}
                     </motion.div>
 
                     {/* Logout Button */}
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <Button
                         variant="outlined"
                         sx={{
@@ -261,7 +332,14 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
                         onClick={handleLogout}
                         disabled={loggingOut}
                       >
-                        {loggingOut ? <CircularProgress size={20} sx={{ color: "inherit" }} /> : "Logout"}
+                        {loggingOut ? (
+                          <CircularProgress
+                            size={20}
+                            sx={{ color: "inherit" }}
+                          />
+                        ) : (
+                          "Logout"
+                        )}
                       </Button>
                     </motion.div>
                   </>
@@ -286,11 +364,16 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
                           transition: "opacity 0.3s, border-bottom 0.3s",
                           "&:hover": { opacity: 1 },
                           borderBottom:
-                            pathname === item.path ? "2px solid #ffffff80" : "2px solid transparent",
+                            pathname === item.path
+                              ? "2px solid #ffffff80"
+                              : "2px solid transparent",
                           padding: "6px 0",
                         }}
                       >
-                        <Link href={item.path} style={{ textDecoration: "none", color: "inherit" }}>
+                        <Link
+                          href={item.path}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
                           {item.label}
                         </Link>
                       </Typography>
@@ -309,9 +392,7 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
         </AppBar>
 
         {/* Main Content Area */}
-        {/* <Box sx={{ marginTop: "40px" }}> */}
-          {children}
-        {/* </Box> */}
+        {children}
       </Box>
     </Box>
   );

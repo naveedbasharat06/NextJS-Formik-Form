@@ -4,12 +4,18 @@ import DataGridComponent from "../../components/DataGridComponent";
 import React, { useEffect, useState } from "react";
 import { getProductColumns } from "../../constants/datagridColumnsName";
 import ProtectRoutes from "../../components/ProtectRoutes";
-import supabase from "../../../utils/supabaseClient";
+import supabase from "../../utils/supabaseClient";
 import { GridRowsProp } from "@mui/x-data-grid";
 import ProductEditModalComponent from "../../components/ProductsEditModal";
 import SuccessSnackbar from "../../components/SuccessSnackbar";
 import DeleteModalComponent from "../../components/DeleteModalComponent";
-import { Box, SnackbarCloseReason } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  SnackbarCloseReason,
+  Typography,
+} from "@mui/material";
+import { motion } from "framer-motion";
 
 function Page() {
   const [rows, setRows] = useState<GridRowsProp>([]);
@@ -21,6 +27,7 @@ function Page() {
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackString, setSnackString] = useState<string>("");
   const [deleteid, setDeleteid] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
 
   // Fetch the current user's ID and role
   useEffect(() => {
@@ -66,6 +73,7 @@ function Page() {
         console.error("Error fetching products:", error);
       } else {
         setRows(data);
+        setLoading(false);
       }
     };
     fetchProducts();
@@ -130,12 +138,55 @@ function Page() {
   return (
     <>
       <ProtectRoutes>
-        <Box sx={{ margin: 4 }}>
-          <DataGridComponent
-            rows={rows}
-            columns={columns}
-            AddProductsButton={true} // Only the additional button will show
-          />
+        <Typography
+          sx={{
+            marginTop: 4,
+            fontSize: "2rem", // Larger font size
+            fontWeight: "bold", // Bold text
+            color: "primary.main", // Use the primary color from your theme
+            textAlign: "center", // Center align the text
+            textTransform: "uppercase", // Uppercase text
+            letterSpacing: "0.1em", // Add some letter spacing
+            marginBottom: 1,
+          }}
+        >
+          PRODUCTS
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 2, // Full viewport height
+            width: "100%",
+          }}
+        >
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%", // Full viewport height
+                width: "100%",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <DataGridComponent
+                rows={rows}
+                columns={columns}
+                AddProductsButton={true} // Only the additional button will show
+                width={"900px"}
+              />
+            </motion.div>
+          )}
         </Box>
         {updatedRow && (
           <ProductEditModalComponent

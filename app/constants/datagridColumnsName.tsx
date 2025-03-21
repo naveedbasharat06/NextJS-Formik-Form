@@ -1,54 +1,35 @@
 import { GridColDef } from "@mui/x-data-grid";
-import { Button, MenuItem, Select, Box } from "@mui/material";
+import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import EditIcon from "@mui/icons-material/Edit";
-import { useState } from "react";
-
 
 // Define columns for the products table
-
-
-// import supabase from "../utils/supabaseClient";
-
 export const getColumns4 = (
   handleEditOpen: (row: any) => void,
-  // handleDelete: (id: number) => void
-  // handleRoleChange:
-  user:any
+  user: any
 ): GridColDef[] => {
   return [
-
     {
       field: "actions",
       headerName: "Actions",
-      width: 70, // Fixed width for action buttons
-      // sortable: false,
-      // disableColumnMenu: true,
-      // headerAlign: "center",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 120,
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
-        <>
-          <IconButton>
-            <EditIcon 
-            onClick={() => handleEditOpen(params.row)} 
-            />
-          </IconButton>
-          {/* <IconButton>
-            <DeleteIcon
-              // onClick={() => handleDelete(params.row.id)}
-              sx={{ color: "#c1121f" }}
-            />
-          </IconButton> */}
-        </>
+        <IconButton onClick={() => handleEditOpen(params.row)}>
+          <EditIcon />
+        </IconButton>
       ),
     },
     {
       field: "id",
       headerName: "ID",
-      flex:1,
+      flex: 1,
+      minWidth: 50,
+      maxWidth: 100,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
@@ -56,13 +37,17 @@ export const getColumns4 = (
       field: "email",
       headerName: "Email",
       flex: 1,
+      minWidth: 150,
+      maxWidth: 300,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
     {
-      field: "display_name", // Add display_name column
+      field: "display_name",
       headerName: "Display Name",
       flex: 1,
+      minWidth: 150,
+      maxWidth: 250,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
@@ -70,48 +55,22 @@ export const getColumns4 = (
       field: "role",
       headerName: "User Role",
       flex: 1,
+      minWidth: 120,
+      maxWidth: 200,
       sortable: false,
       headerClassName: "super-app-theme--header",
-      // renderCell: (params) => {
-      //   const [role, setRole] = useState(params.value || "visitor"); // Default role
-
-      //   const handleChange = (event) => {
-      //     const newRole = event.target.value;
-      //     setRole(newRole);
-      //     handleRoleChange(params.row.id, newRole);
-      //   };
-
-      //   return (
-      //     <Select
-      //       value={role}
-      //       onChange={handleChange}
-      //       fullWidth
-      //       size="small"
-      //       variant="outlined"
-      //       displayEmpty
-      //     >
-      //       <MenuItem value="admin">Admin</MenuItem>
-      //       <MenuItem value="staff">Staff</MenuItem>
-      //       <MenuItem value="visitor">Visitor</MenuItem>
-      //     </Select>
-      //   );
-      // },
     },
-
     {
       field: "isCurrentUser",
       headerName: "Logged In",
-      flex:1,
+      flex: 1,
+      minWidth: 100,
+      maxWidth: 150,
       headerClassName: "super-app-theme--header",
-      width: 120,
-      renderCell: (params) => {
-        return params.row.id === user?.id ? "LOGGED IN" : "";
-      },
+      renderCell: (params) => (params.row.id === user?.id ? "LOGGED IN" : ""),
     },
-  
   ];
 };
-
 
 export const getColumns3 = (
   handleEditOpen: (row: any) => void,
@@ -121,20 +80,22 @@ export const getColumns3 = (
     {
       field: "actions",
       headerName: "Actions",
-      width: 70,
+      width: 100,
+      minWidth: 100,
+      maxWidth: 120,
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
-        <>
-          <IconButton>
-            <EditIcon onClick={() => handleEditOpen(params.row)} />
-          </IconButton>
-        </>
+        <IconButton onClick={() => handleEditOpen(params.row)}>
+          <EditIcon />
+        </IconButton>
       ),
     },
     {
       field: "id",
       headerName: "ID",
       flex: 1,
+      minWidth: 50,
+      maxWidth: 100,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
@@ -142,13 +103,17 @@ export const getColumns3 = (
       field: "email",
       headerName: "Email",
       flex: 1,
+      minWidth: 150,
+      maxWidth: 300,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
     {
-      field: "display_name", // Add display_name column
+      field: "display_name",
       headerName: "Display Name",
       flex: 1,
+      minWidth: 150,
+      maxWidth: 250,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
@@ -156,6 +121,8 @@ export const getColumns3 = (
       field: "role",
       headerName: "User Role",
       flex: 1,
+      minWidth: 120,
+      maxWidth: 200,
       sortable: false,
       headerClassName: "super-app-theme--header",
     },
@@ -163,28 +130,28 @@ export const getColumns3 = (
       field: "isCurrentUser",
       headerName: "Logged In",
       flex: 1,
+      minWidth: 100,
+      maxWidth: 150,
       headerClassName: "super-app-theme--header",
-      width: 120,
-      renderCell: (params) => {
-        return params.row.id === user?.id ? "LOGGED IN" : "";
-      },
+      renderCell: (params) => (params.row.id === user?.id ? "LOGGED IN" : ""),
     },
   ];
 };
 
-
 export const getColumns2 = (
   handleShowMarker: (id: number, lng: number, lat: number) => void,
   deleteRow: (id: number) => void
-) => {
+): GridColDef[] => {
   return [
     {
       field: "actions",
       headerName: "Actions",
       width: 120,
+      minWidth: 120,
+      maxWidth: 150,
       sortable: false,
       headerClassName: "super-app-theme--header",
-      renderCell: (params: any) => (
+      renderCell: (params) => (
         <>
           <IconButton
             size="small"
@@ -193,7 +160,6 @@ export const getColumns2 = (
           >
             <DeleteIcon />
           </IconButton>
-
           <IconButton
             size="small"
             onClick={() =>
@@ -218,26 +184,32 @@ export const getColumns2 = (
       field: "id",
       headerName: "ID",
       width: 50,
+      minWidth: 50,
+      maxWidth: 80,
       headerClassName: "super-app-theme--header",
     },
-
     {
       field: "address",
       headerName: "Address",
-
       flex: 1,
+      minWidth: 150,
+      maxWidth: 300,
       headerClassName: "super-app-theme--header",
     },
     {
       field: "latitude",
       headerName: "Latitude",
       flex: 1,
+      minWidth: 100,
+      maxWidth: 150,
       headerClassName: "super-app-theme--header",
     },
     {
       field: "longitude",
       headerName: "Longitude",
       flex: 1,
+      minWidth: 100,
+      maxWidth: 150,
       headerClassName: "super-app-theme--header",
     },
   ];
@@ -251,21 +223,21 @@ export const getColumns = (
     {
       field: "actions",
       headerName: "Actions",
-      width: 120, // Fixed width for action buttons
+      width: 120,
+      minWidth: 120,
+      maxWidth: 150,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
         <>
-          <IconButton>
-            <EditIcon onClick={() => handleEditOpen(params.row)} />
+          <IconButton onClick={() => handleEditOpen(params.row)}>
+            <EditIcon />
           </IconButton>
-          <IconButton>
-            <DeleteIcon
-              onClick={() => handleDelete(params.row.id)}
-              sx={{ color: "#c1121f" }}
-            />
+          <IconButton
+            onClick={() => handleDelete(params.row.id)}
+            sx={{ color: "#c1121f" }}
+          >
+            <DeleteIcon />
           </IconButton>
         </>
       ),
@@ -273,21 +245,19 @@ export const getColumns = (
     {
       field: "id",
       headerName: "ID",
-      width: 50, // Fixed width for ID
+      width: 50,
+      minWidth: 50,
+      maxWidth: 80,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
-      hideable: false,
     },
     {
       field: "firstname",
       headerName: "Firstname",
-      flex: 1, // Make it flexible
-      minWidth: 100, // Prevent shrinking too much
+      flex: 1,
+      minWidth: 100,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -295,19 +265,17 @@ export const getColumns = (
       headerName: "Lastname",
       flex: 1,
       minWidth: 100,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
       field: "email",
       headerName: "Email",
-      flex: 2, // Give it more space
+      flex: 2,
       minWidth: 200,
+      maxWidth: 400,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -316,9 +284,8 @@ export const getColumns = (
       type: "boolean",
       flex: 1,
       minWidth: 150,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -326,9 +293,8 @@ export const getColumns = (
       headerName: "Name",
       flex: 1,
       minWidth: 120,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -336,9 +302,8 @@ export const getColumns = (
       headerName: "Address",
       flex: 2,
       minWidth: 200,
+      maxWidth: 400,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -346,9 +311,8 @@ export const getColumns = (
       headerName: "Shipping Name",
       flex: 1,
       minWidth: 150,
+      maxWidth: 250,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -356,14 +320,12 @@ export const getColumns = (
       headerName: "Shipping Address",
       flex: 2,
       minWidth: 200,
+      maxWidth: 400,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
   ];
 };
-
 
 export const getProductColumns = (
   handleEditOpen: (row: any) => void,
@@ -373,21 +335,21 @@ export const getProductColumns = (
     {
       field: "actions",
       headerName: "Actions",
-      width: 120, // Fixed width for action buttons
+      width: 120,
+      minWidth: 120,
+      maxWidth: 150,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
         <>
-          <IconButton>
-            <EditIcon onClick={() => handleEditOpen(params.row)} />
+          <IconButton onClick={() => handleEditOpen(params.row)}>
+            <EditIcon />
           </IconButton>
-          <IconButton>
-            <DeleteIcon
-              onClick={() => handleDelete(params.row.id)}
-              sx={{ color: "#c1121f" }}
-            />
+          <IconButton
+            onClick={() => handleDelete(params.row.id)}
+            sx={{ color: "#c1121f" }}
+          >
+            <DeleteIcon />
           </IconButton>
         </>
       ),
@@ -395,31 +357,28 @@ export const getProductColumns = (
     {
       field: "id",
       headerName: "ID",
-      width: 50, // Fixed width for ID
+      width: 50,
+      minWidth: 50,
+      maxWidth: 80,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
-      hideable: false,
     },
     {
       field: "name",
       headerName: "Product Name",
-      flex: 1, // Make it flexible
-      minWidth: 150, // Prevent shrinking too much
+      flex: 1,
+      minWidth: 150,
+      maxWidth: 300,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
       field: "description",
       headerName: "Description",
-      flex: 2, // Give it more space
+      flex: 2,
       minWidth: 200,
+      maxWidth: 500,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -427,21 +386,18 @@ export const getProductColumns = (
       headerName: "Price",
       flex: 1,
       minWidth: 100,
+      maxWidth: 150,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       type: "number",
-      // valueFormatter: (params) => `$${params.value.toFixed(2)}`, // Format as currency
     },
     {
       field: "stock",
       headerName: "Stock",
       flex: 1,
       minWidth: 100,
+      maxWidth: 150,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       type: "number",
     },
@@ -450,9 +406,8 @@ export const getProductColumns = (
       headerName: "Image URL",
       flex: 1,
       minWidth: 150,
+      maxWidth: 250,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
         <img
@@ -467,10 +422,8 @@ export const getProductColumns = (
       headerName: "Product Code",
       flex: 1,
       minWidth: 150,
+      maxWidth: 250,
       sortable: false,
-      disableColumnMenu: true,
-      
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -478,9 +431,8 @@ export const getProductColumns = (
       headerName: "Manufacturer",
       flex: 1,
       minWidth: 150,
+      maxWidth: 250,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -488,9 +440,8 @@ export const getProductColumns = (
       headerName: "Warranty (Months)",
       flex: 1,
       minWidth: 150,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       type: "number",
     },
@@ -499,9 +450,8 @@ export const getProductColumns = (
       headerName: "Shipping Weight (kg)",
       flex: 1,
       minWidth: 150,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
       type: "number",
     },
@@ -509,22 +459,19 @@ export const getProductColumns = (
       field: "product_condition",
       headerName: "Condition",
       flex: 1,
-      minWidth: 150,
+      minWidth: 120,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
       field: "availability_status",
       headerName: "Availability",
       flex: 1,
-      minWidth: 150,
+      minWidth: 120,
+      maxWidth: 200,
       sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
   ];
 };
-

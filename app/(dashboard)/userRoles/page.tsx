@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import ProtectedRoute from "../../components/ProtectRoutes";
-import supabase from "../../../utils/supabaseClient"; // Adjust the path as needed
+import supabase from "../../utils/supabaseClient"; // Adjust the path as needed
 import DataGridComponent from "../../components/DataGridComponent";
 import { GridRowsProp } from "@mui/x-data-grid";
 import { getColumns3, getColumns4 } from "../../constants/datagridColumnsName";
-import { Box, CircularProgress, Button } from "@mui/material";
+import { Box, CircularProgress, Button, Typography } from "@mui/material";
 import UserEditModalComponent from "../../components/UserEditModalComponent";
 import SuccessSnackbar from "../../components/SuccessSnackbar";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
@@ -20,7 +20,6 @@ const Page = () => {
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackString, setSnackString] = useState("");
   // const [role,setRole]=useState("")
-
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -89,14 +88,8 @@ const Page = () => {
   }, []);
 
   const handleEditOpen = (row: any) => {
-    
-      setUpdatedRow(row);
-      setOpenEditModal(true);
-    
-    
-  
-
-    
+    setUpdatedRow(row);
+    setOpenEditModal(true);
   };
 
   const handleEditClose = () => {
@@ -123,7 +116,10 @@ const Page = () => {
     }
 
     // If the user is not an admin, ensure they can only update their own profile
-    if (currentUserProfile.role !== "admin" && updatedRow.id !== session.session.user.id) {
+    if (
+      currentUserProfile.role !== "admin" &&
+      updatedRow.id !== session.session.user.id
+    ) {
       console.error("Unauthorized: You can only update your own profile");
       return;
     }
@@ -160,20 +156,43 @@ const Page = () => {
 
   return (
     <ProtectedRoute>
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh", // Full viewport height
-            width: "100vw",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-
+      <Typography
+        sx={{
+          marginTop: 4,
+          fontSize: "2rem", // Larger font size
+          fontWeight: "bold", // Bold text
+          color: "primary.main", // Use the primary color from your theme
+          textAlign: "center", // Center align the text
+          textTransform: "uppercase", // Uppercase text
+          letterSpacing: "0.1em", // Add some letter spacing
+          marginBottom: 1,
+        }}
+      >
+        USER ROLES
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 2, // Full viewport height
+          width: "100%",
+        }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%", // Full viewport height
+              width: "100%",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -183,24 +202,24 @@ const Page = () => {
                 rows={rows}
                 columns={columns}
                 showUserButton={true}
+                width={"950px"}
               />
             </motion.div>
-   
-      )}
-      <UserEditModalComponent
-        openEditModal={openEditModal}
-        handleEditClose={handleEditClose}
-        updatedRow={updatedRow}
-        handleSaveRow={handleSaveRow}
-        userRoles={true}
-      />
-      <SuccessSnackbar
-        handleClose={handleClose}
-        openSnackbar={snackOpen}
-        alertMessage={
-        snackString
-        }
-      />
+          </>
+        )}
+        <UserEditModalComponent
+          openEditModal={openEditModal}
+          handleEditClose={handleEditClose}
+          updatedRow={updatedRow}
+          handleSaveRow={handleSaveRow}
+          userRoles={true}
+        />
+        <SuccessSnackbar
+          handleClose={handleClose}
+          openSnackbar={snackOpen}
+          alertMessage={snackString}
+        />
+      </Box>
     </ProtectedRoute>
   );
 };

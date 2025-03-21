@@ -3,9 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import DataGridComponent from "./DataGridComponent";
-import supabase from "../../utils/supabaseClient";
+import supabase from "../utils/supabaseClient";
 import { GridRowsProp } from "@mui/x-data-grid";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
 import SuccessSnackbar from "./SuccessSnackbar";
@@ -357,6 +363,21 @@ const Map = () => {
   const columns = getColumns2(handleShowMarker, deleteRow);
   return (
     <>
+      <Typography
+        sx={{
+          marginTop: 4,
+          fontSize: "2rem", // Larger font size
+          fontWeight: "bold", // Bold text
+          color: "primary.main", // Use the primary color from your theme
+          textAlign: "center", // Center align the text
+          textTransform: "uppercase", // Uppercase text
+          letterSpacing: "0.1em", // Add some letter spacing
+          marginBottom: 1,
+        }}
+      >
+        LOCATE YOURSELF
+      </Typography>
+
       {/* Location Input */}
       {loading ? (
         <Box
@@ -364,8 +385,8 @@ const Map = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100vh", // Full viewport height
-            width: "100vw",
+            height: "100%", // Full viewport height
+            width: "100%",
           }}
         >
           <CircularProgress />
@@ -378,12 +399,10 @@ const Map = () => {
             alignItems: "center",
             height: "100vh", // Full viewport height
             width: "92vw",
-            marginTop:4,
           }}
         >
           {/* Map Container */}
           <Box className="relative w-[50%] h-[540px] m-4">
-            
             <Box
               ref={mapContainerRef}
               className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
@@ -392,28 +411,25 @@ const Map = () => {
             />
           </Box>
 
-     
-
           <Box className="w-[50%] my-4 mr-4">
-          <motion.div
-          
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-            <DataGridComponent
-              rows={rows}
-              columns={columns}
-              height={"429px"}
-              width={"50vw"}
-              showButton={false}
-              locationText={locationText}
-              toggleDragableMarker={toggleDraggableMarker}
-              isGeolocateActive={isGeolocateActive}
-              showDragableMarker={showDragableMarker}
-              saveLocation={saveLocation}
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <DataGridComponent
+                rows={rows}
+                columns={columns}
+                height={"429px"}
+                width={"50vw"}
+                showButton={false}
+                locationText={locationText}
+                toggleDragableMarker={toggleDraggableMarker}
+                isGeolocateActive={isGeolocateActive}
+                showDragableMarker={showDragableMarker}
+                saveLocation={saveLocation}
               />
-              </motion.div>
+            </motion.div>
           </Box>
         </Box>
       )}

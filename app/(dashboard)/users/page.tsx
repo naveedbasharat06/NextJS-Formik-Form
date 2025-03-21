@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import ProtectedRoute from "../../components/ProtectRoutes";
-import supabase from "../../../utils/supabaseClient"; // Adjust the path as needed
+import supabase from "../../utils/supabaseClient"; // Adjust the path as needed
 import DataGridComponent from "../../components/DataGridComponent";
 import { GridRowsProp } from "@mui/x-data-grid";
 import { getColumns3 } from "../../constants/datagridColumnsName";
-import { Box, CircularProgress, Button } from "@mui/material";
+import { Box, CircularProgress, Button, Typography } from "@mui/material";
 import UserEditModalComponent from "../../components/UserEditModalComponent";
 import SuccessSnackbar from "../../components/SuccessSnackbar";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
@@ -160,33 +160,57 @@ const Page = () => {
 
   return (
     <ProtectedRoute>
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh", // Full viewport height
-            width: "100vw",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-  
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <DataGridComponent
-                rows={rows}
-                columns={columns}
-                showUserButton={true}
-              />
-            </motion.div>
+      <Typography
+        sx={{
+          marginTop: 4,
+          fontSize: "2rem", // Larger font size
+          fontWeight: "bold", // Bold text
+          color: "primary.main", // Use the primary color from your theme
+          textAlign: "center", // Center align the text
+          textTransform: "uppercase", // Uppercase text
+          letterSpacing: "0.1em", // Add some letter spacing
+          marginBottom: 1,
+        }}
+      >
+        USERS
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 2, // Full viewport height
+          width: "100%",
+        }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%", // Full viewport height
+              width: "100%",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <DataGridComponent
+              rows={rows}
+              columns={columns}
+              showUserButton={true}
+              width={"950px"}
+            />
+          </motion.div>
+        )}
+      </Box>
 
-      )}
       <UserEditModalComponent
         openEditModal={openEditModal}
         handleEditClose={handleEditClose}

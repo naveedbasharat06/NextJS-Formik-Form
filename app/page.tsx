@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import { SnackbarCloseReason } from "@mui/material/Snackbar";
-import supabase from "../utils/supabaseClient";
+import supabase from "./utils/supabaseClient";
 import DataGridComponent from "./components/DataGridComponent";
 import EditModalComponent from "./components/EditModalComponent";
 import DeleteModalComponent from "./components/DeleteModalComponent";
@@ -34,7 +34,9 @@ const Page: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [snackString, setSnackString] = useState<boolean>(false);
-  const [snackSeverity, setSnackSeverity] = useState<"success" | "error" | "info" | "warning">("success");
+  const [snackSeverity, setSnackSeverity] = useState<
+    "success" | "error" | "info" | "warning"
+  >("success");
   const [updatedRow, setUpdatedRow] = useState<FormData | null>(null);
   const [deleteid, setDeleteid] = useState<number>(0);
 
@@ -47,7 +49,7 @@ const Page: React.FC = () => {
         if (error) {
           throw error;
         }
- 
+
         setRows(data || []);
       } catch (err: any) {
         console.error("Supabase Error:", err);
@@ -95,7 +97,7 @@ const Page: React.FC = () => {
       if (error) {
         throw error;
       }
-      
+
       setSnackString(true);
       setSnackOpen(true);
       setSnackSeverity("success");
@@ -132,79 +134,104 @@ const Page: React.FC = () => {
   };
 
   const columns = getColumns(handleEditOpen, handleDelete);
-  
+
   return (
     <>
-  
+      <Typography
+        sx={{
+          marginTop: 4,
+          fontSize: "2rem", // Larger font size
+          fontWeight: "bold", // Bold text
+          color: "primary.main", // Use the primary color from your theme
+          textAlign: "center", // Center align the text
+          textTransform: "uppercase", // Uppercase text
+          letterSpacing: "0.1em", // Add some letter spacing
+        }}
+      >
+        CONTACT DETAILS
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          // Full viewport height
+          width: "100%",
+          marginTop: 2,
+        }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh", // Full viewport height
+            }}
+          >
+            <CircularProgress size={60} thickness={4} />
+          </Box>
+        ) : error ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+              width: "100vw",
+            }}
+          >
+            <Alert severity="error" sx={{ maxWidth: "600px" }}>
+              {error}
+            </Alert>
+          </Box>
+        ) : (
+          <>
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <DataGridComponent
+                rows={rows}
+                columns={columns}
+                showButton={true}
+                width={"950px"}
+              />
+            </motion.div>
+          </>
+        )}
 
+        {updatedRow && (
+          <EditModalComponent
+            openEditModal={openEditModal}
+            handleEditClose={handleEditClose}
+            updatedRow={updatedRow}
+            handleSaveRow={handleSaveRow}
+          />
+        )}
 
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh", // Full viewport height
-            
-          }}
-        >
-          <CircularProgress size={60} thickness={4} />
-        
-        </Box>
-      ) : error ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            width: "100vw",
-          }}
-        >
-          <Alert severity="error" sx={{ maxWidth: "600px" }}>
-            {error}
-          </Alert>
-        </Box>
-      ) : (
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <DataGridComponent  rows={rows} columns={columns} showButton={true} />
-        </motion.div>
-      )}
-
-      {updatedRow && (
-        <EditModalComponent
-          openEditModal={openEditModal}
-          handleEditClose={handleEditClose}
-          updatedRow={updatedRow}
-          handleSaveRow={handleSaveRow}
+        <DeleteModalComponent
+          open={open}
+          setOpen={setOpen}
+          confirmDelete={confirmDelete}
         />
-      )}
-      
-      <DeleteModalComponent
-        open={open}
-        setOpen={setOpen}
-        confirmDelete={confirmDelete}
-      />
-      
-      <SuccessSnackbar
-        handleClose={handleClose}
-        openSnackbar={snackOpen}
-        alertMessage={
-          snackString
-            ? "Record has been successfully updated!"
-            : error 
-              ? error 
+
+        <SuccessSnackbar
+          handleClose={handleClose}
+          openSnackbar={snackOpen}
+          alertMessage={
+            snackString
+              ? "Record has been successfully updated!"
+              : error
+              ? error
               : "Record deleted successfully."
-        }
-        severity={snackSeverity}
-        autoHideDuration={4000}
-      />
-       
+          }
+          severity={snackSeverity}
+          autoHideDuration={4000}
+        />
+      </Box>
     </>
   );
 };
