@@ -146,13 +146,11 @@ const Page: React.FC = () => {
             justifyContent: "center",
             alignItems: "center",
             height: "100vh", // Full viewport height
-            width: "100vw",
+            
           }}
         >
           <CircularProgress size={60} thickness={4} />
-          <Typography variant="h6" sx={{ mt: 2 }}>
-            Loading data...
-          </Typography>
+        
         </Box>
       ) : error ? (
         <Box
@@ -174,7 +172,7 @@ const Page: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <DataGridComponent rows={rows} columns={columns} showButton={true} />
+          <DataGridComponent  rows={rows} columns={columns} showButton={true} />
         </motion.div>
       )}
 

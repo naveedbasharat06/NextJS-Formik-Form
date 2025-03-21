@@ -8,13 +8,15 @@ import {
 } from "@mui/x-data-grid";
 import { Box, Button, Fade, useTheme } from "@mui/material";
 import Link from "next/link";
-import { useMediaQuery } from "@mui/material";
+
 import gsap from "gsap";
+
 
 interface DataGridComponentProps {
   rows: GridRowsProp;
   columns: GridColDef[];
   height?: string | number;
+  width?: string | number;
   locationText?: string | number;
   showButton?: boolean;
   toggleDragableMarker?: () => void;
@@ -30,6 +32,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   rows,
   columns,
   height,
+  width,
   showButton = null,
   locationText,
   toggleDragableMarker,
@@ -41,11 +44,14 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   // Handler for additional button click
 }) => {
   const theme = useTheme(); // Access the theme
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  // const isMobile = useMediaQuery("(max-width: 768px)");
   const buttonRef = useRef(null);
   const [saving, setSaving] = useState(false);
 
   const columnVisibilityModel = {
+    // address:false,
+    name:false,
+    isDifferentShipping:false,
     shippingAddress: false,
     shippingName: false,
     latitude: false,
@@ -54,7 +60,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
     manufacturer: false,
     warranty_period: false,
     shipping_weight: false,
-    id: isMobile ? false : true, // Hide ID column in mobile view
+    // id: isMobile ? false : true, // Hide ID column in mobile view
   };
 
   const handleButtonClick = () => {
@@ -90,8 +96,18 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   };
 
   return (
+<>
+
+    <Box
+    sx={{width:width,}}
+    
+    >
+
+
     <Box
       sx={{
+       
+
         borderRadius: 2,
         backgroundColor: theme.palette.background.paper, // Use theme's background color
         p: 2,
@@ -216,6 +232,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
       <DataGrid
         sx={{
           height: height,
+          
           "& .super-app-theme--header": {
             backgroundColor: theme.palette.secondary.main, // Use theme's primary color
             color: theme.palette.primary.contrastText, // Use theme's contrast text color
@@ -236,8 +253,13 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
         disableRowSelectionOnClick
         slots={{ toolbar: GridToolbar }}
         slotProps={{ toolbar: { showQuickFilter: true } }}
+  
+
+        
       />
     </Box>
+    </Box>
+    </>
   );
 };
 

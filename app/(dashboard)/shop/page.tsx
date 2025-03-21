@@ -105,6 +105,7 @@ const Shop: React.FC = () => {
                 <Card
                   sx={{
                     height: "100%",
+                   
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 2,
@@ -117,13 +118,18 @@ const Shop: React.FC = () => {
                   }}
                 >
                   {product.image_url && (
-                    <CardMedia
-                      component="img"
-                      height="150"
-                      image={product.image_url}
-                      alt={product.name}
-                      sx={{ objectFit: "cover" }}
-                    />
+
+
+<CardMedia
+component="img"
+sx={{
+  height: "200px", // Fixed height for all images
+  width: "100%", // Full width of the card
+  objectFit: "cover", // Ensure the image covers the area without distortion
+}}
+image={product.image_url}
+alt={product.name}
+/>
                   )}
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography

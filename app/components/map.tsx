@@ -377,7 +377,8 @@ const Map = () => {
             justifyContent: "center",
             alignItems: "center",
             height: "100vh", // Full viewport height
-            width: "98vw",
+            width: "92vw",
+            marginTop:4,
           }}
         >
           {/* Map Container */}
@@ -404,6 +405,7 @@ const Map = () => {
               rows={rows}
               columns={columns}
               height={"429px"}
+              width={"50vw"}
               showButton={false}
               locationText={locationText}
               toggleDragableMarker={toggleDraggableMarker}

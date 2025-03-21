@@ -35,57 +35,57 @@ export const useThemeContext = () => useContext(ThemeContext);
 const getTheme = (mode: "light" | "dark") =>
   createTheme({
     typography: {
-      fontFamily: '" Inter"', // Global font
+      fontFamily: '"Inter"', // Global font
     },
     palette: {
       mode,
       primary: {
-        main: mode === "dark" ? "#121212" : "#003049", // Dynamic primary color
+        main: mode === "dark" ? "#535C91" : "#1B1A55", // Primary color
       },
       secondary: {
-        main: mode === "dark" ? "#3C3D37" : "#003049",
+        main: mode === "dark" ? "#9290C3" : "#535C91", // Secondary color
       },
-
+      background: {
+        default: mode === "dark" ? "#070F2B" : "#F5F5F5", // Background color
+        paper: mode === "dark" ? "#1B1A55" : "#FFFFFF", // Paper color
+      },
       text: {
-        primary: mode === "dark" ? "#ffffff" : "#000000", // Dynamic text color
+        primary: mode === "dark" ? "#FFFFFF" : "#000000", // Primary text color
+        secondary: mode === "dark" ? "#9290C3" : "#535C91", // Secondary text color
       },
     },
     components: {
       // Global styles for TextField
       MuiTextField: {
         styleOverrides: {
-          root:
-            mode === "dark"
-              ? {
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#f0f0f0", // Fixed border color
-                    },
-                    // Remove hover and focus effects
-                    "&:hover fieldset": {
-                      borderColor: "#f0f0f0", // Same as default
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#f0f0f0", // Same as default
-                    },
-                  },
-                  "&:hover .MuiInputLabel-root": {
-                    color: "#ffffff", // Dynamic label color
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#ffffff",
-                  },
-                }
-              : {},
+          root: {
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: mode === "dark" ? "#535C91" : "#1B1A55", // Border color
+              },
+              "&:hover fieldset": {
+                borderColor: mode === "dark" ? "#9290C3" : "#535C91", // Hover border color
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: mode === "dark" ? "#9290C3" : "#1B1A55", // Focus border color
+              },
+            },
+            "& .MuiInputLabel-root": {
+              color: mode === "dark" ? "#9290C3" : "#1B1A55", // Label color
+            },
+            "&:hover .MuiInputLabel-root": {
+              color: mode === "dark" ? "#FFFFFF" : "#535C91", // Hover label color
+            },
+          },
         },
       },
       // Global styles for Checkbox
       MuiCheckbox: {
         styleOverrides: {
           root: {
-            color: mode === "dark" ? "#ffffff" : "#000000", // Checkbox color
+            color: mode === "dark" ? "#9290C3" : "#1B1A55", // Checkbox color
             "&.Mui-checked": {
-              color: mode === "dark" ? "#ffffff" : "#000000", // Checked state color
+              color: mode === "dark" ? "#9290C3" : "#535C91", // Checked state color
             },
           },
         },
@@ -95,28 +95,28 @@ const getTheme = (mode: "light" | "dark") =>
         styleOverrides: {
           root: {
             "& .super-app-theme--header": {
-              backgroundColor: mode === "dark" ? "#3C3D37" : "#003049", // Header background
-              color: mode === "dark" ? "#ffffff" : "#ffffff", // Header text color
+              backgroundColor: mode === "dark" ? "#1B1A55" : "#535C91", // Header background
+              color: mode === "dark" ? "#FFFFFF" : "#FFFFFF", // Header text color
             },
             "& .MuiDataGrid-row": {
-              color: mode === "dark" ? "#ffffff" : "#000000", // Row text color
+              color: mode === "dark" ? "#FFFFFF" : "#000000", // Row text color
             },
             "& .MuiDataGrid-cell": {
               borderBottom: `1px solid ${
-                mode === "dark" ? "#555555" : "#e0e0e0"
+                mode === "dark" ? "#535C91" : "#E0E0E0"
               }`, // Cell border
             },
             // Toolbar styles
             "& .MuiDataGrid-toolbarContainer": {
-              backgroundColor: mode === "dark" ? "#121212" : "#f5f5f5", // Toolbar background
-              color: mode === "dark" ? "#ffffff" : "#000000", // Toolbar text color
+              backgroundColor: mode === "dark" ? "#070F2B" : "#F5F5F5", // Toolbar background
+              color: mode === "dark" ? "#FFFFFF" : "#000000", // Toolbar text color
               "& .MuiButton-root": {
-                color: mode === "dark" ? "#ffffff" : "#000000", // Button text color
+                color: mode === "dark" ? "#FFFFFF" : "#000000", // Button text color
               },
               "& .MuiInputBase-root": {
-                color: mode === "dark" ? "#ffffff" : "#000000", // Input text color
+                color: mode === "dark" ? "#FFFFFF" : "#000000", // Input text color
                 "& .MuiSvgIcon-root": {
-                  color: mode === "dark" ? "#ffffff" : "#000000", // Icon color
+                  color: mode === "dark" ? "#FFFFFF" : "#000000", // Icon color
                 },
               },
             },

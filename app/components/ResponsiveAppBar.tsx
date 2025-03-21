@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import supabase from "../../utils/supabaseClient";
-import { Button, IconButton, useTheme, CircularProgress, List, ListItem, ListItemText, Divider } from "@mui/material";
+import { Button, IconButton, useTheme, CircularProgress, List, ListItem, ListItemText } from "@mui/material";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useThemeContext } from "./ThemeRegistry";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,10 +16,8 @@ import ShoppingCartWithBadge from "./ShoppingCartWithBadge";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
-
-
 interface ResponsiveAppBarProps {
-  children?: React.ReactNode; // Add children as a prop
+  children?: React.ReactNode;
 }
 
 export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
@@ -30,7 +28,7 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [loggingOut, setLoggingOut] = useState<boolean>(false);
   const { mode, toggleTheme } = useThemeContext();
-  const [menuOpen, setMenuOpen] = useState<boolean>(true); // Controls the visibility of the left menu
+  const [menuOpen, setMenuOpen] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -81,202 +79,240 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
   };
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev); // Toggle the menu state
   };
 
   const menuItems = [
     { label: "Contact Details", path: "/" },
     { label: "Locate Yourself", path: "/locateYourself" },
     { label: "Shop", path: "/shop" },
-    { label: "Contact Data", path: "/contactsData" },
+    { label: "Data Table", path: "/dataTable" },
     ...(session ? [{ label: "Products", path: "/products" }] : []),
     ...(session ? [{ label: "Users", path: "/users" }] : []),
     ...(session && session.user.role === "admin" ? [{ label: "User Roles", path: "/userRoles" }] : []),
   ];
 
+  // Animation variants for the drawer
+  const drawerVariants = {
+    open: { 
+      width: 240, 
+      opacity: 1, 
+      transition: { 
+        type: "spring", 
+        stiffness: 200, 
+        damping: 25, 
+        mass: 1, 
+        velocity: 2 
+      } 
+    },
+    closed: { 
+      width: 0, 
+      opacity: 0, 
+      transition: { 
+        type: "spring", 
+        stiffness: 200, 
+        damping: 25, 
+        mass: 1, 
+        velocity: 2 
+      } 
+    },
+  };
+
+  // Animation variants for the menu items
+  const menuItemVariants = {
+    open: { 
+      opacity: 1, 
+      visibility: "visible" as const, // Use valid value for visibility
+      transition: { delay: 0.1 } 
+    },
+    closed: { 
+      opacity: 0, 
+      visibility: "hidden" as const, // Use valid value for visibility
+      transition: { duration: 0.1 } 
+    },
+  };
+
   return (
-<Box sx={{ display: "flex" }}>
-  {/* Left Vertical Menu Bar */}
-  <Box
-    sx={{
-      width: menuOpen ? 240 : 0, // Width of the menu when open/closed
-      flexShrink: 0,
-      transition: "width 0.3s", // Smooth transition
-      backgroundColor: theme.palette.primary.main,
-      borderRight: `1px solid ${theme.palette.divider}`,
-      height: "100vh", // Full height
-      position: "fixed", // Fixed position
-      overflowX: "hidden", // Hide overflow when closed
-      zIndex: 1, // Ensure it stays above the main content
-    }}
-  >
-    {/* Close Button */}
-    <IconButton
-      onClick={toggleMenu}
-      sx={{
-        position: "absolute",
-        right: 8,
-        top: 8,
-      
-      }}
-    >
-      <ChevronLeftIcon />
-    </IconButton>
-
-    {/* Menu Items */}
-    <List sx={{ mt: 8 }}>
-      {menuItems.map((item) => (
-        <ListItem
-          key={item.path}
-          component="div" // Use a div as the component
-          onClick={toggleMenu}
-          sx={{
-            "&:hover": {
-              backgroundColor: theme.palette.action.hover,
-            },
-          }}
-        >
-     
-          <Link href={item.path} passHref>
-
-            <ListItemText sx={{ color: "white" }}
-            
-            primary={item.label}
-            
-            />
-          </Link>
-     
-        </ListItem>
-      ))}
-    </List>
-  </Box>
-
-  {/* Main Content */}
-  <Box
-    component="main"
-    sx={{
-      flexGrow: 1,
-      p: 3,
-      marginLeft: menuOpen ? "240px" : 0, // Adjust margin based on menu state
-      transition: "margin 0.3s", // Smooth transition
-    }}
-  >
-    {/* AppBar */}
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar
-        variant="dense"
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          backgroundColor: theme.palette.secondary.main,
+    <Box sx={{ display: "flex" }}>
+      {/* Left Vertical Menu Bar with Animation */}
+      <motion.div
+        initial={false}
+        animate={menuOpen ? "open" : "closed"}
+        variants={drawerVariants}
+        style={{
+          flexShrink: 0,
+          backgroundColor: theme.palette.primary.main,
+          borderRight: `1px solid ${theme.palette.divider}`,
+          height: "100vh",
+          position: "fixed",
+          overflowX: "hidden",
+          zIndex: 1,
         }}
       >
-        {/* Menu Icon to toggle the left menu */}
-        <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleMenu}>
-          <MenuIcon />
+        {/* Close Button */}
+        <IconButton
+          onClick={toggleMenu}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: "white",
+          }}
+        >
+          <ChevronLeftIcon />
         </IconButton>
 
-        {/* Auth Links or User Info */}
-        <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
-          <AnimatePresence>
-            {session ? (
-              <>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Typography variant="h6" sx={{ color: "inherit", opacity: 1, padding: "6px 0" }}>
-                    Welcome, {session.user.display_name || session.user.email}
-                  </Typography>
-                </motion.div>
+        {/* Menu Items */}
+        <motion.div
+          initial={false}
+          animate={menuOpen ? "open" : "closed"}
+          variants={menuItemVariants}
+        >
+          <List sx={{ mt: 8 }}>
+            {menuItems.map((item) => (
+              <ListItem
+                key={item.path}
+                component="div"
+                sx={{
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                }}
+              >
+                <Link href={item.path} passHref>
+                  <ListItemText sx={{ color: "white" }} primary={item.label} />
+                </Link>
+              </ListItem>
+            ))}
+          </List>
+        </motion.div>
+      </motion.div>
 
-                {/* Profile Image or Icon */}
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
-                  {session.user.photo_url ? (
-                    <img
-                      src={session.user.photo_url}
-                      alt="Profile"
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    <AccountCircleIcon sx={{ fontSize: 40, color: "inherit" }} />
-                  )}
-                </motion.div>
-
-                {/* Logout Button */}
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      color: "inherit",
-                      borderColor: "inherit",
-                      "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      },
-                    }}
-                    onClick={handleLogout}
-                    disabled={loggingOut}
-                  >
-                    {loggingOut ? <CircularProgress size={20} sx={{ color: "inherit" }} /> : "Logout"}
-                  </Button>
-                </motion.div>
-              </>
-            ) : (
-              [
-                { label: "Sign Up", path: "/signup" },
-                { label: "Login", path: "/login" },
-              ].map((item) => (
-                <motion.div
-                  key={item.path}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      cursor: "pointer",
-                      color: "inherit",
-                      opacity: pathname === item.path ? 1 : 0.9,
-                      transition: "opacity 0.3s, border-bottom 0.3s",
-                      "&:hover": { opacity: 1 },
-                      borderBottom:
-                        pathname === item.path ? "2px solid #ffffff80" : "2px solid transparent",
-                      padding: "6px 0",
-                    }}
-                  >
-                    <Link href={item.path} style={{ textDecoration: "none", color: "inherit" }}>
-                      {item.label}
-                    </Link>
-                  </Typography>
-                </motion.div>
-              ))
-            )}
-          </AnimatePresence>
-          <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
-            <ShoppingCartWithBadge />
-            <IconButton sx={{ color: "inherit" }} onClick={toggleTheme}>
-              {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: menuOpen ? "240px" : 0,
+          transition: "margin 0.3s",
+        }}
+      >
+        {/* AppBar */}
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <Toolbar
+            variant="dense"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              backgroundColor: theme.palette.secondary.main,
+            }}
+          >
+            {/* Menu Icon to toggle the left menu */}
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleMenu}>
+              <MenuIcon />
             </IconButton>
-          </Box>
-        </Box>
-      </Toolbar>
-    </AppBar>
 
-    {/* Main Content Area */}
-    <Box> {/* Add marginTop to account for the AppBar */}
-      {/* Your main content goes here */}
-      {children}
+            {/* Auth Links or User Info */}
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+              <AnimatePresence>
+                {session ? (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Typography variant="h6" sx={{ color: "inherit", opacity: 1, padding: "6px 0" }}>
+                        Welcome, {session.user.display_name || session.user.email}
+                      </Typography>
+                    </motion.div>
+
+                    {/* Profile Image or Icon */}
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
+                      {session.user.photo_url ? (
+                        <img
+                          src={session.user.photo_url}
+                          alt="Profile"
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <AccountCircleIcon sx={{ fontSize: 40, color: "inherit" }} />
+                      )}
+                    </motion.div>
+
+                    {/* Logout Button */}
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          color: "inherit",
+                          borderColor: "inherit",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          },
+                        }}
+                        onClick={handleLogout}
+                        disabled={loggingOut}
+                      >
+                        {loggingOut ? <CircularProgress size={20} sx={{ color: "inherit" }} /> : "Logout"}
+                      </Button>
+                    </motion.div>
+                  </>
+                ) : (
+                  [
+                    { label: "Sign Up", path: "/signup" },
+                    { label: "Login", path: "/login" },
+                  ].map((item) => (
+                    <motion.div
+                      key={item.path}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          cursor: "pointer",
+                          color: "inherit",
+                          opacity: pathname === item.path ? 1 : 0.9,
+                          transition: "opacity 0.3s, border-bottom 0.3s",
+                          "&:hover": { opacity: 1 },
+                          borderBottom:
+                            pathname === item.path ? "2px solid #ffffff80" : "2px solid transparent",
+                          padding: "6px 0",
+                        }}
+                      >
+                        <Link href={item.path} style={{ textDecoration: "none", color: "inherit" }}>
+                          {item.label}
+                        </Link>
+                      </Typography>
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
+              <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+                <ShoppingCartWithBadge />
+                <IconButton sx={{ color: "inherit" }} onClick={toggleTheme}>
+                  {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+                </IconButton>
+              </Box>
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        {/* Main Content Area */}
+        {/* <Box sx={{ marginTop: "40px" }}> */}
+          {children}
+        {/* </Box> */}
+      </Box>
     </Box>
-  </Box>
-</Box>
   );
 }

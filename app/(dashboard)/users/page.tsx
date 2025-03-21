@@ -173,20 +173,7 @@ const Page = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            height: "100vh", // Full viewport height
-            width: "98vw",
-          }}
-        >
-          <Box
-            sx={{
-              margin: 4,
-              width: "98%",
-            }}
-          >
+  
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -198,8 +185,7 @@ const Page = () => {
                 showUserButton={true}
               />
             </motion.div>
-          </Box>
-        </Box>
+
       )}
       <UserEditModalComponent
         openEditModal={openEditModal}
