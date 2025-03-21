@@ -197,7 +197,7 @@ const Page: React.FC = () => {
                 rows={rows}
                 columns={columns}
                 showButton={true}
-                width={"950px"}
+                width={"1050px"}
               />
             </motion.div>
           </>
