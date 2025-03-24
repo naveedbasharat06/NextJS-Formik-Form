@@ -2,8 +2,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import { Provider } from "react-redux";
+import { store } from "../store/store";
 // Extend the MUI theme to include MuiDataGrid
 import { Theme, Components } from "@mui/material/styles";
 
@@ -140,13 +140,13 @@ export default function ThemeRegistry({
   };
 
   return (
-      <Provider store={store}>
-       <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <ThemeProvider theme={getTheme(mode)}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
-    </ThemeContext.Provider>
-      </Provider> 
+    <Provider store={store}>
+      <ThemeContext.Provider value={{ mode, toggleTheme }}>
+        <ThemeProvider theme={getTheme(mode)}>
+          <CssBaseline />
+          {children}
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </Provider>
   );
 }

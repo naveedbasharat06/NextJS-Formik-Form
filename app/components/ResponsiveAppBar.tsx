@@ -212,9 +212,25 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
                 key={item.path}
                 component="div"
                 sx={{
+                  backgroundColor:
+                    pathname === item.path
+                      ? "rgba(0, 0, 0, 0.3)"
+                      : "transparent",
+                  color: pathname === item.path ? "white" : "inherit",
+                  fontWeight: pathname === item.path ? "bold" : "normal",
+                  borderLeft:
+                    pathname === item.path
+                      ? "4px solid #ffffff"
+                      : "4px solid transparent",
+                  boxShadow:
+                    pathname === item.path
+                      ? "0px 4px 8px rgba(0,0,0,0.2)"
+                      : "none",
                   "&:hover": {
-                    backgroundColor: theme.palette.action.hover,
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    color: "white",
                   },
+                  transition: "all 0.3s",
                 }}
               >
                 <Link href={item.path} passHref>

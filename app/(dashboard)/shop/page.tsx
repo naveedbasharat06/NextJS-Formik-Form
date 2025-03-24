@@ -94,13 +94,18 @@ const Shop: React.FC = () => {
           <Typography
             sx={{
               marginTop: 4,
-              fontSize: "2rem", // Larger font size
+              fontSize: "2.5rem", // Larger font size for better visibility
               fontWeight: "bold", // Bold text
-              color: "primary.main", // Use the primary color from your theme
+              color: (theme) => theme.palette.primary.main, // Use theme's primary color
               textAlign: "center", // Center align the text
               textTransform: "uppercase", // Uppercase text
-              letterSpacing: "0.1em", // Add some letter spacing
-              marginBottom: 1,
+              letterSpacing: "0.15em", // Increased letter spacing for emphasis
+              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.4)", // Add a shadow effect for depth
+              transition: "color 0.3s, transform 0.3s", // Smooth transitions
+              "&:hover": {
+                color: (theme) => theme.palette.secondary.main, // Use theme's secondary color on hover
+                transform: "scale(1.05)", // Slight scaling effect on hover
+              },
             }}
           >
             SHOP

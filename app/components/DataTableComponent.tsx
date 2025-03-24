@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import supabase from "../utils/supabaseClient";
 import FilterComponent from "./FilterComponent";
-import { Box, CircularProgress, useTheme } from "@mui/material";
+import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
 
 export interface User {
   id: string;
@@ -127,10 +127,29 @@ const DataTableComponent = () => {
 
   return (
     <>
+      <Typography
+        sx={{
+          marginTop: 4,
+          fontSize: "2.5rem", // Larger font size for better visibility
+          fontWeight: "bold", // Bold text
+          color: (theme) => theme.palette.primary.main, // Use theme's primary color
+          textAlign: "center", // Center align the text
+          textTransform: "uppercase", // Uppercase text
+          letterSpacing: "0.15em", // Increased letter spacing for emphasis
+          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.4)", // Add a shadow effect for depth
+          transition: "color 0.3s, transform 0.3s", // Smooth transitions
+          "&:hover": {
+            color: (theme) => theme.palette.secondary.main, // Use theme's secondary color on hover
+            transform: "scale(1.05)", // Slight scaling effect on hover
+          },
+        }}
+      >
+        DATA TABLE
+      </Typography>
       <Box
         sx={{
           height: "100vh",
-          marginTop: 6,
+          marginTop: 2,
           boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
           borderRadius: 2,
           p: 2,
