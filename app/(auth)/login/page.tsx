@@ -19,6 +19,8 @@ import supabase from "../../utils/supabaseClient";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Grid from "@mui/material/Grid2";
+import GoogleOAuthButton from "../../components/GoogleOAuthButton";
+// import { GoogleOAuthButton } from "../../components/GoogleOAuthButton";
 
 // Validation Schema
 const validationSchema = Yup.object({
@@ -181,10 +183,14 @@ const SignInPage: React.FC = () => {
                         fullWidth
                         variant="contained"
                         disabled={isSubmitting}
-                        sx={{ background: theme.palette.secondary.main }}
+                        sx={{
+                          background: theme.palette.secondary.main,
+                          marginBottom: 1,
+                        }}
                       >
                         {isSubmitting ? "Signing in..." : "Sign In"}
                       </Button>
+                      <GoogleOAuthButton />
                     </Grid>
                   </Grid>
                 </Box>

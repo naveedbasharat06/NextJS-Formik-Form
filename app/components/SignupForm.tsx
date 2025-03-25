@@ -19,6 +19,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import supabase from "../utils/supabaseClient";
 import { useRouter } from "next/navigation";
 import SuccessSnackbar from "./SuccessSnackbar";
+import GoogleOAuthButton from "./GoogleOAuthButton";
 
 interface SignupFormProps {
   onSuccess?: () => void; // Callback for successful signup
@@ -284,10 +285,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onError }) => {
                         fullWidth
                         variant="contained"
                         disabled={isSubmitting}
-                        sx={{ background: theme.palette.secondary.main }}
+                        sx={{
+                          background: theme.palette.secondary.main,
+                          marginBottom: 1,
+                        }}
                       >
                         {isSubmitting ? "Signing up..." : "Sign Up"}
                       </Button>
+                      <GoogleOAuthButton />
                     </Grid>
                   </Grid>
                 </Box>
