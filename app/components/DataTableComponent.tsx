@@ -148,7 +148,7 @@ const DataTableComponent = () => {
       </Typography>
       <Box
         sx={{
-          height: "100vh",
+          // height: "100vh",
           marginTop: 2,
           boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
           borderRadius: 2,

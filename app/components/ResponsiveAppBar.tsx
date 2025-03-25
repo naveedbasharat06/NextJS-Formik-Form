@@ -26,6 +26,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 // Import icons for menu items
+import GoogleIcon from "@mui/icons-material/Google";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -113,6 +114,9 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
     },
     { label: "Shop", path: "/shop", icon: <ShoppingCartIcon /> },
     { label: "Data Table", path: "/dataTable", icon: <TableChartIcon /> },
+    ...(session
+      ? [{ label: "OAuth Users", path: "/OAuthUsers", icon: <GoogleIcon /> }]
+      : []),
     ...(session
       ? [{ label: "Products", path: "/products", icon: <InventoryIcon /> }]
       : []),

@@ -28,11 +28,6 @@ function GoogleOAuthButton({ variant = "signin" }: GoogleOAuthButtonProps) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Sign out error:", error);
-  };
-
   const handleSignInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -44,17 +39,6 @@ function GoogleOAuthButton({ variant = "signin" }: GoogleOAuthButtonProps) {
 
     if (error) console.error("Sign in error:", error);
   };
-
-  if (session) {
-    return (
-      <div className="flex items-center gap-4">
-        <span className="text-gray-700">Welcome, {session.user?.email}</span>
-        <Button variant="outlined" onClick={handleSignOut} className="text-sm">
-          Sign Out
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <Button

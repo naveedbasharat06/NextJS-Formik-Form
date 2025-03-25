@@ -134,7 +134,7 @@ export const getColumns2 = (
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1,
+      width: 100,
       sortable: false,
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (
@@ -169,7 +169,7 @@ export const getColumns2 = (
     {
       field: "id",
       headerName: "ID",
-      flex: 1,
+      width: 50,
       headerClassName: "super-app-theme--header",
     },
     {
@@ -192,6 +192,60 @@ export const getColumns2 = (
     },
   ];
 };
+
+export const getColumns5: GridColDef[] = [
+  {
+    field: "id",
+    headerName: "ID",
+    width: 250,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+    renderCell: (params) => (
+      <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+        {params.value}
+      </div>
+    ),
+  },
+  {
+    field: "provider",
+    headerName: "PROVIDER",
+    flex: 1,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    flex: 1,
+    width: 250,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+  },
+  {
+    field: "full_name",
+    headerName: "Full Name",
+    flex: 1,
+    width: 180,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+  },
+  {
+    field: "avatar_url",
+    headerName: "Avatar",
+    flex: 1,
+    width: 100,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+    renderCell: (params) =>
+      params.value ? (
+        <img
+          src={params.value}
+          alt="Avatar"
+          style={{ width: 40, height: 40, borderRadius: "50%" }}
+        />
+      ) : null,
+  },
+];
 
 export const getColumns = (
   handleEditOpen: (row: any) => void,

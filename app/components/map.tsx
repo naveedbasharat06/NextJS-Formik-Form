@@ -402,12 +402,12 @@ const Map = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100vh", // Full viewport height
-            width: "92vw",
+            // height: "100vh", // Full viewport height
+            width: "97vw",
           }}
         >
           {/* Map Container */}
-          <Box className="relative w-[50%] h-[540px] m-4">
+          <Box className=" w-[50%] h-[540px] m-4">
             <Box
               ref={mapContainerRef}
               className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
@@ -426,7 +426,7 @@ const Map = () => {
                 rows={rows}
                 columns={columns}
                 height={"429px"}
-                width={"50vw"}
+                width={"100%"}
                 showButton={false}
                 locationText={locationText}
                 toggleDragableMarker={toggleDraggableMarker}
