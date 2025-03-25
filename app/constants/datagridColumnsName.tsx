@@ -64,8 +64,7 @@ export const getColumns4 = (
       field: "isCurrentUser",
       headerName: "Logged In",
       flex: 1,
-      minWidth: 100,
-      maxWidth: 150,
+
       headerClassName: "super-app-theme--header",
       renderCell: (params) => (params.row.id === user?.id ? "LOGGED IN" : ""),
     },

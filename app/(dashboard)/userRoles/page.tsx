@@ -207,7 +207,7 @@ const Page = () => {
                 rows={rows}
                 columns={columns}
                 showUserButton={true}
-                width={"1050px"}
+                width={"80vw"}
               />
             </motion.div>
           </>
