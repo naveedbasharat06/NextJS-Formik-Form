@@ -34,7 +34,6 @@ const CustomDay = (
   const hasEvents = eventDates.includes(day.format("YYYY-MM-DD"));
 
   return (
-    // <Box sx={{ position: "relative" }}>
     <PickersDay
       {...other}
       day={day}
@@ -55,7 +54,6 @@ const CustomDay = (
         }),
       }}
     />
-    // </Box>
   );
 };
 
@@ -66,6 +64,7 @@ const GoogleCalendarPage = () => {
   const [session, setSession] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const theme = useTheme();
+
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -161,34 +160,41 @@ const GoogleCalendarPage = () => {
 
   return (
     <>
-      <Typography
-        sx={{
-          marginTop: 4,
-          fontSize: "2.5rem", // Larger font size for better visibility
-          fontWeight: "bold", // Bold text
-          color: (theme) => theme.palette.primary.main, // Use theme's primary color
-          textAlign: "center", // Center align the text
-          textTransform: "uppercase", // Uppercase text
-          letterSpacing: "0.15em", // Increased letter spacing for emphasis
-          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.4)", // Add a shadow effect for depth
-          transition: "color 0.3s, transform 0.3s", // Smooth transitions
-          "&:hover": {
-            color: (theme) => theme.palette.secondary.main, // Use theme's secondary color on hover
-            transform: "scale(1.05)", // Slight scaling effect on hover
-          },
-        }}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
-        EVENTS
-      </Typography>
+        <Typography
+          sx={{
+            marginTop: 4,
+            fontSize: "2.5rem",
+            fontWeight: "bold",
+            color: theme.palette.primary.main,
+            textAlign: "center",
+            textTransform: "uppercase",
+            letterSpacing: "0.15em",
+            textShadow: "2px 2px 4px rgba(0, 0, 0, 0.4)",
+            transition: "color 0.3s, transform 0.3s",
+            "&:hover": {
+              color: theme.palette.secondary.main,
+              transform: "scale(1.05)",
+            },
+          }}
+        >
+          EVENTS
+        </Typography>
+      </motion.div>
+
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
-          // alignItems: "center",
+          flexDirection: { xs: "column", md: "row" },
           justifyContent: "center",
+          alignItems: "flex-start",
           width: "100%",
           p: 4,
-          minHeight: "100vh",
+          //   minHeight: "100vh",
           bgcolor: "background.default",
         }}
       >
@@ -196,50 +202,69 @@ const GoogleCalendarPage = () => {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
               justifyContent: "center",
-              //   alignItems: "center",
-              height: "100vh", // Full viewport height
+              alignItems: "center",
+              //   height: "100vh",
             }}
           >
             <CircularProgress size={60} thickness={4} />
           </Box>
         ) : error ? (
-          <Box sx={{ textAlign: "center", p: 3 }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            style={{ textAlign: "center", padding: "20px" }}
+          >
             <Typography color="error" gutterBottom>
               {error}
             </Typography>
             <GoogleOAuthButton />
-          </Box>
+          </motion.div>
         ) : (
           <>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar
-                value={selectedDate}
-                onChange={handleDateChange}
-                sx={{
-                  //   width: "30%",
-                  bgcolor: "background.paper",
-                  p: 2,
-                  borderRadius: "8px",
-                  boxShadow: 2,
-                  margin: 0,
-                  "& .Mui-selected": {
-                    backgroundColor: "#4285F4 !important",
-                  },
-                }}
-                slots={{
-                  day: CustomDay,
-                }}
-                slotProps={{
-                  day: {
-                    eventDates: getEventDates(),
-                  } as any,
-                }}
-              />
-            </LocalizationProvider>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateCalendar
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  sx={{
+                    // width: { xs: "100%", md: "40%" },
+                    bgcolor: "background.paper",
+                    p: 2,
+                    borderRadius: "8px",
+                    boxShadow: 2,
+                    "& .Mui-selected": {
+                      backgroundColor: "#4285F4 !important",
+                    },
+                  }}
+                  slots={{
+                    day: CustomDay,
+                  }}
+                  slotProps={{
+                    day: {
+                      eventDates: getEventDates(),
+                    } as any,
+                  }}
+                />
+              </LocalizationProvider>
+            </motion.div>
 
-            <Box sx={{ mt: 4, width: "40%", marginLeft: 2 }}>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              style={{
+                marginTop: "20px",
+                width: "100%",
+                maxWidth: "600px",
+                marginLeft: "20px",
+              }}
+            >
               <Typography variant="h6" sx={{ mb: 2 }}>
                 Events on {selectedDate?.format("MMMM D, YYYY")}
               </Typography>
@@ -294,7 +319,7 @@ const GoogleCalendarPage = () => {
                   </motion.div>
                 ))
               )}
-            </Box>
+            </motion.div>
           </>
         )}
       </Box>

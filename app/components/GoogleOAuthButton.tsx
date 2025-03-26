@@ -18,6 +18,7 @@ function GoogleOAuthButton() {
         scopes: [
           "https://www.googleapis.com/auth/calendar.events.readonly",
           "https://www.googleapis.com/auth/calendar.readonly",
+          "https://www.googleapis.com/auth/gmail.readonly",
         ].join(" "),
         queryParams: {
           access_type: "offline",

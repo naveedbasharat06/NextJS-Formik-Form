@@ -144,8 +144,9 @@ const page: React.FC = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
-          width: "98vw",
+          height: "100%", // Full viewport height
+          width: "100%",
+          marginTop: 7,
         }}
       >
         <motion.div
@@ -155,7 +156,6 @@ const page: React.FC = () => {
         >
           <Box
             sx={{
-              marginTop: 8,
               maxWidth: 600,
               padding: 2,
               borderRadius: 2,
