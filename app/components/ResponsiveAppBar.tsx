@@ -33,6 +33,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
+import EventIcon from "@mui/icons-material/Event";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 interface ResponsiveAppBarProps {
@@ -114,6 +115,7 @@ export default function ResponsiveAppBar({ children }: ResponsiveAppBarProps) {
     },
     { label: "Shop", path: "/shop", icon: <ShoppingCartIcon /> },
     { label: "Data Table", path: "/dataTable", icon: <TableChartIcon /> },
+    { label: "Events", path: "/events", icon: <EventIcon /> },
     ...(session
       ? [{ label: "OAuth Users", path: "/OAuthUsers", icon: <GoogleIcon /> }]
       : []),

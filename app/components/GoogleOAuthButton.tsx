@@ -1,43 +1,33 @@
 "use client";
-
 import { Button } from "@mui/material";
-import { useEffect, useState } from "react";
-import supabase from "../utils/supabaseClient";
 import { FcGoogle } from "react-icons/fc";
+import supabase from "../utils/supabaseClient";
 
 interface GoogleOAuthButtonProps {
   variant?: "signin" | "signup";
 }
 
 function GoogleOAuthButton({ variant = "signin" }: GoogleOAuthButtonProps) {
-  const [session, setSession] = useState<any>(null);
-
-  useEffect(() => {
-    // Check existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Set up auth state listener
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const handleSignInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        // redirectTo: `${window.location.origin}/auth/callback`,
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: window.location.origin,
+        scopes: [
+          "https://www.googleapis.com/auth/calendar.events.readonly",
+          "https://www.googleapis.com/auth/calendar.readonly",
+        ].join(" "),
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
       },
     });
 
-    if (error) console.error("Sign in error:", error);
+    if (error) {
+      console.error("Google OAuth error:", error);
+      alert(`Authentication failed: ${error.message}`);
+    }
   };
 
   return (
