@@ -6,15 +6,15 @@ import {
   CircularProgress,
   Typography,
   Button,
-  List,
-  ListItem,
   Chip,
+  useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import EventIcon from "@mui/icons-material/Event";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 import GoogleOAuthButton from "./GoogleOAuthButton";
+import { PickersDay, PickersDayProps } from "@mui/x-date-pickers/PickersDay";
 
 interface GoogleEvent {
   id: string;
@@ -26,16 +26,49 @@ interface GoogleEvent {
   status: string;
 }
 
+const CustomDay = (
+  props: PickersDayProps<Dayjs> & { eventDates?: string[] }
+) => {
+  const { eventDates = [], day, outsideCurrentMonth, ...other } = props;
+
+  const hasEvents = eventDates.includes(day.format("YYYY-MM-DD"));
+
+  return (
+    // <Box sx={{ position: "relative" }}>
+    <PickersDay
+      {...other}
+      day={day}
+      outsideCurrentMonth={outsideCurrentMonth}
+      sx={{
+        ...(hasEvents && {
+          "&:after": {
+            content: '""',
+            position: "absolute",
+            bottom: 4,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            backgroundColor: "#4285F4",
+          },
+        }),
+      }}
+    />
+    // </Box>
+  );
+};
+
 const GoogleCalendarPage = () => {
   const [events, setEvents] = useState<GoogleEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [session, setSession] = useState<any>(null);
-
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
+  const theme = useTheme();
   useEffect(() => {
     const initialize = async () => {
       try {
-        // 1. Get session
         const {
           data: { session },
           error: sessionError,
@@ -44,7 +77,6 @@ const GoogleCalendarPage = () => {
 
         setSession(session);
 
-        // 2. If we have a token, fetch events
         if (session?.provider_token) {
           await fetchCalendarEvents(session.provider_token);
         } else {
@@ -59,7 +91,6 @@ const GoogleCalendarPage = () => {
 
     initialize();
 
-    // Set up auth state listener
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -78,7 +109,7 @@ const GoogleCalendarPage = () => {
       const response = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
           new URLSearchParams({
-            maxResults: "10",
+            maxResults: "20",
             orderBy: "startTime",
             singleEvents: "true",
             timeMin: new Date().toISOString(),
@@ -111,36 +142,28 @@ const GoogleCalendarPage = () => {
     }
   };
 
-  const formatDateTime = (dateString?: string) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleString([], {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const handleDateChange = (date: Dayjs | null) => {
+    setSelectedDate(date);
   };
 
-  const handleRefresh = async () => {
-    if (session?.provider_token) {
-      await fetchCalendarEvents(session.provider_token);
-    }
+  const getEventDates = () => {
+    return events.map((event) =>
+      dayjs(event.start.dateTime || event.start.date).format("YYYY-MM-DD")
+    );
   };
+
+  const eventsOnSelectedDate = events.filter((event) => {
+    const eventDate = dayjs(event.start.dateTime || event.start.date).format(
+      "YYYY-MM-DD"
+    );
+    return eventDate === selectedDate?.format("YYYY-MM-DD");
+  });
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        p: 4,
-        minHeight: "100vh",
-        bgcolor: "background.default",
-      }}
-    >
+    <>
       <Typography
         sx={{
+          marginTop: 4,
           fontSize: "2.5rem", // Larger font size for better visibility
           fontWeight: "bold", // Bold text
           color: (theme) => theme.palette.primary.main, // Use theme's primary color
@@ -157,56 +180,98 @@ const GoogleCalendarPage = () => {
       >
         EVENTS
       </Typography>
-
-      {loading ? (
-        <CircularProgress size={60} />
-      ) : error ? (
-        <Box sx={{ textAlign: "center", p: 3 }}>
-          <Typography color="error" gutterBottom>
-            {error}
-          </Typography>
-          <GoogleOAuthButton />
-        </Box>
-      ) : events.length === 0 ? (
-        <Box sx={{ textAlign: "center" }}>
-          <EventIcon sx={{ fontSize: 60, mb: 2 }} />
-          <Typography variant="h5" gutterBottom>
-            No Upcoming Events
-          </Typography>
-          <Button
-            variant="outlined"
-            onClick={handleRefresh}
-            startIcon={<AccessTimeIcon />}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          // alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          p: 4,
+          minHeight: "100vh",
+          bgcolor: "background.default",
+        }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              //   alignItems: "center",
+              height: "100vh", // Full viewport height
+            }}
           >
-            Refresh Events
-          </Button>
-        </Box>
-      ) : (
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          style={{ width: "100%", maxWidth: "800px" }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-            <Typography variant="h5">Upcoming Events</Typography>
-            <Button
-              variant="outlined"
-              onClick={handleRefresh}
-              startIcon={<AccessTimeIcon />}
-            >
-              Refresh
-            </Button>
+            <CircularProgress size={60} thickness={4} />
           </Box>
+        ) : error ? (
+          <Box sx={{ textAlign: "center", p: 3 }}>
+            <Typography color="error" gutterBottom>
+              {error}
+            </Typography>
+            <GoogleOAuthButton />
+          </Box>
+        ) : (
+          <>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateCalendar
+                value={selectedDate}
+                onChange={handleDateChange}
+                sx={{
+                  //   width: "30%",
+                  bgcolor: "background.paper",
+                  p: 2,
+                  borderRadius: "8px",
+                  boxShadow: 2,
+                  margin: 0,
+                  "& .Mui-selected": {
+                    backgroundColor: "#4285F4 !important",
+                  },
+                }}
+                slots={{
+                  day: CustomDay,
+                }}
+                slotProps={{
+                  day: {
+                    eventDates: getEventDates(),
+                  } as any,
+                }}
+              />
+            </LocalizationProvider>
 
-          <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-            {events.map((event) => (
-              <ListItem key={event.id} divider sx={{ py: 2 }}>
-                <Box sx={{ width: "100%" }}>
-                  <Box
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+            <Box sx={{ mt: 4, width: "40%", marginLeft: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Events on {selectedDate?.format("MMMM D, YYYY")}
+              </Typography>
+
+              {eventsOnSelectedDate.length === 0 ? (
+                <Typography color="textSecondary">No events</Typography>
+              ) : (
+                eventsOnSelectedDate.map((event) => (
+                  <motion.div
+                    key={event.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                      padding: "10px",
+                      marginBottom: "8px",
+                      border: "1px solid lightgray",
+                      borderRadius: "8px",
+                      backgroundColor: theme.palette.background.paper,
+                    }}
                   >
-                    <Typography variant="h6">
+                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
                       {event.summary || "No Title"}
+                    </Typography>
+                    <Typography variant="body2">
+                      {dayjs(event.start.dateTime || event.start.date).format(
+                        "hh:mm A"
+                      )}{" "}
+                      -{" "}
+                      {dayjs(event.end.dateTime || event.end.date).format(
+                        "hh:mm A"
+                      )}
                     </Typography>
                     <Chip
                       label={
@@ -215,36 +280,25 @@ const GoogleCalendarPage = () => {
                       color={
                         event.status === "confirmed" ? "success" : "warning"
                       }
+                      size="small"
+                      sx={{ mt: 1 }}
                     />
-                  </Box>
-                  {event.description && (
-                    <Typography variant="body2" sx={{ my: 1 }}>
-                      {event.description}
-                    </Typography>
-                  )}
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <AccessTimeIcon fontSize="small" />
-                    <Typography>
-                      {formatDateTime(event.start.dateTime || event.start.date)}{" "}
-                      - {formatDateTime(event.end.dateTime || event.end.date)}
-                    </Typography>
-                  </Box>
-                  <Button
-                    href={event.htmlLink}
-                    target="_blank"
-                    size="small"
-                    sx={{ mt: 1 }}
-                    startIcon={<CalendarTodayIcon />}
-                  >
-                    Open in Calendar
-                  </Button>
-                </Box>
-              </ListItem>
-            ))}
-          </List>
-        </motion.div>
-      )}
-    </Box>
+                    <Button
+                      href={event.htmlLink}
+                      target="_blank"
+                      size="small"
+                      sx={{ mt: 1, ml: 2 }}
+                    >
+                      View in Calendar
+                    </Button>
+                  </motion.div>
+                ))
+              )}
+            </Box>
+          </>
+        )}
+      </Box>
+    </>
   );
 };
 

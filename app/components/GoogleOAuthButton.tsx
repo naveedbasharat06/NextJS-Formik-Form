@@ -1,13 +1,15 @@
 "use client";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import supabase from "../utils/supabaseClient";
+import { useTheme } from "@mui/material";
 
-interface GoogleOAuthButtonProps {
-  variant?: "signin" | "signup";
-}
+// interface GoogleOAuthButtonProps {
+//   variant?: "signin" | "signup";
+// }
 
-function GoogleOAuthButton({ variant = "signin" }: GoogleOAuthButtonProps) {
+function GoogleOAuthButton() {
+  const theme = useTheme();
   const handleSignInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -32,12 +34,15 @@ function GoogleOAuthButton({ variant = "signin" }: GoogleOAuthButtonProps) {
 
   return (
     <Button
-      variant="outlined"
+      variant="contained"
       startIcon={<FcGoogle />}
       onClick={handleSignInWithGoogle}
+      sx={{
+        background: theme.palette.secondary.main,
+      }}
       className="w-full flex items-center justify-center gap-2"
     >
-      {variant === "signin" ? "Sign in with Google" : "Sign up with Google"}
+      <Typography>SIGN IN WITH GOOGLE</Typography>
     </Button>
   );
 }
