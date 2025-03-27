@@ -74,11 +74,11 @@ const GoogleCalendarPage = () => {
         } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
 
-        setSession(session);
-
-        if (session?.provider_token) {
+        // Only fetch events if the session is valid and events haven't been fetched yet
+        if (session?.provider_token && events.length === 0) {
+          setSession(session);
           await fetchCalendarEvents(session.provider_token);
-        } else {
+        } else if (!session?.provider_token) {
           setError("Please sign in with Google to access your calendar");
         }
       } catch (err) {
@@ -95,12 +95,16 @@ const GoogleCalendarPage = () => {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session?.provider_token) {
         setSession(session);
-        await fetchCalendarEvents(session.provider_token);
+
+        // Only fetch events if they haven't been fetched yet
+        if (events.length === 0) {
+          await fetchCalendarEvents(session.provider_token);
+        }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [events.length]); // Add events.length as a dependency
 
   const fetchCalendarEvents = async (accessToken: string) => {
     setLoading(true);

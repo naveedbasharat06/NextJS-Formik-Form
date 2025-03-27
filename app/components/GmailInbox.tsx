@@ -1,20 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import supabase from "../utils/supabaseClient";
-import {
-  Box,
-  CircularProgress,
-  Typography,
-  Button,
-  Divider,
-  IconButton,
-} from "@mui/material";
+import { Box, CircularProgress, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import MailIcon from "@mui/icons-material/Mail";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import GoogleOAuthButton from "./GoogleOAuthButton";
 import { formatDistanceToNow } from "date-fns";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DataGridComponent from "./DataGridComponent";
 import { gmailColumns } from "../constants/datagridColumnsName";
 
@@ -50,9 +42,8 @@ const GmailInbox = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [session, setSession] = useState<any>(null);
-  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
-  const [selectedEmailHeaders, setSelectedEmailHeaders] =
-    useState<EmailHeader | null>(null);
+
+  useState<EmailHeader | null>(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -165,18 +156,6 @@ const GmailInbox = () => {
       await fetchEmails(session.provider_token);
     }
   };
-  const handleBackToList = () => {
-    setSelectedEmail(null);
-    setSelectedEmailHeaders(null);
-  };
-
-  const isUnread = (email: Email) => {
-    return !email.labelIds?.includes("UNREAD");
-  };
-
-  const isStarred = (email: Email) => {
-    return email.labelIds?.includes("STARRED");
-  };
 
   const formatEmailDate = (dateString: string) => {
     try {
@@ -199,8 +178,7 @@ const GmailInbox = () => {
         snippet: email.snippet,
         date: headers.date,
         formattedDate: formatEmailDate(email.internalDate),
-        isUnread: isUnread(email),
-        isStarred: isStarred(email),
+
         emailData: email,
       };
     });
@@ -232,20 +210,6 @@ const GmailInbox = () => {
             </Button>
           )}
           {!session && <GoogleOAuthButton />}
-        </Box>
-      ) : selectedEmail ? (
-        <Box sx={{ width: "100%", maxWidth: "800px" }}>
-          <IconButton onClick={handleBackToList} sx={{ mb: 2 }}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            {selectedEmailHeaders?.subject}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            From: {selectedEmailHeaders?.from}
-          </Typography>
-          <Divider sx={{ my: 2 }} />
-          <Typography variant="body1">{selectedEmail.snippet}</Typography>
         </Box>
       ) : (
         <motion.div

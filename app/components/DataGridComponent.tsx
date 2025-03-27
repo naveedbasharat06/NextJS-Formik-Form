@@ -24,8 +24,6 @@ interface DataGridComponentProps {
   saveLocation?: () => void;
   showUserButton?: boolean;
   AddProductsButton?: boolean;
-  // New prop for additional button
-  // Handler for additional button click
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
@@ -39,17 +37,15 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   isGeolocateActive,
   showDragableMarker,
   saveLocation,
-  showUserButton = false, // Default to false
-  AddProductsButton = false, // Default to false
-  // Handler for additional button click
+  showUserButton = false,
+  AddProductsButton = false,
 }) => {
-  const theme = useTheme(); // Access the theme
-  // const isMobile = useMediaQuery("(max-width: 768px)");
+  const theme = useTheme();
+
   const buttonRef = useRef(null);
   const [saving, setSaving] = useState(false);
 
   const columnVisibilityModel = {
-    // address:false,
     name: false,
     isDifferentShipping: false,
     shippingAddress: false,
