@@ -1,5 +1,5 @@
 import { GridColDef } from "@mui/x-data-grid";
-import { IconButton } from "@mui/material";
+import { Avatar, Box, IconButton, Typography, useTheme } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -461,3 +461,71 @@ export const getProductColumns = (
     },
   ];
 };
+
+export const gmailColumns: GridColDef[] = [
+  {
+    field: "from",
+    headerName: "From",
+    width: 150,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+    renderCell: (params) => {
+      const theme = useTheme();
+      const fromText = params.row.from || "";
+      const firstName = fromText.split(/\s|</)[0]; // Split by space or '<'
+      const initial = firstName?.charAt(0)?.toUpperCase() || "?";
+      const truncateString = (str: string, num: number) => {
+        if (!str) return "";
+        return str.length <= num ? str : str.slice(0, num) + "...";
+      };
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Avatar sx={{ mr: 2, backgroundColor: theme.palette.secondary.main }}>
+            {initial}
+          </Avatar>
+          <Typography variant="body2">
+            {truncateString(firstName, 15)}
+          </Typography>
+        </Box>
+      );
+    },
+  },
+  {
+    field: "subject",
+    headerName: "Subject",
+    flex: 1,
+    width: 300,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+    renderCell: (params) => (
+      <Typography
+        variant="subtitle2"
+        sx={{ fontWeight: params.row.isUnread ? "bold" : "normal" }}
+      >
+        {params.row.subject}
+      </Typography>
+    ),
+  },
+  // {
+  //   field: "snippet",
+  //   headerName: "Preview",
+  //   width: 400,
+  //   renderCell: (params) => (
+  //     <Typography variant="body2">
+  //       {truncateString(params.row.snippet, 100)}
+  //     </Typography>
+  //   ),
+  // },
+  {
+    field: "date",
+    headerName: "Date",
+    width: 150,
+    sortable: false,
+    headerClassName: "super-app-theme--header",
+    renderCell: (params) => (
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Typography variant="caption">{params.row.formattedDate}</Typography>
+      </Box>
+    ),
+  },
+];

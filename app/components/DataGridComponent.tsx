@@ -23,7 +23,8 @@ interface DataGridComponentProps {
   isGeolocateActive?: boolean;
   saveLocation?: () => void;
   showUserButton?: boolean;
-  AddProductsButton?: boolean; // New prop for additional button
+  AddProductsButton?: boolean;
+  // New prop for additional button
   // Handler for additional button click
 }
 

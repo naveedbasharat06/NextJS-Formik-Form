@@ -152,7 +152,7 @@ const GoogleUsersPage = () => {
                 rows={users}
                 columns={columns}
                 showUserButton={true}
-                width={"80vw"}
+                width={"77vw"}
               />
             </motion.div>
           )}

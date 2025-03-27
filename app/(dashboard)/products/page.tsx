@@ -188,7 +188,7 @@ function Page() {
                 rows={rows}
                 columns={columns}
                 AddProductsButton={true} // Only the additional button will show
-                width={"80vw"}
+                width={"77vw"}
               />
             </motion.div>
           )}

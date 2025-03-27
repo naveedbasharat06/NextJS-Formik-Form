@@ -406,35 +406,68 @@ const Map = () => {
             width: "97vw",
           }}
         >
-          {/* Map Container */}
-          <Box className=" w-[50%] h-[540px] m-4">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens, horizontally on medium+
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              p: 2,
+            }}
+          >
+            {/* Map Container */}
             <Box
-              ref={mapContainerRef}
-              className="w-full h-full rounded-xl border-2 border-gray-200 overflow-hidden 
-             transform hover:scale-105 transition-transform duration-300 
-             shadow-[0px_10px_30px_rgba(0,0,255,0.4)]"
-            />
-          </Box>
-
-          <Box className="w-[50%] my-4 mr-4">
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              sx={{
+                width: { xs: "100%", md: "50%" }, // Full width on small screens, half on medium+
+                height: { xs: "300px", md: "540px" }, // Adjust height for smaller screens
+                m: 2,
+              }}
             >
-              <DataGridComponent
-                rows={rows}
-                columns={columns}
-                height={"429px"}
-                width={"100%"}
-                showButton={false}
-                locationText={locationText}
-                toggleDragableMarker={toggleDraggableMarker}
-                isGeolocateActive={isGeolocateActive}
-                showDragableMarker={showDragableMarker}
-                saveLocation={saveLocation}
+              <Box
+                ref={mapContainerRef}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "12px",
+                  border: "2px solid",
+                  borderColor: "divider",
+                  overflow: "hidden",
+                  boxShadow: "0px 10px 30px rgba(0,0,255,0.4)",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)", // Slight zoom effect on hover
+                  },
+                }}
               />
-            </motion.div>
+            </Box>
+
+            {/* Data Grid Container */}
+            <Box
+              sx={{
+                width: { xs: "100%", md: "50%" }, // Full width on small screens, half on medium+
+                m: 2,
+              }}
+            >
+              <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <DataGridComponent
+                  rows={rows}
+                  columns={columns}
+                  height={"429px"}
+                  width={"100%"}
+                  showButton={false}
+                  locationText={locationText}
+                  toggleDragableMarker={toggleDraggableMarker}
+                  isGeolocateActive={isGeolocateActive}
+                  showDragableMarker={showDragableMarker}
+                  saveLocation={saveLocation}
+                />
+              </motion.div>
+            </Box>
           </Box>
         </Box>
       )}
