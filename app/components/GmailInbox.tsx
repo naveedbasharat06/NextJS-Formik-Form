@@ -9,6 +9,7 @@ import GoogleOAuthButton from "./GoogleOAuthButton";
 import { formatDistanceToNow } from "date-fns";
 import DataGridComponent from "./DataGridComponent";
 import { gmailColumns } from "../constants/datagridColumnsName";
+import { useRouter } from "next/navigation";
 
 interface Email {
   id: string;
@@ -44,6 +45,7 @@ const GmailInbox = () => {
   const [session, setSession] = useState<any>(null);
 
   useState<EmailHeader | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const initialize = async () => {
@@ -157,6 +159,14 @@ const GmailInbox = () => {
     }
   };
 
+  const handleRowClick = (params: any) => {
+    const emailId = params.row.id;
+    // Navigate to the detail page with the email ID
+    // window.location.href = `/emails/${emailId}`;
+    // Or using Next.js router:
+    router.push(`/inbox/${emailId}`);
+  };
+
   const formatEmailDate = (dateString: string) => {
     try {
       const date = new Date(parseInt(dateString));
@@ -246,6 +256,7 @@ const GmailInbox = () => {
             columns={columns}
             showUserButton={true}
             width={"77vw"}
+            onRowClick={handleRowClick}
           />
         </motion.div>
       )}

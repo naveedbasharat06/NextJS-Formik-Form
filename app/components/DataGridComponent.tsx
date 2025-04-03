@@ -24,6 +24,7 @@ interface DataGridComponentProps {
   saveLocation?: () => void;
   showUserButton?: boolean;
   AddProductsButton?: boolean;
+  onRowClick?: (params: any) => void;
 }
 
 const DataGridComponent: React.FC<DataGridComponentProps> = ({
@@ -39,6 +40,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
   saveLocation,
   showUserButton = false,
   AddProductsButton = false,
+  onRowClick,
 }) => {
   const theme = useTheme();
 
@@ -238,6 +240,7 @@ const DataGridComponent: React.FC<DataGridComponentProps> = ({
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           pageSizeOptions={[5, 10, 25]}
+          onRowClick={onRowClick}
           disableColumnFilter
           disableDensitySelector
           disableRowSelectionOnClick

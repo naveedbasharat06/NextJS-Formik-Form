@@ -22,6 +22,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "depcheck": "^1.4.7",
+    "dompurify": "^3.2.4",
     "formik": "^2.4.6",
     "framer-motion": "^12.4.7",
     "gsap": "^3.12.7",
@@ -36,6 +37,7 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/node": "^20",
     "@types/react": "^19",
     "postcss": "^8",
